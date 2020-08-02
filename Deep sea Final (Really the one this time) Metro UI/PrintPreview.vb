@@ -169,18 +169,18 @@ Public Class PrintPreview
                             e.Graphics.DrawLine(custpen, e.MarginBounds.Left - 70, e.MarginBounds.Bottom,
                                             e.MarginBounds.Right + 55, e.MarginBounds.Bottom)
 
-                            'e.Graphics.DrawString(vbCrLf + "Beneficiary Name: DEEP SEA GENERAL TRADING L.L.C. | Bank Name: COMMERCIAL BANK INTERNATIONAL",
-                            '                  New Font("Cambria", 10, FontStyle.Regular), brush,
-                            '                                              e.PageBounds.Width / 2 -
-                            '                  e.Graphics.MeasureString("Beneficiary Name: DEEP SEA GENERAL TRADING L.L.C. | Bank Name: COMMERCIAL BANK INTERNATIONAL",
-                            '                                           New Font("Cambria", 10, FontStyle.Regular)
-                            '                  ).Width / 2, e.MarginBounds.Bottom)
-                            'e.Graphics.DrawString(vbCrLf + vbCrLf + "A/ C NO: 100130028399 | IBAN NO: AE680220000100130028399 | SWIFT CODE: CLBIAEAD",
-                            '                  New Font("Cambria", 10, FontStyle.Regular), brush,
-                            '                                              e.PageBounds.Width / 2 -
-                            '                  e.Graphics.MeasureString("A/ C NO: 100130028399 | IBAN NO: AE680220000100130028399 | SWIFT CODE: CLBIAEAD",
-                            '                                           New Font("Cambria", 10, FontStyle.Regular)
-                            '                  ).Width / 2, e.MarginBounds.Bottom)
+                            e.Graphics.DrawString(vbCrLf + "Beneficiary Name: RAVINDRA SUMANT CURTAINS FIXING | Bank Name: RAK BANK",
+                                  New Font("Cambria", 10, FontStyle.Regular), brush,
+                                                              e.PageBounds.Width / 2 -
+                                  e.Graphics.MeasureString("Beneficiary Name: RAVINDRA SUMANT CURTAINS FIXING | Bank Name: RAK BANK",
+                                                           New Font("Cambria", 10, FontStyle.Regular)
+                                  ).Width / 2, e.MarginBounds.Bottom)
+                            e.Graphics.DrawString(vbCrLf + vbCrLf + "A/ C NO: 0032850670001 | IBAN NO: AE220400000032850670001 | SWIFT CODE: NRAKAEAK",
+                                  New Font("Cambria", 10, FontStyle.Regular), brush,
+                                                              e.PageBounds.Width / 2 -
+                                  e.Graphics.MeasureString("A/ C NO: 0032850670001 | IBAN NO: AE220400000032850670001 | SWIFT CODE: NRAKAEAK",
+                                                           New Font("Cambria", 10, FontStyle.Regular)
+                                  ).Width / 2, e.MarginBounds.Bottom)
                             e.HasMorePages = True
                             newpage = True
                             Return
@@ -193,18 +193,18 @@ Public Class PrintPreview
                         e.Graphics.DrawLine(custpen, e.MarginBounds.Left - 70, e.MarginBounds.Bottom,
                                             e.MarginBounds.Right + 55, e.MarginBounds.Bottom)
 
-                        'e.Graphics.DrawString(vbCrLf + "Beneficiary Name: DEEP SEA GENERAL TRADING L.L.C. | Bank Name: COMMERCIAL BANK INTERNATIONAL",
-                        '                      New Font("Cambria", 10, FontStyle.Regular), brush,
-                        '                                                  e.PageBounds.Width / 2 -
-                        '                      e.Graphics.MeasureString("Beneficiary Name: DEEP SEA GENERAL TRADING L.L.C. | Bank Name: COMMERCIAL BANK INTERNATIONAL",
-                        '                                               New Font("Cambria", 10, FontStyle.Regular)
-                        '                      ).Width / 2, e.MarginBounds.Bottom)
-                        'e.Graphics.DrawString(vbCrLf + vbCrLf + "A/ C NO: 100130028399 | IBAN NO: AE680220000100130028399 | SWIFT CODE: CLBIAEAD",
-                        '                      New Font("Cambria", 10, FontStyle.Regular), brush,
-                        '                                                  e.PageBounds.Width / 2 -
-                        '                      e.Graphics.MeasureString("A/ C NO: 100130028399 | IBAN NO: AE680220000100130028399 | SWIFT CODE: CLBIAEAD",
-                        '                                               New Font("Cambria", 10, FontStyle.Regular)
-                        '                      ).Width / 2, e.MarginBounds.Bottom)
+                        e.Graphics.DrawString(vbCrLf + "Beneficiary Name: RAVINDRA SUMANT CURTAINS FIXING | Bank Name: RAK BANK",
+                                  New Font("Cambria", 10, FontStyle.Regular), brush,
+                                                              e.PageBounds.Width / 2 -
+                                  e.Graphics.MeasureString("Beneficiary Name: RAVINDRA SUMANT CURTAINS FIXING | Bank Name: RAK BANK",
+                                                           New Font("Cambria", 10, FontStyle.Regular)
+                                  ).Width / 2, e.MarginBounds.Bottom)
+                        e.Graphics.DrawString(vbCrLf + vbCrLf + "A/ C NO: 0032850670001 | IBAN NO: AE220400000032850670001 | SWIFT CODE: NRAKAEAK",
+                                  New Font("Cambria", 10, FontStyle.Regular), brush,
+                                                              e.PageBounds.Width / 2 -
+                                  e.Graphics.MeasureString("A/ C NO: 0032850670001 | IBAN NO: AE220400000032850670001 | SWIFT CODE: NRAKAEAK",
+                                                           New Font("Cambria", 10, FontStyle.Regular)
+                                  ).Width / 2, e.MarginBounds.Bottom)
                         e.HasMorePages = True
                         newpage = True
                         Return
