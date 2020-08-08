@@ -1,4 +1,7 @@
-﻿Imports DevExpress.XtraPrinting.Native
+﻿Imports System.IO
+Imports DevExpress.XtraPrinting.Export.Pdf
+Imports DevExpress.XtraPrinting.HtmlExport.Native
+Imports iText.Html2pdf
 Imports Microsoft.Office.Interop
 
 Public Class StatementForm
@@ -57,7 +60,6 @@ Public Class StatementForm
 
             EDateLB.SelectedIndex = 0
         End If
-
         Try
             Using dt As DataTable = Main.DBOp.LoadStmntDGV(CompLB.SelectedItem)
                 Dim dataView As DataView = dt.DefaultView
@@ -126,7 +128,7 @@ Public Class StatementForm
 
     End Sub
 
-    Private Sub BarButtonItem2_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles BarButtonItem2.ItemClick
+    Private Sub SendAsEmail_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles SendAsEmail.ItemClick
 
         Try
             Dim oApp As Outlook.Application = New Outlook.Application
@@ -147,7 +149,7 @@ Public Class StatementForm
                 message += "</tr>"
                 Dim total As Decimal
                 Try
-                    For i As Integer = 0 To StmtDGV.RowCount - 2
+                    For i As Integer = 0 To StmtDGV.RowCount - 1
                         message += "<tr>"
                         For j As Integer = 0 To StmtDGV.ColumnCount - 1
                             If j = StmtDGV.ColumnCount - 1 AndAlso IsNumeric(StmtDGV.Rows(i).Cells(j).Value) Then
@@ -157,9 +159,6 @@ Public Class StatementForm
                         Next
                         message += "</tr>"
                     Next
-                    '"<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>Total" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & total & "</b></td></tr>" &
-                    '          "<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>Discount" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & Discount & "</b></td></tr>" &
-                    '          "<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>VAT" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & VAT & "</b></td></tr>" &
                     message += "<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>Total" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & total & "</b></td></tr>"
                 Catch ex As Exception
                     .Close(Outlook.OlInspectorClose.olDiscard)
@@ -168,7 +167,6 @@ Public Class StatementForm
                 message += "</table>"
                 .Display()
                 mySignature = .HTMLBody
-                'MsgBox(message + mySignature)
                 .HTMLBody = message + mySignature
             End With
         Catch ex As Exception
@@ -176,40 +174,47 @@ Public Class StatementForm
         End Try
     End Sub
 
-    Private Sub BarButtonItem1_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles BarButtonItem1.ItemClick
+    Private Sub SendAsPDF_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles SendAsPDF.ItemClick
+
         Try
             Dim oApp As Outlook.Application = New Outlook.Application
             Dim mailItem As Outlook.MailItem = TryCast(oApp.CreateItem(Outlook.OlItemType.olMailItem), Outlook.MailItem)
 
             Dim mySignature As String
             Dim message As String
+            Dim PDFData As String
             'Hide()
             TopMost = False
             With mailItem
                 .Subject = "Statement " & SDateLB.Items(SDateLB.SelectedIndex) & " - " & EDateLB.Items(EDateLB.SelectedIndex)
-                message = "Dear Sir,<br><br>Please find the statement below and kindly arrange the payment soon. <br><br>"
-                message += "<table cellspacing = -1> <tr bgcolor = ""#D9E1F2"">"
+                message = "Dear Sir,<br><br>Please find the attached statement and kindly arrange the payment soon. <br><br>"
+                PDFData = "<table cellspacing = -1> <tr bgcolor = ""#D9E1F2"">"
                 For i As Integer = 0 To StmtDGV.ColumnCount - 1
-                    message += "<th style=""padding: 0 5px; border: 1px solid #AAAAAA;"">" & StmtDGV.Columns(i).HeaderText & "</th>"
+                    PDFData += "<th style=""padding: 0 5px; border: 1px solid #AAAAAA;"">" & StmtDGV.Columns(i).HeaderText & "</th>"
                 Next
-                message += "</tr>"
+                PDFData += "</tr>"
                 Try
-                    For i As Integer = 0 To StmtDGV.RowCount - 2
-                        message += "<tr>"
+                    For i As Integer = 0 To StmtDGV.RowCount - 1
+                        PDFData += "<tr>"
                         For j As Integer = 0 To StmtDGV.ColumnCount - 1
-                            message += "<td style=""padding: 0 5px; border-left: 1px solid #AAAAAA; border-right: 1px solid #AAAAAA;"" align='center'>" & StmtDGV.Rows(i).Cells(j).Value & "</td>"
+                            PDFData += "<td style = ""font-family: Calibri, sans-serif; padding: 0 5px; border-left: 1px solid #AAAAAA; border-right: 1px solid #AAAAAA;"" align='center'>" & StmtDGV.Rows(i).Cells(j).Value & "</td>"
                         Next
-                        message += "</tr>"
+                        PDFData += "</tr>"
                     Next
-                    'message += "<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>Total" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & Total & "</b></td></tr>" &
-                    '           "<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>Discount" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & Discount & "</b></td></tr>" &
-                    '           "<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>VAT" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & VAT & "</b></td></tr>" &
-                    message += "<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>Total" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & Net & "</b></td></tr>"
+                    PDFData += "<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>Total" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & Net & "</b></td></tr>"
                 Catch ex As Exception
                     .Close(Outlook.OlInspectorClose.olDiscard)
                 End Try
 
-                message += "</table>"
+                PDFData += "</table>"
+
+                HtmlConverter.ConvertToPdf(PDFData, New FileStream(Application.StartupPath & "\Statement " &
+                          SDateLB.Items(SDateLB.SelectedIndex) & " - " &
+                          EDateLB.Items(EDateLB.SelectedIndex) & ".pdf", FileMode.Create, FileAccess.Write))
+
+                .Attachments.Add(Application.StartupPath & "\Statement " &
+                          SDateLB.Items(SDateLB.SelectedIndex) & " - " &
+                          EDateLB.Items(EDateLB.SelectedIndex) & ".pdf")
                 .Display()
                 mySignature = .HTMLBody
                 'MsgBox(message + mySignature)

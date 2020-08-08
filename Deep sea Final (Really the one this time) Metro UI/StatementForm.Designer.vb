@@ -22,8 +22,8 @@ Partial Class StatementForm
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.RibbonControl = New DevExpress.XtraBars.Ribbon.RibbonControl()
-        Me.BarButtonItem1 = New DevExpress.XtraBars.BarButtonItem()
-        Me.BarButtonItem2 = New DevExpress.XtraBars.BarButtonItem()
+        Me.SendAsPDF = New DevExpress.XtraBars.BarButtonItem()
+        Me.SendAsEmail = New DevExpress.XtraBars.BarButtonItem()
         Me.StmtTotalLBL = New DevExpress.XtraBars.BarStaticItem()
         Me.RibbonPage1 = New DevExpress.XtraBars.Ribbon.RibbonPage()
         Me.RibbonPageGroup1 = New DevExpress.XtraBars.Ribbon.RibbonPageGroup()
@@ -48,7 +48,7 @@ Partial Class StatementForm
         'RibbonControl
         '
         Me.RibbonControl.ExpandCollapseItem.Id = 0
-        Me.RibbonControl.Items.AddRange(New DevExpress.XtraBars.BarItem() {Me.RibbonControl.ExpandCollapseItem, Me.RibbonControl.SearchEditItem, Me.BarButtonItem1, Me.BarButtonItem2, Me.StmtTotalLBL})
+        Me.RibbonControl.Items.AddRange(New DevExpress.XtraBars.BarItem() {Me.RibbonControl.ExpandCollapseItem, Me.RibbonControl.SearchEditItem, Me.SendAsPDF, Me.SendAsEmail, Me.StmtTotalLBL})
         Me.RibbonControl.Location = New System.Drawing.Point(0, 0)
         Me.RibbonControl.MaxItemId = 5
         Me.RibbonControl.Name = "RibbonControl"
@@ -56,21 +56,21 @@ Partial Class StatementForm
         Me.RibbonControl.Size = New System.Drawing.Size(1117, 162)
         Me.RibbonControl.StatusBar = Me.RibbonStatusBar
         '
-        'BarButtonItem1
+        'SendAsPDF
         '
-        Me.BarButtonItem1.Caption = "Send as PDF"
-        Me.BarButtonItem1.Id = 1
-        Me.BarButtonItem1.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.sendpdf_16x16
-        Me.BarButtonItem1.ImageOptions.LargeImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.sendpdf_32x32
-        Me.BarButtonItem1.Name = "BarButtonItem1"
+        Me.SendAsPDF.Caption = "Send as PDF"
+        Me.SendAsPDF.Id = 1
+        Me.SendAsPDF.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.sendpdf_16x16
+        Me.SendAsPDF.ImageOptions.LargeImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.sendpdf_32x32
+        Me.SendAsPDF.Name = "SendAsPDF"
         '
-        'BarButtonItem2
+        'SendAsEmail
         '
-        Me.BarButtonItem2.Caption = "Send as E-Mail"
-        Me.BarButtonItem2.Id = 2
-        Me.BarButtonItem2.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.emailtemplate_16x16
-        Me.BarButtonItem2.ImageOptions.LargeImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.emailtemplate_32x32
-        Me.BarButtonItem2.Name = "BarButtonItem2"
+        Me.SendAsEmail.Caption = "Send as E-Mail"
+        Me.SendAsEmail.Id = 2
+        Me.SendAsEmail.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.emailtemplate_16x16
+        Me.SendAsEmail.ImageOptions.LargeImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.emailtemplate_32x32
+        Me.SendAsEmail.Name = "SendAsEmail"
         '
         'StmtTotalLBL
         '
@@ -86,8 +86,8 @@ Partial Class StatementForm
         '
         'RibbonPageGroup1
         '
-        Me.RibbonPageGroup1.ItemLinks.Add(Me.BarButtonItem1)
-        Me.RibbonPageGroup1.ItemLinks.Add(Me.BarButtonItem2)
+        Me.RibbonPageGroup1.ItemLinks.Add(Me.SendAsPDF)
+        Me.RibbonPageGroup1.ItemLinks.Add(Me.SendAsEmail)
         Me.RibbonPageGroup1.Name = "RibbonPageGroup1"
         '
         'RibbonStatusBar
@@ -281,8 +281,8 @@ Partial Class StatementForm
     Friend WithEvents RibbonPage1 As DevExpress.XtraBars.Ribbon.RibbonPage
     Friend WithEvents RibbonPageGroup1 As DevExpress.XtraBars.Ribbon.RibbonPageGroup
     Friend WithEvents RibbonStatusBar As DevExpress.XtraBars.Ribbon.RibbonStatusBar
-    Friend WithEvents BarButtonItem1 As DevExpress.XtraBars.BarButtonItem
-    Friend WithEvents BarButtonItem2 As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents SendAsPDF As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents SendAsEmail As DevExpress.XtraBars.BarButtonItem
     Friend WithEvents CompLB As ListBox
     Friend WithEvents SDateLB As ListBox
     Friend WithEvents EDateLB As ListBox

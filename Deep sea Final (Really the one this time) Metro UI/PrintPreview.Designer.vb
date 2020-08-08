@@ -42,7 +42,7 @@ Partial Class PrintPreview
         '
         Me.ComboBox2.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.ComboBox2.FormattingEnabled = True
-        Me.ComboBox2.Items.AddRange(New Object() {"DimGray", "Gray", "Black", "Blue", "Red"})
+        Me.ComboBox2.Items.AddRange(New Object() {"Gray", "DimGray", "Black", "Blue", "Red"})
         Me.ComboBox2.Location = New System.Drawing.Point(508, 202)
         Me.ComboBox2.Name = "ComboBox2"
         Me.ComboBox2.Size = New System.Drawing.Size(222, 21)

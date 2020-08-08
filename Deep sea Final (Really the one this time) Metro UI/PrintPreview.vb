@@ -362,9 +362,9 @@ Public Class PrintPreview
     Private Sub ComboBox2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox2.SelectedIndexChanged
         Select Case ComboBox2.SelectedIndex
             Case 0
-                col = Color.DimGray
-            Case 1
                 col = Color.Gray
+            Case 1
+                col = Color.DimGray
             Case 2
                 col = Color.Black
             Case 3
