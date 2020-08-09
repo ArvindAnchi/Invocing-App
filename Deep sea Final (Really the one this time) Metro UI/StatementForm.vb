@@ -185,9 +185,11 @@ Public Class StatementForm
             Dim PDFData As String
             'Hide()
             TopMost = False
+            Enabled = False
+
             With mailItem
                 .Subject = "Statement " & SDateLB.Items(SDateLB.SelectedIndex) & " - " & EDateLB.Items(EDateLB.SelectedIndex)
-                message = "Dear Sir,<br><br>Please find the attached statement and kindly arrange the payment soon. <br><br>"
+
                 PDFData = "<table cellspacing = -1> <tr bgcolor = ""#D9E1F2"">"
                 For i As Integer = 0 To StmtDGV.ColumnCount - 1
                     PDFData += "<th style=""padding: 0 5px; border: 1px solid #AAAAAA;"">" & StmtDGV.Columns(i).HeaderText & "</th>"
@@ -208,6 +210,7 @@ Public Class StatementForm
 
                 PDFData += "</table>"
 
+
                 HtmlConverter.ConvertToPdf(PDFData, New FileStream(Application.StartupPath & "\Statement " &
                           SDateLB.Items(SDateLB.SelectedIndex) & " - " &
                           EDateLB.Items(EDateLB.SelectedIndex) & ".pdf", FileMode.Create, FileAccess.Write))
@@ -217,7 +220,7 @@ Public Class StatementForm
                           EDateLB.Items(EDateLB.SelectedIndex) & ".pdf")
                 .Display()
                 mySignature = .HTMLBody
-                'MsgBox(message + mySignature)
+                message = "Dear Sir,<br><br>Please find the attached statement and kindly arrange the payment soon. <br><br>"
                 .HTMLBody = message + mySignature
             End With
         Catch ex As Exception

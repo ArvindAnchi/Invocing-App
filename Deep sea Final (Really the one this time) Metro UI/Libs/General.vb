@@ -120,7 +120,7 @@ Module General
         Next
         Return True
     End Function
-    Function Readmefexcel(InvoiceForm As InvoiceForm, Optional filepath As String = Nothing) As Boolean
+    Function WaitForm(Message As String) As Form
         Dim pwfrm As New Form
         Dim Label1 As New Label
         With pwfrm
@@ -132,7 +132,7 @@ Module General
             .MaximumSize = New Size(352, 158)
             .MinimumSize = New Size(352, 158)
             .Name = "pwfrm"
-            .StartPosition = FormStartPosition.CenterScreen
+            .StartPosition = FormStartPosition.CenterParent
             .Text = "Wait"
             .TopMost = True
             .ResumeLayout(False)
@@ -146,19 +146,23 @@ Module General
             .Name = "Label1"
             .Size = New Size(238, 25)
             .TabIndex = 0
-            .Text = "Reading contents of file"
+            .Text = Message
             .TextAlign = ContentAlignment.MiddleCenter
         End With
+        Return pwfrm
+    End Function
+    Function Readmefexcel(InvoiceForm As InvoiceForm, Optional filepath As String = Nothing) As Boolean
         If filepath Is Nothing Then
             filepath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
         End If
+
+        Dim WForm As Form = WaitForm("Reading contents of file please wait.")
+
         Try
             InvoiceForm.DGV1.CurrentCell = InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.Rows.Count - 1).Cells(0)
 
-            pwfrm.Show()
-            Dim Value As Point
-            Value = InvoiceForm.Location
-            pwfrm.Location = Value
+            WForm.Show()
+
             Dim xlApp As New Excel.Application
             Dim xlWorkBook As Excel.Workbook = xlApp.Workbooks.Open(filepath)
             xlWorkBook = xlApp.Workbooks.Open(filepath)
@@ -214,10 +218,10 @@ Module General
             End With
             xlWorkBook.Close()
             xlApp.Quit()
-            pwfrm.Hide()
+            WForm.Hide()
             'InvoiceForm.Hide()
         Catch ex As Exception
-            pwfrm.Hide()
+            WForm.Hide()
             MsgBox(ex.ToString)
             Return False
         Finally
