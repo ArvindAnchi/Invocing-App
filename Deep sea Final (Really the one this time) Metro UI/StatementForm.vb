@@ -176,6 +176,8 @@ Public Class StatementForm
 
     Private Sub SendAsPDF_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles SendAsPDF.ItemClick
 
+        Dim WForm As Form = WaitForm("Please wait while the statement generates.")
+
         Try
             Dim oApp As Outlook.Application = New Outlook.Application
             Dim mailItem As Outlook.MailItem = TryCast(oApp.CreateItem(Outlook.OlItemType.olMailItem), Outlook.MailItem)
@@ -186,8 +188,8 @@ Public Class StatementForm
             'Hide()
             TopMost = False
             Enabled = False
-
             With mailItem
+                WForm.ShowDialog()
                 .Subject = "Statement " & SDateLB.Items(SDateLB.SelectedIndex) & " - " & EDateLB.Items(EDateLB.SelectedIndex)
 
                 PDFData = "<table cellspacing = -1> <tr bgcolor = ""#D9E1F2"">"
@@ -218,12 +220,14 @@ Public Class StatementForm
                 .Attachments.Add(Application.StartupPath & "\Statement " &
                           SDateLB.Items(SDateLB.SelectedIndex) & " - " &
                           EDateLB.Items(EDateLB.SelectedIndex) & ".pdf")
+                WForm.Close()
                 .Display()
                 mySignature = .HTMLBody
                 message = "Dear Sir,<br><br>Please find the attached statement and kindly arrange the payment soon. <br><br>"
                 .HTMLBody = message + mySignature
             End With
         Catch ex As Exception
+            WForm.Close()
             MsgBox(ex.Message)
         End Try
     End Sub

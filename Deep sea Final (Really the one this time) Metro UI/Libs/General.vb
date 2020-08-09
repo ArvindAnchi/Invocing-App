@@ -161,7 +161,7 @@ Module General
         Try
             InvoiceForm.DGV1.CurrentCell = InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.Rows.Count - 1).Cells(0)
 
-            WForm.Show()
+            WForm.ShowDialog()
 
             Dim xlApp As New Excel.Application
             Dim xlWorkBook As Excel.Workbook = xlApp.Workbooks.Open(filepath)
@@ -218,10 +218,10 @@ Module General
             End With
             xlWorkBook.Close()
             xlApp.Quit()
-            WForm.Hide()
+            WForm.Close()
             'InvoiceForm.Hide()
         Catch ex As Exception
-            WForm.Hide()
+            WForm.Close()
             MsgBox(ex.ToString)
             Return False
         Finally
