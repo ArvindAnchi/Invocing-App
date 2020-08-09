@@ -179,6 +179,7 @@ Public Class StatementForm
         Dim WForm As Form = WaitForm("Please wait while the statement generates.")
 
         Try
+            Console.WriteLine("Initialize Outlook")
             Dim oApp As Outlook.Application = New Outlook.Application
             Dim mailItem As Outlook.MailItem = TryCast(oApp.CreateItem(Outlook.OlItemType.olMailItem), Outlook.MailItem)
 
@@ -187,11 +188,12 @@ Public Class StatementForm
             Dim PDFData As String
             'Hide()
             TopMost = False
-            Enabled = False
+            'Enabled = False
             With mailItem
-                WForm.ShowDialog()
+                Console.WriteLine("Show Wait form")
+                WForm.Show()
                 .Subject = "Statement " & SDateLB.Items(SDateLB.SelectedIndex) & " - " & EDateLB.Items(EDateLB.SelectedIndex)
-
+                Console.WriteLine("Start HTML Data generation")
                 PDFData = "<table cellspacing = -1> <tr bgcolor = ""#D9E1F2"">"
                 For i As Integer = 0 To StmtDGV.ColumnCount - 1
                     PDFData += "<th style=""padding: 0 5px; border: 1px solid #AAAAAA;"">" & StmtDGV.Columns(i).HeaderText & "</th>"
@@ -206,29 +208,33 @@ Public Class StatementForm
                         PDFData += "</tr>"
                     Next
                     PDFData += "<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>Total" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & Net & "</b></td></tr>"
+                    Console.WriteLine("HTML data generated")
                 Catch ex As Exception
+                    Console.WriteLine("Error: " & ex.ToString)
                     .Close(Outlook.OlInspectorClose.olDiscard)
                 End Try
 
                 PDFData += "</table>"
 
-
+                Console.WriteLine("Convert HTML to PDF")
                 HtmlConverter.ConvertToPdf(PDFData, New FileStream(Application.StartupPath & "\Statement " &
                           SDateLB.Items(SDateLB.SelectedIndex) & " - " &
                           EDateLB.Items(EDateLB.SelectedIndex) & ".pdf", FileMode.Create, FileAccess.Write))
-
+                Console.WriteLine("Attach file")
                 .Attachments.Add(Application.StartupPath & "\Statement " &
                           SDateLB.Items(SDateLB.SelectedIndex) & " - " &
                           EDateLB.Items(EDateLB.SelectedIndex) & ".pdf")
+                Console.WriteLine("Close Waitform")
                 WForm.Close()
+                Console.WriteLine("Show Outlook message")
                 .Display()
                 mySignature = .HTMLBody
                 message = "Dear Sir,<br><br>Please find the attached statement and kindly arrange the payment soon. <br><br>"
                 .HTMLBody = message + mySignature
             End With
         Catch ex As Exception
+            Console.WriteLine("Error (Main): " & ex.ToString)
             WForm.Close()
-            MsgBox(ex.Message)
         End Try
     End Sub
 End Class

@@ -161,7 +161,7 @@ Module General
         Try
             InvoiceForm.DGV1.CurrentCell = InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.Rows.Count - 1).Cells(0)
 
-            WForm.ShowDialog()
+            WForm.Show()
 
             Dim xlApp As New Excel.Application
             Dim xlWorkBook As Excel.Workbook = xlApp.Workbooks.Open(filepath)
