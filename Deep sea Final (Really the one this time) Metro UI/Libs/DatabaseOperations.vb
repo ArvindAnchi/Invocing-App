@@ -2,7 +2,7 @@
 
 Public Class DatabaseOperations
 
-    Public ConnectionString As String = "Server=.\SQLEXPRESS;Database=Deep Sea;Trusted_Connection=True;" 'If(Application.StartupPath = "G:\Other stuff\dsp\Deep sea Final (Really the one this time) Metro UI - Copy\Deep sea Final (Really the one this time) Metro UI\bin\Debug", "Server=.\SQLEXPRESS;Database=DeepSeaDev;Trusted_Connection=True;", "Server=.\SQLEXPRESS;Database=Deep Sea;Trusted_Connection=True;")
+    Public ConnectionString As String = "Server=.\SQLEXPRESS;Database=Deep Sea;Trusted_Connection=True;"
     Public filesupdatedlist As New List(Of String)
     'Read operations
     Public Function Getinvno() As Integer
