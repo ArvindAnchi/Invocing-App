@@ -298,7 +298,7 @@ Partial Class InvoiceForm
         'QtyColm
         '
         Me.QtyColm.FillWeight = 6.0!
-        Me.QtyColm.HeaderText = "Quantity"
+        Me.QtyColm.HeaderText = "Qty"
         Me.QtyColm.Name = "QtyColm"
         Me.QtyColm.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
         '
@@ -312,7 +312,7 @@ Partial Class InvoiceForm
         'TtlClm
         '
         Me.TtlClm.FillWeight = 6.0!
-        Me.TtlClm.HeaderText = "Total (AED)"
+        Me.TtlClm.HeaderText = "Total"
         Me.TtlClm.Name = "TtlClm"
         Me.TtlClm.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
         '
@@ -636,11 +636,11 @@ Partial Class InvoiceForm
     Friend WithEvents FLine6 As FLine
     Friend WithEvents FLine4 As FLine
     Friend WithEvents AutoCompleteLB As ListBox
+    Friend WithEvents VatCB As CheckBox
     Friend WithEvents SNoClm As DataGridViewTextBoxColumn
     Friend WithEvents descclm As DataGridViewTextBoxColumn
     Friend WithEvents UCLM As DataGridViewTextBoxColumn
     Friend WithEvents QtyColm As DataGridViewTextBoxColumn
     Friend WithEvents PrcClm As DataGridViewTextBoxColumn
     Friend WithEvents TtlClm As DataGridViewTextBoxColumn
-    Friend WithEvents VatCB As CheckBox
 End Class

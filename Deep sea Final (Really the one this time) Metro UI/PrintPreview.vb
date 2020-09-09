@@ -1,5 +1,7 @@
 ﻿Option Strict Off
 Imports System.Drawing.Printing
+Imports DevExpress.Data.Filtering
+Imports DevExpress.XtraEditors.Filtering.Templates
 
 Public Class PrintPreview
 
@@ -44,6 +46,7 @@ Public Class PrintPreview
         Else
             MsgBox("Invalid Printer", MsgBoxStyle.Information)
         End If
+
     End Sub
 
     Dim col As Color = Color.Gray
@@ -92,7 +95,7 @@ Public Class PrintPreview
 
                     Dim row As DataGridViewRow
 
-                    Dim cols As Integer() = {80, 400, 50, 75, 75, 95}
+                    Dim cols As Integer() = {80, 400, 50, 50, 50, 50, 50, 50}
                     Dim x As Integer
                     Dim prcrec As Rectangle
                     If newpage Then
@@ -102,21 +105,29 @@ Public Class PrintPreview
                         fmt.Alignment = StringAlignment.Center
                         rc.Offset(1, 2)
                         Dim flag As Boolean = True
-                        For Each colll As Integer In {0, 1, 2, 3, 4, 5}
-                            If InvoiceForm.DGV1.Rows(0).Cells(colll).Visible Then
-                                rc = New Rectangle(x, y, cols(colll),
-                                                           InvoiceForm.DGV1.Rows(0).Cells(colll).Size.Height)
-                                e.Graphics.DrawLine(custpen, rc.X, rc.Y, rc.X + rc.Width, rc.Y)
-                                e.Graphics.DrawLine(custpen, rc.X, rc.Y + rc.Height, rc.X + rc.Width, rc.Y + rc.Height)
+                        Dim colll As Integer = 0
+                        While colll <= 7
+                            rc = New Rectangle(x, y, cols(colll),
+                                                   InvoiceForm.DGV1.Rows(0).Cells(0).Size.Height)
 
-                                e.Graphics.DrawString(InvoiceForm.DGV1.Columns(colll).HeaderText,
-                                                          New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
+                            e.Graphics.DrawLine(custpen, rc.X, rc.Y, rc.X + rc.Width, rc.Y)
+                            e.Graphics.DrawLine(custpen, rc.X, rc.Y + rc.Height, rc.X + rc.Width, rc.Y + rc.Height)
 
-                                x += rc.Width
-                                h = Math.Max(h, rc.Height)
-
+                            If InvoiceForm.DGV1.Rows(0).Cells(If(colll > 5, colll - 2, colll)).Visible And (colll < 5 Or colll > 6) Then
+                                e.Graphics.DrawString(InvoiceForm.DGV1.Columns(If(colll > 6, colll - 2, colll)).HeaderText,
+                                                              New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
+                            ElseIf colll = 5 Then
+                                Console.WriteLine("Write ""Disc.""")
+                                e.Graphics.DrawString("Disc.", New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
+                            ElseIf colll = 6 Then
+                                Console.WriteLine("Write ""VAT""")
+                                e.Graphics.DrawString("VAT", New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
                             End If
-                        Next
+
+                            x += rc.Width
+                            h = Math.Max(h, rc.Height)
+                            colll += 1
+                        End While
                         y += h
                         prcrec.X = rc.X
 
@@ -136,30 +147,39 @@ Public Class PrintPreview
                         rc.Offset(2, 2)
                         Dim flag As Boolean = True
 
-                        For Each colll As Integer In {0, 1, 2, 3, 4, 5}
-                            If InvoiceForm.DGV1.Rows(thisNDX).Cells(colll).Visible Then
+                        Dim colll As Integer = 0
+
+                        While colll <= 7
+
+                            If InvoiceForm.DGV1.Rows(thisNDX).Cells(If(colll > 5, colll - 2, colll)).Visible Then
                                 rc = New Rectangle(x, y, cols(colll),
-                                                           InvoiceForm.DGV1.Rows(0).Cells(colll).Size.Height)
-                                If InvoiceForm.DGV1.Rows(thisNDX).Cells(colll).ColumnIndex = 1 Then
+                                                       InvoiceForm.DGV1.Rows(0).Cells(If(colll > 5, colll - 2, colll)).Size.Height)
+                                If InvoiceForm.DGV1.Rows(thisNDX).Cells(If(colll > 5, colll - 2, colll)).ColumnIndex = 1 Then
                                     fmt.Alignment = StringAlignment.Near
                                 Else
                                     fmt.Alignment = StringAlignment.Center
                                 End If
 
-                                If InvoiceForm.DGV1.Rows(thisNDX).Cells(colll).ColumnIndex = 6 Then
+                                If InvoiceForm.DGV1.Rows(thisNDX).Cells(If(colll > 5, colll - 2, colll)).ColumnIndex = 6 Then
                                     prcrec = rc
                                 End If
 
-                                e.Graphics.DrawString(InvoiceForm.DGV1.Rows(thisNDX).Cells(colll).FormattedValue.ToString(),
-                                                      New Font("Calibria", 10, FontStyle.Regular), brush, rc, fmt)
+                                If (colll < 5 Or colll > 6) Then
+                                    e.Graphics.DrawString(InvoiceForm.DGV1.Rows(thisNDX).Cells(If(colll > 5, colll - 2, colll)).FormattedValue.ToString(),
+                                                  New Font("Calibria", 10, FontStyle.Regular), brush, rc, fmt)
+                                ElseIf colll = 5 Then
+                                    Console.WriteLine((InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) & " * 5 / 100 = " & (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) * 5 / 100)
 
-
+                                    e.Graphics.DrawString((InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100).ToString("N2"), New Font("Calibria", 10, FontStyle.Regular), brush, rc, fmt)
+                                ElseIf colll = 6 Then
+                                    e.Graphics.DrawString(((InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) * 5 / 100).ToString("N2"), New Font("Calibria", 10, FontStyle.Regular), brush, rc, fmt)
+                                End If
 
                                 x += rc.Width
                                 h = Math.Max(h, rc.Height)
                             End If
-                        Next
-
+                            colll += 1
+                        End While
 
                         y += h
                         mRow = thisNDX + 1
@@ -214,9 +234,9 @@ Public Class PrintPreview
 
                     e.Graphics.DrawLine(custpen, 30, rc.Y + rc.Height, rc.X + rc.Width, rc.Y + rc.Height)
                     Dim xval As Integer = 747.29
-                    e.Graphics.DrawString("Total" & vbNewLine &
+                    e.Graphics.DrawString("Total (AED)" & vbNewLine &
                                               "Discount (" & InvoiceForm.disctxt.Text & "%)" & vbNewLine &
-                                              "VAT" & vbNewLine &
+                                              "VAT (5%)" & vbNewLine &
                                               "Grand total", New Font("Calibria", 10, FontStyle.Bold),
                                               brush, xval - 5,
                                               y + h, format)
@@ -318,7 +338,11 @@ Public Class PrintPreview
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles PrintBtn.Click
 
         PrintDocument1.PrinterSettings.PrinterName = ComboBox1.Text
-        PrintDocument1.DefaultPageSettings.Color = False
+        If BWCB.Checked Then
+            PrintDocument1.DefaultPageSettings.Color = True
+        Else
+            PrintDocument1.DefaultPageSettings.Color = False
+        End If
         PrintDocument1.PrinterSettings.Copies = CShort(TextBox1.Text)
 
         PrintDocument1.Print()

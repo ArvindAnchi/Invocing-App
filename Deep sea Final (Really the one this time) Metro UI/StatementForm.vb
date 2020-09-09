@@ -12,7 +12,9 @@ Public Class StatementForm
     Private Net As String
 
     Private Sub StatementForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        CompLB.DataSource = Main.DBOp.LoadCompLSTDGV
+        Dim companies As DataTable = Main.DBOp.LoadCompLSTDGV
+        companies.Rows.Add("All companies")
+        CompLB.DataSource = companies
         CompLB.DisplayMember = "Company name"
         SYearLBL.Text = Today.Year
         EYearLBL.Text = Today.Year
@@ -237,4 +239,6 @@ Public Class StatementForm
             WForm.Close()
         End Try
     End Sub
+
+
 End Class

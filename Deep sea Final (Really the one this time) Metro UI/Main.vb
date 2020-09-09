@@ -1,4 +1,5 @@
-﻿Imports Microsoft.Office.Interop
+﻿Option Strict On
+Imports Microsoft.Office.Interop
 
 Public Class Main
     Public DBOp As New DatabaseOperations
@@ -6,17 +7,22 @@ Public Class Main
     'Dim thread As Threading.Thread = New Threading.Thread(AddressOf RefreshDGVthread) With {.IsBackground = True}
     Private Sub RefreshDGVthread()
         Try
+            Using dt As DataTable = DBOp.LoadInvoicesDGV()
+                With InvoicesDGV
+                    .DataSource = dt
+                    .Columns(4).DefaultCellStyle.Format() = "0.00"
+                    .Columns(5).DefaultCellStyle.Format() = "0.00"
+                End With
 
-            With InvoicesDGV
-                .DataSource = DBOp.LoadInvoicesDGV()
-                .Columns(4).DefaultCellStyle.Format() = "0.00"
-            End With
+                Autoweight(InvoicesDGV, {8, 8, 32, 15, 8, 5, 8, 8, 8, 8})
 
-            Autoweight(InvoicesDGV, {8, 8, 32, 15, 8, 5, 8, 8, 8})
-
-            Refresh()
-            loading = False
-
+                Refresh()
+                ISDateDTP.Value = CDate("1/1/2020")
+                BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
+                    "Total: " & dt.Compute("SUM(Total)", dt.DefaultView.RowFilter).ToString &
+                    " VAT: " & dt.Compute("SUM(VAT)", dt.DefaultView.RowFilter).ToString
+                loading = False
+            End Using
         Catch ex As Exception
             MsgBox(ex.ToString)
         End Try
@@ -26,9 +32,6 @@ Public Class Main
         Enabled = False
         AllowDrop = True
         InvoicesDGV.BackgroundColor = Color.White
-        'thread
-        'CheckForIllegalCrossThreadCalls = False
-        'thread.Start()
 
         RefreshDGVthread()
         AllRB.Checked = True
@@ -39,9 +42,9 @@ Public Class Main
             Try
                 infrm.invnotxt.Text = DBOp.Getinvno
             Catch ex As Exception
-                infrm.invnotxt.Text = 1
+                infrm.invnotxt.Text = "1"
             End Try
-            infrm.TermTXT.Text = 30
+            infrm.TermTXT.Text = "30"
             infrm.ShowDialog()
         End Using
     End Sub
@@ -107,7 +110,7 @@ Public Class Main
         If MsgBox("Paid?", vbYesNo, "Paid") = vbYes Then
             For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
                 If row.Cells(5).Value.ToString <> "True" Then
-                    DBOp.InvoicePaid(CInt(row.Cells(0).Value.ToString), True, Now)
+                    DBOp.InvoicePaid(CInt(row.Cells(0).Value.ToString), True, CType(Now, String))
                 End If
             Next
         Else
@@ -122,71 +125,67 @@ Public Class Main
             stfrm.ShowDialog()
         End Using
     End Sub
+    Function DVRowFilter(Paid As Boolean, RetCan As Boolean, UPaid As Boolean) As String
 
-    Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles ISDateDTP.ValueChanged
-        Using dt As DataTable = DBOp.LoadInvoicesDGV()
-            Dim dataView As DataView = dt.DefaultView
-
-            dataView.RowFilter = "[Invoice Date] >= '" & ISDateDTP.Value & "'" & " And [Invoice Date] <= '" & IEDateDTP.Value & "'"
-            InvoicesDGV.DataSource = dataView
-        End Using
-    End Sub
-    Private Sub DateTimePicker2_ValueChanged(sender As Object, e As EventArgs) Handles IEDateDTP.ValueChanged
-        Using dt As DataTable = DBOp.LoadInvoicesDGV()
-            Dim dataView As DataView = dt.DefaultView
-
-            dataView.RowFilter = "[Invoice Date]  >= '" & ISDateDTP.Value & "'" & " And [Invoice Date]  <= '" & IEDateDTP.Value & "'"
-
-            InvoicesDGV.DataSource = dataView
-        End Using
-    End Sub
-    Private Sub ISearchTB_TextChanged(sender As Object, e As EventArgs) Handles ISearchTB.TextChanged
-        Using dt As DataTable = DBOp.LoadInvoicesDGV()
-            Dim dataView As DataView = dt.DefaultView
-
-            Try
-                If Not String.IsNullOrEmpty(ISearchTB.Text) Then
-                    If IsNumeric(ISearchTB.Text) Then
-                        dataView.RowFilter = String.Format("CONVERT([Invoice Number], System.String) like '%{0}%'  OR 
-                                                   CONVERT([LPO Number], System.String) like '%{0}%'",
-                                                                     ISearchTB.Text)
-                    Else
-                        dataView.RowFilter = String.Format("[Company Name] LIKE '%{0}%'", ISearchTB.Text)
-                    End If
+        Dim FilterString As String = ""
+        Try
+            If Not String.IsNullOrEmpty(ISearchTB.Text) Then
+                If IsNumeric(ISearchTB.Text) Then
+                    FilterString = String.Format("(CONVERT([Invoice Number], System.String) like '%{0}%' OR CONVERT([LPO Number], System.String) like '%{0}%') AND ([Invoice Date] >= '{1}' And [Invoice Date] <= '{2}')",
+                                                  ISearchTB.Text, ISDateDTP.Value, IEDateDTP.Value)
+                Else
+                    FilterString = String.Format("[Company Name] LIKE '%{0}%' AND ([Invoice Date] >= '{1}' And [Invoice Date] <= '{2}')",
+                                                  ISearchTB.Text, ISDateDTP.Value, IEDateDTP.Value)
                 End If
-            Catch ex As Exception
+                If Paid = True Then
+                    FilterString += String.Format(" AND Paid = '{0}'", Paid)
+                ElseIf RetCan = True Then
+                    FilterString += String.Format(" AND Canceled = '{0}'", RetCan)
+                ElseIf UPaid = True Then
+                    FilterString += String.Format(" AND Paid = '{0}' AND Canceled = '{0}'", False)
+                End If
+            Else
+                If Paid = True Then
+                    FilterString = String.Format("Paid = '{0}'", Paid)
+                ElseIf RetCan = True Then
+                    FilterString = String.Format("Canceled = {0}", RetCan)
+                ElseIf UPaid = True Then
+                    FilterString = String.Format("Paid = '{0}' AND Canceled = '{0}'", False)
+                End If
+            End If
+            Console.WriteLine(FilterString)
+        Catch ex As Exception
+            Console.WriteLine(ex.ToString)
+        End Try
+        Return FilterString
 
-            End Try
+    End Function
 
+    Private Sub DataView_RowFilter(sender As Object, e As EventArgs) Handles ISDateDTP.ValueChanged, IEDateDTP.ValueChanged, ISearchTB.TextChanged, PaidRB.CheckedChanged, UPaidRB.CheckedChanged, RetcanRB.CheckedChanged
+        Using dt As DataTable = DBOp.LoadInvoicesDGV()
+            Dim dataView As DataView = dt.DefaultView
+            dataView.RowFilter = DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked)
             InvoicesDGV.DataSource = dataView
+
+            BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
+                "Total: " & dt.Compute("SUM(Total)", dataView.RowFilter).ToString &
+                " VAT: " & dt.Compute("SUM(VAT)", dataView.RowFilter).ToString
         End Using
     End Sub
+
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles IClearBTN.Click
         ISearchTB.Clear()
         ISDateDTP.Value = CDate("1/1/2019")
         IEDateDTP.Value = Today
     End Sub
     Private Sub AllRB_CheckedChanged(sender As Object, e As EventArgs) Handles AllRB.CheckedChanged
-        If Not loading Then
-            InvoicesDGV.DataSource = DBOp.LoadInvoicesDGV()
-        End If
-    End Sub
-    Private Sub PaidRB_CheckedChanged(sender As Object, e As EventArgs) Handles PaidRB.CheckedChanged
         Using dt As DataTable = DBOp.LoadInvoicesDGV()
             Dim dataView As DataView = dt.DefaultView
-
-            dataView.RowFilter = "Paid = 'True'"
-
+            dataView.RowFilter = DVRowFilter(False, False, UPaidRB.Checked)
             InvoicesDGV.DataSource = dataView
-        End Using
-    End Sub
-    Private Sub UnpaidRB_CheckedChanged(sender As Object, e As EventArgs) Handles UPaidRB.CheckedChanged
-        Using dt As DataTable = DBOp.LoadInvoicesDGV()
-            Dim dataView As DataView = dt.DefaultView
-
-            dataView.RowFilter = "Paid = 'False'"
-
-            InvoicesDGV.DataSource = dataView
+            BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
+                "Total: " & dt.Compute("SUM(Total)", dataView.RowFilter).ToString &
+                " VAT: " & dt.Compute("SUM(VAT)", dataView.RowFilter).ToString
         End Using
     End Sub
     Private Sub InvoicesDGV_DoubleClick(sender As Object, e As EventArgs) Handles InvoicesDGV.DoubleClick
@@ -235,7 +234,7 @@ Public Class Main
                     Try
                         Invoicefrm.invnotxt.Text = DBOp.Getinvno
                     Catch ex As Exception
-                        Invoicefrm.invnotxt.Text = 1
+                        Invoicefrm.invnotxt.Text = "1"
                     End Try
                     If file.ToUpper.Contains("XLS") Then
                         Readmefexcel(Invoicefrm, file)
@@ -260,13 +259,32 @@ Public Class Main
         End Using
     End Sub
 
-    Private Sub RetcanRB_CheckedChanged(sender As Object, e As EventArgs) Handles RetcanRB.CheckedChanged
-        Using dt As DataTable = DBOp.LoadInvoicesDGV()
-            Dim dataView As DataView = dt.DefaultView
 
-            dataView.RowFilter = "[Returned or cancled] = 'True'"
-
-            InvoicesDGV.DataSource = dataView
+    Private Sub VATAccBtn_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles VATAccBtn.ItemClick
+        Using VATReport As New VATReport
+            VATReport.ShowDialog()
         End Using
+    End Sub
+
+    Private Sub InvoicesDGV_SelectionChanged(sender As Object, e As EventArgs) Handles InvoicesDGV.SelectionChanged
+        Dim Total As Decimal = 0
+        Dim VAT As Decimal = 0
+        If InvoicesDGV.SelectedRows.Count <= 1 Then
+            For Each Row As DataGridViewRow In InvoicesDGV.Rows
+                Total += CDec(Row.Cells(4).Value)
+                VAT += CDec(Row.Cells(5).Value)
+            Next
+            BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
+                " Total: " & Total.ToString &
+                " VAT: " & VAT.ToString
+        Else
+            For Each Row As DataGridViewRow In InvoicesDGV.SelectedRows
+                Total += CDec(Row.Cells(4).Value)
+                VAT += CDec(Row.Cells(5).Value)
+            Next
+            BarStaticItem1.Caption = "Records: " & InvoicesDGV.SelectedRows.Count &
+                " Total: " & Total.ToString &
+                " VAT: " & VAT.ToString
+        End If
     End Sub
 End Class

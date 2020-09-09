@@ -5,7 +5,7 @@ Public Class DatabaseOperations
     Public ConnectionString As String = "Server=.\SQLEXPRESS;Database=Deep Sea;Trusted_Connection=True;"
     Public filesupdatedlist As New List(Of String)
     'Read operations
-    Public Function Getinvno() As Integer
+    Public Function Getinvno() As String
 
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
@@ -24,7 +24,7 @@ Public Class DatabaseOperations
                     MsgBox(ex.ToString)
                 End Try
 
-                Return dt.Rows(0).Item(0) + 1
+                Return (dt.Rows(0).Item(0) + 1).ToString
 
             End Using
         End Using
@@ -102,6 +102,8 @@ Public Class DatabaseOperations
                         Email
                 
                     FROM Companies
+
+                    ORDER BY CompName
                 
                 </SQL>.Value
 
@@ -304,6 +306,32 @@ Public Class DatabaseOperations
 
                 cmd.CommandText = "SELECT Id AS [Reference Number], Company AS [Company Name], Amount, Date AS [Date] FROM Expense"
                 cmd.CommandType = CommandType.Text
+
+                Dim dt As New DataTable
+
+                Try
+                    cn.Open()
+                    dt.Load(cmd.ExecuteReader)
+                    cn.Close()
+                Catch ex As Exception
+                    MsgBox(ex.ToString, MessageBoxIcon.Error, "Error")
+                End Try
+
+                Return dt
+
+            End Using
+        End Using
+    End Function
+
+    Public Function GetVATReport(StartDate As Date, EndDate As Date) As DataTable
+        Using cn As New SqlConnection(ConnectionString)
+            Using cmd As New SqlCommand With {.Connection = cn}
+
+
+                cmd.CommandText = "GetVATDetails"
+                cmd.CommandType = CommandType.StoredProcedure
+                cmd.Parameters.AddWithValue("@StartDate", StartDate)
+                cmd.Parameters.AddWithValue("@EndDate", EndDate)
 
                 Dim dt As New DataTable
 

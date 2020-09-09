@@ -39,10 +39,12 @@ Partial Class Main
         Me.RefreshBtn = New DevExpress.XtraBars.BarButtonItem()
         Me.BarButtonItem2 = New DevExpress.XtraBars.BarButtonItem()
         Me.BarButtonItem5 = New DevExpress.XtraBars.BarButtonItem()
+        Me.VATAccBtn = New DevExpress.XtraBars.BarButtonItem()
         Me.InvoiceRT = New DevExpress.XtraBars.Ribbon.RibbonPage()
         Me.InvoiceRG = New DevExpress.XtraBars.Ribbon.RibbonPageGroup()
         Me.StmtRT = New DevExpress.XtraBars.Ribbon.RibbonPage()
         Me.StmtRG = New DevExpress.XtraBars.Ribbon.RibbonPageGroup()
+        Me.VatGrp = New DevExpress.XtraBars.Ribbon.RibbonPageGroup()
         Me.RibbonPage1 = New DevExpress.XtraBars.Ribbon.RibbonPage()
         Me.RibbonPageGroup1 = New DevExpress.XtraBars.Ribbon.RibbonPageGroup()
         Me.RibbonStatusBar = New DevExpress.XtraBars.Ribbon.RibbonStatusBar()
@@ -50,6 +52,7 @@ Partial Class Main
         Me.BarButtonItem1 = New DevExpress.XtraBars.BarButtonItem()
         Me.InvoicesDGV = New System.Windows.Forms.DataGridView()
         Me.FilterGB = New System.Windows.Forms.GroupBox()
+        Me.RetcanRB = New System.Windows.Forms.RadioButton()
         Me.IClearBTN = New System.Windows.Forms.Button()
         Me.AllRB = New System.Windows.Forms.RadioButton()
         Me.PaidRB = New System.Windows.Forms.RadioButton()
@@ -62,7 +65,6 @@ Partial Class Main
         Me.ISDateLBL = New System.Windows.Forms.Label()
         Me.BehaviorManager1 = New DevExpress.Utils.Behaviors.BehaviorManager(Me.components)
         Me.BarButtonItem4 = New DevExpress.XtraBars.BarButtonItem()
-        Me.RetcanRB = New System.Windows.Forms.RadioButton()
         CType(Me.RibbonControl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.InvoicesDGV, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.FilterGB.SuspendLayout()
@@ -72,9 +74,9 @@ Partial Class Main
         'RibbonControl
         '
         Me.RibbonControl.ExpandCollapseItem.Id = 0
-        Me.RibbonControl.Items.AddRange(New DevExpress.XtraBars.BarItem() {Me.RibbonControl.ExpandCollapseItem, Me.RibbonControl.SearchEditItem, Me.NewInvBtnItm, Me.OpenBtnItm, Me.PrintBtnItm, Me.CanceledBtnItm, Me.DeleteBtnItm, Me.BarButtonItem3, Me.PaidBtnItm, Me.GenStmtBtnItm, Me.BarButtonItem7, Me.BarStaticItem1, Me.SkinDropDownButtonItem1, Me.RefreshBtn, Me.BarButtonItem2, Me.BarButtonItem5})
+        Me.RibbonControl.Items.AddRange(New DevExpress.XtraBars.BarItem() {Me.RibbonControl.ExpandCollapseItem, Me.RibbonControl.SearchEditItem, Me.NewInvBtnItm, Me.OpenBtnItm, Me.PrintBtnItm, Me.CanceledBtnItm, Me.DeleteBtnItm, Me.BarButtonItem3, Me.PaidBtnItm, Me.GenStmtBtnItm, Me.BarButtonItem7, Me.BarStaticItem1, Me.SkinDropDownButtonItem1, Me.RefreshBtn, Me.BarButtonItem2, Me.BarButtonItem5, Me.VATAccBtn})
         Me.RibbonControl.Location = New System.Drawing.Point(0, 0)
-        Me.RibbonControl.MaxItemId = 26
+        Me.RibbonControl.MaxItemId = 27
         Me.RibbonControl.Name = "RibbonControl"
         Me.RibbonControl.Pages.AddRange(New DevExpress.XtraBars.Ribbon.RibbonPage() {Me.InvoiceRT, Me.StmtRT, Me.RibbonPage1})
         Me.RibbonControl.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonControlStyle.Office2019
@@ -178,6 +180,13 @@ Partial Class Main
         Me.BarButtonItem5.ImageOptions.LargeImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.addnewdatasource_32x32
         Me.BarButtonItem5.Name = "BarButtonItem5"
         '
+        'VATAccBtn
+        '
+        Me.VATAccBtn.Caption = "VAT Report"
+        Me.VATAccBtn.Id = 26
+        Me.VATAccBtn.ImageOptions.SvgImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.business_eurocircled
+        Me.VATAccBtn.Name = "VATAccBtn"
+        '
         'InvoiceRT
         '
         Me.InvoiceRT.Groups.AddRange(New DevExpress.XtraBars.Ribbon.RibbonPageGroup() {Me.InvoiceRG})
@@ -198,7 +207,7 @@ Partial Class Main
         '
         'StmtRT
         '
-        Me.StmtRT.Groups.AddRange(New DevExpress.XtraBars.Ribbon.RibbonPageGroup() {Me.StmtRG})
+        Me.StmtRT.Groups.AddRange(New DevExpress.XtraBars.Ribbon.RibbonPageGroup() {Me.StmtRG, Me.VatGrp})
         Me.StmtRT.Name = "StmtRT"
         Me.StmtRT.Text = "Accounts"
         '
@@ -208,6 +217,12 @@ Partial Class Main
         Me.StmtRG.ItemLinks.Add(Me.BarButtonItem5)
         Me.StmtRG.Name = "StmtRG"
         Me.StmtRG.Text = "Statement"
+        '
+        'VatGrp
+        '
+        Me.VatGrp.ItemLinks.Add(Me.VATAccBtn)
+        Me.VatGrp.Name = "VatGrp"
+        Me.VatGrp.Text = "VAT"
         '
         'RibbonPage1
         '
@@ -300,6 +315,16 @@ Partial Class Main
         Me.FilterGB.TabIndex = 5
         Me.FilterGB.TabStop = False
         Me.FilterGB.Text = "Filter"
+        '
+        'RetcanRB
+        '
+        Me.RetcanRB.AutoSize = True
+        Me.RetcanRB.Location = New System.Drawing.Point(705, 20)
+        Me.RetcanRB.Name = "RetcanRB"
+        Me.RetcanRB.Size = New System.Drawing.Size(128, 17)
+        Me.RetcanRB.TabIndex = 6
+        Me.RetcanRB.Text = "Returned or canceled"
+        Me.RetcanRB.UseVisualStyleBackColor = True
         '
         'IClearBTN
         '
@@ -395,16 +420,6 @@ Partial Class Main
         Me.BarButtonItem4.ImageOptions.SvgImage = CType(resources.GetObject("BarButtonItem4.ImageOptions.SvgImage"), DevExpress.Utils.Svg.SvgImage)
         Me.BarButtonItem4.Name = "BarButtonItem4"
         '
-        'RetcanRB
-        '
-        Me.RetcanRB.AutoSize = True
-        Me.RetcanRB.Location = New System.Drawing.Point(705, 20)
-        Me.RetcanRB.Name = "RetcanRB"
-        Me.RetcanRB.Size = New System.Drawing.Size(128, 17)
-        Me.RetcanRB.TabIndex = 6
-        Me.RetcanRB.Text = "Returned or canceled"
-        Me.RetcanRB.UseVisualStyleBackColor = True
-        '
         'Main
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -468,4 +483,6 @@ Partial Class Main
     Friend WithEvents BarButtonItem5 As DevExpress.XtraBars.BarButtonItem
     Friend WithEvents BarButtonItem4 As DevExpress.XtraBars.BarButtonItem
     Friend WithEvents RetcanRB As RadioButton
+    Friend WithEvents VATAccBtn As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents VatGrp As DevExpress.XtraBars.Ribbon.RibbonPageGroup
 End Class

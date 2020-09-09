@@ -116,7 +116,11 @@ Module General
     Function Autoweight(ByRef DGV As DataGridView, ByRef Weights As Integer()) As Boolean
         For col As Integer = 0 To DGV.ColumnCount - 1
             'MsgBox(DGV.Columns(col).HeaderText)
-            DGV.Columns(col).FillWeight = Weights(col)
+            Try
+                DGV.Columns(col).FillWeight = Weights(col)
+            Catch ex As Exception
+
+            End Try
         Next
         Return True
     End Function
@@ -349,26 +353,34 @@ Module General
     <Runtime.CompilerServices.Extension>
     Public Function ContainsItemWithSubstring(cb As ComboBox, substring As String) As Boolean
 
-        If cb.Items.Count = 0 Then
-            Return False
-        End If
+        If cb.Items.Count <> 0 Then
 
-        If TypeOf cb.Items(0) Is DataRowView Then
-            If cb.DisplayMember IsNot Nothing AndAlso TypeOf DirectCast(cb.Items(0), DataRowView)(cb.DisplayMember) Is [String] Then
-                For Each item As Object In cb.Items
-                    If DirectCast(DirectCast(item, DataRowView)(cb.DisplayMember), [String]).Contains(substring) Then
+            Dim v As Boolean = TypeOf cb.Items(0) Is DataRowView
+
+            If v Then
+                If cb.DisplayMember IsNot Nothing AndAlso TypeOf DirectCast(cb.Items(0), DataRowView)(cb.DisplayMember) Is String Then
+                    For i = 0 To cb.Items.Count - 1
+                        Dim item As Object = cb.Items(i)
+
+                        Dim v1 As String = DirectCast(DirectCast(item, DataRowView)(cb.DisplayMember), String)
+
+                        If v1.Contains(substring) Then
+                            Return True
+                        End If
+                    Next
+                End If
+            Else
+                For i = 0 To cb.Items.Count - 1
+                    Dim item As Object = cb.Items(i)
+
+                    If TypeOf item Is String AndAlso DirectCast(item, String).Contains(substring) Then
                         Return True
                     End If
                 Next
             End If
-        Else
-            For Each item As Object In cb.Items
-                If TypeOf item Is [String] AndAlso DirectCast(item, [String]).Contains(substring) Then
-                    Return True
-                End If
-            Next
-        End If
 
+            Return False
+        End If
         Return False
 
     End Function

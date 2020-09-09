@@ -372,4 +372,5 @@ Public Class InvoiceForm
             invfrm.ShowDialog()
         End Using
     End Sub
+
 End Class
