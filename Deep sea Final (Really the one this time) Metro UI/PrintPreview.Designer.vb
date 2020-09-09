@@ -35,6 +35,8 @@ Partial Class PrintPreview
         Me.PrintCanBtn = New System.Windows.Forms.Button()
         Me.PrintBtn = New System.Windows.Forms.Button()
         Me.BWCB = New System.Windows.Forms.CheckBox()
+        Me.ComboBox3 = New System.Windows.Forms.ComboBox()
+        Me.Label6 = New System.Windows.Forms.Label()
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TrackBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -192,12 +194,31 @@ Partial Class PrintPreview
         Me.BWCB.AutoSize = True
         Me.BWCB.Checked = True
         Me.BWCB.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.BWCB.Location = New System.Drawing.Point(508, 229)
+        Me.BWCB.Location = New System.Drawing.Point(508, 256)
         Me.BWCB.Name = "BWCB"
         Me.BWCB.Size = New System.Drawing.Size(82, 17)
         Me.BWCB.TabIndex = 54
         Me.BWCB.Text = "Black/White"
         Me.BWCB.UseVisualStyleBackColor = True
+        '
+        'ComboBox3
+        '
+        Me.ComboBox3.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.ComboBox3.FormattingEnabled = True
+        Me.ComboBox3.Location = New System.Drawing.Point(508, 229)
+        Me.ComboBox3.Name = "ComboBox3"
+        Me.ComboBox3.Size = New System.Drawing.Size(222, 21)
+        Me.ComboBox3.TabIndex = 56
+        '
+        'Label6
+        '
+        Me.Label6.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(460, 232)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(41, 13)
+        Me.Label6.TabIndex = 55
+        Me.Label6.Text = "Quality"
         '
         'PrintPreview
         '
@@ -205,6 +226,8 @@ Partial Class PrintPreview
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(754, 605)
+        Me.Controls.Add(Me.ComboBox3)
+        Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.BWCB)
         Me.Controls.Add(Me.ComboBox2)
         Me.Controls.Add(Me.PrintPreviewControl1)
@@ -246,4 +269,6 @@ Partial Class PrintPreview
     Friend WithEvents PrintCanBtn As Button
     Friend WithEvents PrintBtn As Button
     Friend WithEvents BWCB As CheckBox
+    Friend WithEvents ComboBox3 As ComboBox
+    Friend WithEvents Label6 As Label
 End Class

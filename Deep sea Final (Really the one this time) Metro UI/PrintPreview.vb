@@ -319,9 +319,14 @@ Public Class PrintPreview
             ComboBox1.Items.Add(pkInstalledPrinters)
         Next pkInstalledPrinters
 
+        For Each Res In PrintDocument1.PrinterSettings.PrinterResolutions
+            ComboBox3.Items.Add(Res)
+        Next
+
         'Set the combo to the first printer in the list
         If ComboBox1.ContainsItemWithSubstring("3630 series") Then
             ComboBox1.SelectedIndex = ComboBox1.FindSubStringIndex("3630 series")
+            ComboBox3.SelectedIndex = 3
         End If
         'PrintPreviewControl1.Document = PrintDocument1
         ComboBox2.SelectedIndex = 0
@@ -344,7 +349,7 @@ Public Class PrintPreview
             PrintDocument1.DefaultPageSettings.Color = False
         End If
         PrintDocument1.PrinterSettings.Copies = CShort(TextBox1.Text)
-
+        PrintDocument1.DefaultPageSettings.PrinterResolution = PrintDocument1.PrinterSettings.PrinterResolutions(ComboBox3.SelectedIndex)
         PrintDocument1.Print()
 
         Dim pset As PrinterSettings = PrintDocument1.PrinterSettings
