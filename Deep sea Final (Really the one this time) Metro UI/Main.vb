@@ -19,7 +19,7 @@ Public Class Main
                 Refresh()
                 ISDateDTP.Value = CDate("1/1/2020")
                 BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
-                    "Total: " & dt.Compute("SUM(Total)", dt.DefaultView.RowFilter).ToString &
+                    " Total: " & dt.Compute("SUM(Total)", dt.DefaultView.RowFilter).ToString &
                     " VAT: " & dt.Compute("SUM(VAT)", dt.DefaultView.RowFilter).ToString
                 loading = False
             End Using
@@ -168,7 +168,7 @@ Public Class Main
             InvoicesDGV.DataSource = dataView
 
             BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
-                "Total: " & dt.Compute("SUM(Total)", dataView.RowFilter).ToString &
+                " Total: " & dt.Compute("SUM(Total)", dataView.RowFilter).ToString &
                 " VAT: " & dt.Compute("SUM(VAT)", dataView.RowFilter).ToString
         End Using
     End Sub
@@ -184,7 +184,7 @@ Public Class Main
             dataView.RowFilter = DVRowFilter(False, False, UPaidRB.Checked)
             InvoicesDGV.DataSource = dataView
             BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
-                "Total: " & dt.Compute("SUM(Total)", dataView.RowFilter).ToString &
+                " Total: " & dt.Compute("SUM(Total)", dataView.RowFilter).ToString &
                 " VAT: " & dt.Compute("SUM(VAT)", dataView.RowFilter).ToString
         End Using
     End Sub
