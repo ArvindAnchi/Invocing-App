@@ -37,8 +37,12 @@ Module General
     Function RefreshDGV() As Boolean
         With Main
             With .InvoicesDGV
-                .DataSource = dbop.LoadInvoicesDGV()
-                .Columns(4).DefaultCellStyle.Format() = "0.00"
+                Using dt As DataTable = dbop.LoadInvoicesDGV()
+                    Dim dataView As DataView = dt.DefaultView
+                    dataView.RowFilter = Main.DVRowFilter(False, False, False)
+                    .DataSource = dataView
+                    .Columns(4).DefaultCellStyle.Format() = "0.00"
+                End Using
             End With
             .BarStaticItem1.Caption = "Records: " & .InvoicesDGV.RowCount
             Autoweight(.InvoicesDGV, {8, 8, 32, 15, 8, 5, 8, 8, 8})

@@ -349,7 +349,10 @@ Public Class PrintPreview
             PrintDocument1.DefaultPageSettings.Color = False
         End If
         PrintDocument1.PrinterSettings.Copies = CShort(TextBox1.Text)
+        PrintDocument1.DefaultPageSettings.Color = False
+        PrintDocument1.DefaultPageSettings.PaperSize = (From s As PaperSize In PrintDocument1.PrinterSettings.PaperSizes.Cast(Of PaperSize) Where s.RawKind = PaperKind.A4).FirstOrDefault
         PrintDocument1.DefaultPageSettings.PrinterResolution = PrintDocument1.PrinterSettings.PrinterResolutions(ComboBox3.SelectedIndex)
+        'MsgBox(PrintDocument1.PrinterSettings.ToString + vbNewLine + PrintDocument1.DefaultPageSettings.ToString)
         PrintDocument1.Print()
 
         Dim pset As PrinterSettings = PrintDocument1.PrinterSettings

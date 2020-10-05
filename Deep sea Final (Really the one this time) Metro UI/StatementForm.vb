@@ -1,6 +1,4 @@
 ﻿Imports System.IO
-Imports DevExpress.XtraPrinting.Export.Pdf
-Imports DevExpress.XtraPrinting.HtmlExport.Native
 Imports iText.Html2pdf
 Imports Microsoft.Office.Interop
 
@@ -66,10 +64,6 @@ Public Class StatementForm
             Using dt As DataTable = Main.DBOp.LoadStmntDGV(CompLB.SelectedItem)
                 Dim dataView As DataView = dt.DefaultView
                 Dim cols As String = ""
-                'For i As Integer = 0 To dataView.Table.Columns.Count - 1
-                '    cols &= " " & dataView.ToTable.Columns(i).ColumnName
-                'Next
-                'MsgBox(cols)
                 dataView.RowFilter = "[Date] >= '" & CDate("1/" & SDateLB.SelectedIndex + 1 & "/" & SYearLBL.Text) & "'" &
                     " And [Date] <= '" & CDate(Date.DaysInMonth(EYearLBL.Text, EDateLB.SelectedIndex + 1) & "/" & EDateLB.SelectedIndex + 1 & "/" & EYearLBL.Text) & "'"
 
