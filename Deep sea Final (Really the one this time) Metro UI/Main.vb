@@ -117,6 +117,7 @@ Public Class Main
                     DBOp.InvoicePaid(CInt(row.Cells(0).Value.ToString), True, CType(Now, String))
                 End If
             Next
+
         Else
             For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
                 DBOp.InvoicePaid(CInt(row.Cells(0).Value.ToString), False, Nothing)

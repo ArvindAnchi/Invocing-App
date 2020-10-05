@@ -39,7 +39,9 @@ Module General
             With .InvoicesDGV
                 Using dt As DataTable = dbop.LoadInvoicesDGV()
                     Dim dataView As DataView = dt.DefaultView
-                    dataView.RowFilter = Main.DVRowFilter(False, False, False)
+                    If Not String.IsNullOrEmpty(Main.ISearchTB.Text) Then
+                        dataView.RowFilter = If(Main.ISearchTB.Text(0) <> "(", Main.DVRowFilter(Main.PaidRB.Checked, Main.RetcanRB.Checked, Main.UPaidRB.Checked), Main.FilterString)
+                    End If
                     .DataSource = dataView
                     .Columns(4).DefaultCellStyle.Format() = "0.00"
                 End Using
