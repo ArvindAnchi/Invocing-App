@@ -20,9 +20,9 @@ Partial Class Search
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
+        Me.SearchText = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.SrchBtn = New System.Windows.Forms.Button()
         Me.CancelBtn = New System.Windows.Forms.Button()
-        Me.SearchText = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.CheckBox1 = New System.Windows.Forms.CheckBox()
         Me.CheckBox2 = New System.Windows.Forms.CheckBox()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -34,12 +34,19 @@ Partial Class Search
         Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridView1.ColumnHeadersVisible = False
         Me.DataGridView1.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.SearchText})
+        Me.DataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnF2
         Me.DataGridView1.GridColor = System.Drawing.Color.DarkGray
         Me.DataGridView1.Location = New System.Drawing.Point(0, 0)
         Me.DataGridView1.Name = "DataGridView1"
         Me.DataGridView1.RowHeadersVisible = False
         Me.DataGridView1.Size = New System.Drawing.Size(429, 406)
         Me.DataGridView1.TabIndex = 0
+        '
+        'SearchText
+        '
+        Me.SearchText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
+        Me.SearchText.HeaderText = "Search items"
+        Me.SearchText.Name = "SearchText"
         '
         'SrchBtn
         '
@@ -58,12 +65,6 @@ Partial Class Search
         Me.CancelBtn.TabIndex = 2
         Me.CancelBtn.Text = "Cancel"
         Me.CancelBtn.UseVisualStyleBackColor = True
-        '
-        'SearchText
-        '
-        Me.SearchText.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
-        Me.SearchText.HeaderText = "Search items"
-        Me.SearchText.Name = "SearchText"
         '
         'CheckBox1
         '

@@ -12,7 +12,7 @@
             If lastindex > 0 Then
                 searchtbtext += "("
                 If CheckBox1.Checked And Not CheckBox2.Checked Then
-                    searchtbtext += "Invoice number is "
+                    searchtbtext += "Invoice number = ["
                 ElseIf CheckBox2.Checked And Not CheckBox1.Checked Then
                     searchtbtext += "LPO number is "
                 End If
@@ -27,13 +27,30 @@
                     searchtbtext += DataGridView1.Rows(i).Cells(0).Value
                     If i < lastindex Then
                         Main.FilterString += " OR "
-                        searchtbtext += " Or "
+                        searchtbtext += ", "
                     End If
                 Next
-                searchtbtext += ")"
+                searchtbtext += "])"
             End If
             Main.ISearchTB.Text = searchtbtext
         End Using
         Close()
     End Sub
+
+    Private Sub DataGridView1_KeyDown(sender As Object, e As KeyEventArgs) Handles DataGridView1.KeyDown
+        If e.Control AndAlso e.KeyCode = Keys.V Then
+            Try
+                For Each line As String In Clipboard.GetText.Split(vbNewLine)
+                    If Not line.Trim.ToString = "" Then
+                        Dim item() As String = line.Trim.Split(vbTab)
+                        DataGridView1.Rows.Add(item)
+                    End If
+                Next
+
+            Catch ex As Exception
+                MessageBox.Show(ex.Message, My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+    End Sub
+
 End Class

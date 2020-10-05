@@ -5,12 +5,15 @@ Public Class Main
     Public FilterString As String = ""
     Public DBOp As New DatabaseOperations
     Private loading As Boolean = True
+
+    Private InvoicesDataTable As DataTable
     'Dim thread As Threading.Thread = New Threading.Thread(AddressOf RefreshDGVthread) With {.IsBackground = True}
     Private Sub RefreshDGVthread()
         Try
             Using dt As DataTable = DBOp.LoadInvoicesDGV()
+                InvoicesDataTable = dt
                 With InvoicesDGV
-                    .DataSource = dt
+                    .DataSource = InvoicesDataTable
                     .Columns(4).DefaultCellStyle.Format() = "0.00"
                     .Columns(5).DefaultCellStyle.Format() = "0.00"
                 End With
@@ -164,34 +167,43 @@ Public Class Main
     Private Sub DataView_RowFilter(sender As Object, e As EventArgs) Handles ISDateDTP.ValueChanged, IEDateDTP.ValueChanged, ISearchTB.TextChanged, PaidRB.CheckedChanged, UPaidRB.CheckedChanged, RetcanRB.CheckedChanged
         If Not String.IsNullOrEmpty(ISearchTB.Text) Then
             Console.WriteLine(FilterString)
-            Using dt As DataTable = DBOp.LoadInvoicesDGV()
-                Dim dataView As DataView = dt.DefaultView
-                dataView.RowFilter = If(ISearchTB.Text(0) <> "(", DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked), FilterString)
-                InvoicesDGV.DataSource = dataView
+            Dim dataView As DataView = InvoicesDataTable.DefaultView
+            dataView.RowFilter = If(ISearchTB.Text(0) <> "(", DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked), FilterString)
+            InvoicesDGV.DataSource = dataView
 
-                BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
-                    " Total: " & dt.Compute("SUM(Total)", dataView.RowFilter).ToString &
-                    " VAT: " & dt.Compute("SUM(VAT)", dataView.RowFilter).ToString
-            End Using
+            BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
+                    " Total: " & InvoicesDataTable.Compute("SUM(Total)", dataView.RowFilter).ToString &
+                    " VAT: " & InvoicesDataTable.Compute("SUM(VAT)", dataView.RowFilter).ToString
+        Else
+            Dim dataView As DataView = InvoicesDataTable.DefaultView
+            InvoicesDGV.DataSource = dataView
+            dataView.RowFilter = ""
+            BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
+                    " Total: " & InvoicesDataTable.Compute("SUM(Total)", dataView.RowFilter).ToString &
+                    " VAT: " & InvoicesDataTable.Compute("SUM(VAT)", dataView.RowFilter).ToString
         End If
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles IClearBTN.Click
         ISearchTB.Clear()
-        ISDateDTP.Value = CDate("1/1/2019")
+        ISDateDTP.Value = CDate("1/1/2020")
         IEDateDTP.Value = Today
+        Dim dataView As DataView = InvoicesDataTable.DefaultView
+        InvoicesDGV.DataSource = dataView
+        dataView.RowFilter = ""
+        BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
+                    " Total: " & InvoicesDataTable.Compute("SUM(Total)", dataView.RowFilter).ToString &
+                    " VAT: " & InvoicesDataTable.Compute("SUM(VAT)", dataView.RowFilter).ToString
     End Sub
     Private Sub AllRB_CheckedChanged(sender As Object, e As EventArgs) Handles AllRB.CheckedChanged
         If Not String.IsNullOrEmpty(ISearchTB.Text) Then
             Console.WriteLine(FilterString)
-            Using dt As DataTable = DBOp.LoadInvoicesDGV()
-                Dim dataView As DataView = dt.DefaultView
-                dataView.RowFilter = If(ISearchTB.Text(0) <> "(", DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked), FilterString)
-                InvoicesDGV.DataSource = dataView
-                BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
-                " Total: " & dt.Compute("SUM(Total)", dataView.RowFilter).ToString &
-                " VAT: " & dt.Compute("SUM(VAT)", dataView.RowFilter).ToString
-            End Using
+            Dim dataView As DataView = InvoicesDataTable.DefaultView
+            dataView.RowFilter = If(ISearchTB.Text(0) <> "(", DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked), FilterString)
+            InvoicesDGV.DataSource = dataView
+            BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
+                " Total: " & InvoicesDataTable.Compute("SUM(Total)", dataView.RowFilter).ToString &
+                " VAT: " & InvoicesDataTable.Compute("SUM(VAT)", dataView.RowFilter).ToString
         End If
     End Sub
     Private Sub InvoicesDGV_DoubleClick(sender As Object, e As EventArgs) Handles InvoicesDGV.DoubleClick
