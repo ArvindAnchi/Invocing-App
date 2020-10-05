@@ -123,6 +123,21 @@ Public Class StatementForm
         End If
 
     End Sub
+    Function getStatementRange() As String
+        Dim Range As String = ""
+        If CDate(StmtDGV.Rows(0).Cells(1).Value).Month = CDate(StmtDGV.Rows(StmtDGV.RowCount - 1).Cells(1).Value).Month Then
+            Range = String.Format("{0} {1}",
+                          MonthName(CDate(StmtDGV.Rows(0).Cells(1).Value).Month),
+                          CDate(StmtDGV.Rows(0).Cells(1).Value).Year)
+        Else
+            Range = String.Format("{0} {1} - {2} {3}",
+                          MonthName(CDate(StmtDGV.Rows(0).Cells(1).Value).Month),
+                          CDate(StmtDGV.Rows(0).Cells(1).Value).Year,
+                          MonthName(CDate(StmtDGV.Rows(StmtDGV.RowCount - 1).Cells(1).Value).Month),
+                          CDate(StmtDGV.Rows(StmtDGV.RowCount - 1).Cells(1).Value).Year)
+        End If
+        Return Range
+    End Function
 
     Private Sub SendAsEmail_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles SendAsEmail.ItemClick
 
@@ -135,7 +150,7 @@ Public Class StatementForm
             'Hide()
             TopMost = False
             With mailItem
-                .Subject = "Statement " & SDateLB.Items(SDateLB.SelectedIndex) & " - " & EDateLB.Items(EDateLB.SelectedIndex)
+                .Subject = String.Format("Statement {0}", getStatementRange())
                 .To = Main.DBOp.LoadCompEmail(CompLB.Text)
                 message = "Dear Sir,<br><br>Please find the statement below and kindly arrange the payment soon. <br><br>"
                 message += "<table cellspacing = -1> <tr bgcolor = ""#D9E1F2"">"
@@ -166,7 +181,7 @@ Public Class StatementForm
                 .HTMLBody = message + mySignature
             End With
         Catch ex As Exception
-            MsgBox(ex.Message)
+            MsgBox(ex.ToString)
         End Try
     End Sub
 
@@ -188,7 +203,7 @@ Public Class StatementForm
             With mailItem
                 Console.WriteLine("Show Wait form")
                 WForm.Show()
-                .Subject = "Statement " & SDateLB.Items(SDateLB.SelectedIndex) & " - " & EDateLB.Items(EDateLB.SelectedIndex)
+                .Subject = String.Format("Statement {0}", getStatementRange())
                 Console.WriteLine("Start HTML Data generation")
                 PDFData = "<table cellspacing = -1> <tr bgcolor = ""#D9E1F2"">"
                 For i As Integer = 0 To StmtDGV.ColumnCount - 1
@@ -213,13 +228,10 @@ Public Class StatementForm
                 PDFData += "</table>"
 
                 Console.WriteLine("Convert HTML to PDF")
-                HtmlConverter.ConvertToPdf(PDFData, New FileStream(Application.StartupPath & "\Statement " &
-                          SDateLB.Items(SDateLB.SelectedIndex) & " - " &
-                          EDateLB.Items(EDateLB.SelectedIndex) & ".pdf", FileMode.Create, FileAccess.Write))
+                HtmlConverter.ConvertToPdf(PDFData, New FileStream(Application.StartupPath &
+                                         String.Format("\Statement {0}.pdf", getStatementRange()), FileMode.Create, FileAccess.Write))
                 Console.WriteLine("Attach file")
-                .Attachments.Add(Application.StartupPath & "\Statement " &
-                          SDateLB.Items(SDateLB.SelectedIndex) & " - " &
-                          EDateLB.Items(EDateLB.SelectedIndex) & ".pdf")
+                .Attachments.Add(Application.StartupPath & String.Format("\Statement {0}.pdf", getStatementRange()))
                 Console.WriteLine("Close Waitform")
                 WForm.Close()
                 Console.WriteLine("Show Outlook message")
