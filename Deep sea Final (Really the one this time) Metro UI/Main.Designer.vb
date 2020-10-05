@@ -52,6 +52,7 @@ Partial Class Main
         Me.BarButtonItem1 = New DevExpress.XtraBars.BarButtonItem()
         Me.InvoicesDGV = New System.Windows.Forms.DataGridView()
         Me.FilterGB = New System.Windows.Forms.GroupBox()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.RetcanRB = New System.Windows.Forms.RadioButton()
         Me.IClearBTN = New System.Windows.Forms.Button()
         Me.AllRB = New System.Windows.Forms.RadioButton()
@@ -298,6 +299,7 @@ Partial Class Main
         '
         Me.FilterGB.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.FilterGB.Controls.Add(Me.Button1)
         Me.FilterGB.Controls.Add(Me.RetcanRB)
         Me.FilterGB.Controls.Add(Me.IClearBTN)
         Me.FilterGB.Controls.Add(Me.AllRB)
@@ -315,6 +317,15 @@ Partial Class Main
         Me.FilterGB.TabIndex = 5
         Me.FilterGB.TabStop = False
         Me.FilterGB.Text = "Filter"
+        '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(458, 14)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(93, 21)
+        Me.Button1.TabIndex = 9
+        Me.Button1.Text = "Search multiline"
+        Me.Button1.UseVisualStyleBackColor = True
         '
         'RetcanRB
         '
@@ -383,7 +394,7 @@ Partial Class Main
         '
         Me.ISearchTB.Location = New System.Drawing.Point(80, 14)
         Me.ISearchTB.Name = "ISearchTB"
-        Me.ISearchTB.Size = New System.Drawing.Size(471, 21)
+        Me.ISearchTB.Size = New System.Drawing.Size(372, 21)
         Me.ISearchTB.TabIndex = 1
         '
         'ISearchLBL
@@ -485,4 +496,5 @@ Partial Class Main
     Friend WithEvents RetcanRB As RadioButton
     Friend WithEvents VATAccBtn As DevExpress.XtraBars.BarButtonItem
     Friend WithEvents VatGrp As DevExpress.XtraBars.Ribbon.RibbonPageGroup
+    Friend WithEvents Button1 As Button
 End Class

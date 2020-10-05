@@ -2,6 +2,7 @@
 Imports Microsoft.Office.Interop
 
 Public Class Main
+    Public FilterString As String = ""
     Public DBOp As New DatabaseOperations
     Private loading As Boolean = True
     'Dim thread As Threading.Thread = New Threading.Thread(AddressOf RefreshDGVthread) With {.IsBackground = True}
@@ -127,7 +128,6 @@ Public Class Main
     End Sub
     Function DVRowFilter(Paid As Boolean, RetCan As Boolean, UPaid As Boolean) As String
 
-        Dim FilterString As String = ""
         Try
             If Not String.IsNullOrEmpty(ISearchTB.Text) Then
                 If IsNumeric(ISearchTB.Text) Then
@@ -162,15 +162,18 @@ Public Class Main
     End Function
 
     Private Sub DataView_RowFilter(sender As Object, e As EventArgs) Handles ISDateDTP.ValueChanged, IEDateDTP.ValueChanged, ISearchTB.TextChanged, PaidRB.CheckedChanged, UPaidRB.CheckedChanged, RetcanRB.CheckedChanged
-        Using dt As DataTable = DBOp.LoadInvoicesDGV()
-            Dim dataView As DataView = dt.DefaultView
-            dataView.RowFilter = DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked)
-            InvoicesDGV.DataSource = dataView
+        If Not String.IsNullOrEmpty(ISearchTB.Text) Then
+            Console.WriteLine(FilterString)
+            Using dt As DataTable = DBOp.LoadInvoicesDGV()
+                Dim dataView As DataView = dt.DefaultView
+                dataView.RowFilter = If(ISearchTB.Text(0) <> "(", DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked), FilterString)
+                InvoicesDGV.DataSource = dataView
 
-            BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
-                " Total: " & dt.Compute("SUM(Total)", dataView.RowFilter).ToString &
-                " VAT: " & dt.Compute("SUM(VAT)", dataView.RowFilter).ToString
-        End Using
+                BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
+                    " Total: " & dt.Compute("SUM(Total)", dataView.RowFilter).ToString &
+                    " VAT: " & dt.Compute("SUM(VAT)", dataView.RowFilter).ToString
+            End Using
+        End If
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles IClearBTN.Click
@@ -179,14 +182,17 @@ Public Class Main
         IEDateDTP.Value = Today
     End Sub
     Private Sub AllRB_CheckedChanged(sender As Object, e As EventArgs) Handles AllRB.CheckedChanged
-        Using dt As DataTable = DBOp.LoadInvoicesDGV()
-            Dim dataView As DataView = dt.DefaultView
-            dataView.RowFilter = DVRowFilter(False, False, UPaidRB.Checked)
-            InvoicesDGV.DataSource = dataView
-            BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
+        If Not String.IsNullOrEmpty(ISearchTB.Text) Then
+            Console.WriteLine(FilterString)
+            Using dt As DataTable = DBOp.LoadInvoicesDGV()
+                Dim dataView As DataView = dt.DefaultView
+                dataView.RowFilter = If(ISearchTB.Text(0) <> "(", DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked), FilterString)
+                InvoicesDGV.DataSource = dataView
+                BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
                 " Total: " & dt.Compute("SUM(Total)", dataView.RowFilter).ToString &
                 " VAT: " & dt.Compute("SUM(VAT)", dataView.RowFilter).ToString
-        End Using
+            End Using
+        End If
     End Sub
     Private Sub InvoicesDGV_DoubleClick(sender As Object, e As EventArgs) Handles InvoicesDGV.DoubleClick
         For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
@@ -286,5 +292,12 @@ Public Class Main
                 " Total: " & Total.ToString &
                 " VAT: " & VAT.ToString
         End If
+    End Sub
+
+    Private Sub Button1_Click_1(sender As Object, e As EventArgs) Handles Button1.Click
+        With Search
+            .mainfrm = Me
+            .ShowDialog()
+        End With
     End Sub
 End Class
