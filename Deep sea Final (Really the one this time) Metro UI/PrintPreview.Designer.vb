@@ -243,7 +243,10 @@ Partial Class PrintPreview
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.PrintCanBtn)
         Me.Controls.Add(Me.PrintBtn)
+        Me.IconOptions.ShowIcon = False
+        Me.MinimizeBox = False
         Me.Name = "PrintPreview"
+        Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Print Preview"
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).EndInit()

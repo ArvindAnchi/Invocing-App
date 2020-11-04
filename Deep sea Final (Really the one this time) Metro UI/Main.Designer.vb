@@ -440,6 +440,7 @@ Partial Class Main
         Me.Controls.Add(Me.FilterGB)
         Me.Controls.Add(Me.RibbonStatusBar)
         Me.Controls.Add(Me.RibbonControl)
+        Me.IconOptions.SvgImage = CType(resources.GetObject("Main.IconOptions.SvgImage"), DevExpress.Utils.Svg.SvgImage)
         Me.Name = "Main"
         Me.Ribbon = Me.RibbonControl
         Me.StatusBar = Me.RibbonStatusBar

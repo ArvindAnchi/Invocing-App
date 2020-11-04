@@ -64,11 +64,14 @@ Partial Class InvoiceForm
         Me.Label15 = New System.Windows.Forms.Label()
         Me.AccordionControl1 = New DevExpress.XtraBars.Navigation.AccordionControl()
         Me.SaveRibBtn = New DevExpress.XtraBars.Navigation.AccordionControlElement()
+        Me.NewInvoiceRibBtn = New DevExpress.XtraBars.Navigation.AccordionControlElement()
         Me.SavePDFRibBtn = New DevExpress.XtraBars.Navigation.AccordionControlElement()
         Me.PrintPrevRibBtn = New DevExpress.XtraBars.Navigation.AccordionControlElement()
         Me.ReloadRibBtn = New DevExpress.XtraBars.Navigation.AccordionControlElement()
+        Me.SaveCreditRibBtn = New DevExpress.XtraBars.Navigation.AccordionControlElement()
         Me.AccordionContentContainer1 = New DevExpress.XtraBars.Navigation.AccordionContentContainer()
         Me.AccordionControlElement5 = New DevExpress.XtraBars.Navigation.AccordionControlElement()
+        Me.AccordionControlElement1 = New DevExpress.XtraBars.Navigation.AccordionControlElement()
         Me.FluentDesignFormContainer1.SuspendLayout()
         CType(Me.DGV1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.AccordionControl1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -131,7 +134,7 @@ Partial Class InvoiceForm
         'AutoCompleteLB
         '
         Me.AutoCompleteLB.FormattingEnabled = True
-        Me.AutoCompleteLB.Location = New System.Drawing.Point(687, 232)
+        Me.AutoCompleteLB.Location = New System.Drawing.Point(686, 296)
         Me.AutoCompleteLB.Name = "AutoCompleteLB"
         Me.AutoCompleteLB.Size = New System.Drawing.Size(120, 95)
         Me.AutoCompleteLB.TabIndex = 1
@@ -500,14 +503,14 @@ Partial Class InvoiceForm
         Me.AccordionControl1.Appearance.AccordionControl.Options.UseBackColor = True
         Me.AccordionControl1.Appearance.AccordionControl.Options.UseBorderColor = True
         Me.AccordionControl1.Appearance.AccordionControl.Options.UseForeColor = True
-        Me.AccordionControl1.Elements.AddRange(New DevExpress.XtraBars.Navigation.AccordionControlElement() {Me.SaveRibBtn, Me.SavePDFRibBtn, Me.PrintPrevRibBtn, Me.ReloadRibBtn})
+        Me.AccordionControl1.Elements.AddRange(New DevExpress.XtraBars.Navigation.AccordionControlElement() {Me.SaveRibBtn, Me.NewInvoiceRibBtn, Me.SavePDFRibBtn, Me.PrintPrevRibBtn, Me.ReloadRibBtn, Me.SaveCreditRibBtn})
         Me.AccordionControl1.Location = New System.Drawing.Point(656, 11)
         Me.AccordionControl1.Margin = New System.Windows.Forms.Padding(2)
         Me.AccordionControl1.Name = "AccordionControl1"
         Me.AccordionControl1.OptionsMinimizing.AllowMinimizeMode = DevExpress.Utils.DefaultBoolean.[False]
         Me.AccordionControl1.ScrollBarMode = DevExpress.XtraBars.Navigation.ScrollBarMode.Touch
         Me.AccordionControl1.SelectElementMode = DevExpress.XtraBars.Navigation.SelectElementMode.MouseDown
-        Me.AccordionControl1.Size = New System.Drawing.Size(176, 198)
+        Me.AccordionControl1.Size = New System.Drawing.Size(176, 306)
         Me.AccordionControl1.TabIndex = 1
         '
         'SaveRibBtn
@@ -516,10 +519,21 @@ Partial Class InvoiceForm
         Me.SaveRibBtn.Appearance.Hovered.Options.UseBackColor = True
         Me.SaveRibBtn.Appearance.Normal.BackColor = System.Drawing.Color.White
         Me.SaveRibBtn.Appearance.Normal.Options.UseBackColor = True
-        Me.SaveRibBtn.ImageOptions.SvgImage = CType(resources.GetObject("SaveRibBtn.ImageOptions.SvgImage"), DevExpress.Utils.Svg.SvgImage)
+        Me.SaveRibBtn.ImageOptions.SvgImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.save
         Me.SaveRibBtn.Name = "SaveRibBtn"
         Me.SaveRibBtn.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
         Me.SaveRibBtn.Text = "Save"
+        '
+        'NewInvoiceRibBtn
+        '
+        Me.NewInvoiceRibBtn.Appearance.Hovered.BackColor = System.Drawing.SystemColors.InactiveCaption
+        Me.NewInvoiceRibBtn.Appearance.Hovered.Options.UseBackColor = True
+        Me.NewInvoiceRibBtn.Appearance.Normal.BackColor = System.Drawing.Color.White
+        Me.NewInvoiceRibBtn.Appearance.Normal.Options.UseBackColor = True
+        Me.NewInvoiceRibBtn.ImageOptions.SvgImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources._new
+        Me.NewInvoiceRibBtn.Name = "NewInvoiceRibBtn"
+        Me.NewInvoiceRibBtn.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
+        Me.NewInvoiceRibBtn.Text = "New"
         '
         'SavePDFRibBtn
         '
@@ -561,6 +575,17 @@ Partial Class InvoiceForm
         Me.ReloadRibBtn.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
         Me.ReloadRibBtn.Text = "Reload invoice"
         '
+        'SaveCreditRibBtn
+        '
+        Me.SaveCreditRibBtn.Appearance.Hovered.BackColor = System.Drawing.SystemColors.InactiveCaption
+        Me.SaveCreditRibBtn.Appearance.Hovered.Options.UseBackColor = True
+        Me.SaveCreditRibBtn.Appearance.Normal.BackColor = System.Drawing.Color.White
+        Me.SaveCreditRibBtn.Appearance.Normal.Options.UseBackColor = True
+        Me.SaveCreditRibBtn.ImageOptions.SvgImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.saveas
+        Me.SaveCreditRibBtn.Name = "SaveCreditRibBtn"
+        Me.SaveCreditRibBtn.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
+        Me.SaveCreditRibBtn.Text = "Save credit note"
+        '
         'AccordionContentContainer1
         '
         Me.AccordionContentContainer1.Name = "AccordionContentContainer1"
@@ -574,6 +599,17 @@ Partial Class InvoiceForm
         Me.AccordionControlElement5.Name = "AccordionControlElement5"
         Me.AccordionControlElement5.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
         Me.AccordionControlElement5.Text = "Element5"
+        '
+        'AccordionControlElement1
+        '
+        Me.AccordionControlElement1.Appearance.Hovered.BackColor = System.Drawing.SystemColors.InactiveCaption
+        Me.AccordionControlElement1.Appearance.Hovered.Options.UseBackColor = True
+        Me.AccordionControlElement1.Appearance.Normal.BackColor = System.Drawing.Color.White
+        Me.AccordionControlElement1.Appearance.Normal.Options.UseBackColor = True
+        Me.AccordionControlElement1.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.refresh_32x32
+        Me.AccordionControlElement1.Name = "AccordionControlElement1"
+        Me.AccordionControlElement1.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
+        Me.AccordionControlElement1.Text = "Reload invoice"
         '
         'InvoiceForm
         '
@@ -590,6 +626,7 @@ Partial Class InvoiceForm
         Me.MinimizeBox = False
         Me.MinimumSize = New System.Drawing.Size(832, 519)
         Me.Name = "InvoiceForm"
+        Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Invoice"
         Me.FluentDesignFormContainer1.ResumeLayout(False)
@@ -643,4 +680,7 @@ Partial Class InvoiceForm
     Friend WithEvents QtyColm As DataGridViewTextBoxColumn
     Friend WithEvents PrcClm As DataGridViewTextBoxColumn
     Friend WithEvents TtlClm As DataGridViewTextBoxColumn
+    Friend WithEvents AccordionControlElement1 As DevExpress.XtraBars.Navigation.AccordionControlElement
+    Friend WithEvents SaveCreditRibBtn As DevExpress.XtraBars.Navigation.AccordionControlElement
+    Friend WithEvents NewInvoiceRibBtn As DevExpress.XtraBars.Navigation.AccordionControlElement
 End Class

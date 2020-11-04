@@ -54,6 +54,11 @@ Public Class InvoiceForm
             Next
         End If
 
+        If Not SaveRibBtn.Enabled Then
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
+            SaveRibBtn.Enabled = True
+        End If
+
     End Sub
 
     Private Sub InvoiceForm_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
@@ -122,13 +127,30 @@ Public Class InvoiceForm
             TermTXT.Enabled = True
             TermTXT.Text = term
         End If
+
+        If Not SaveRibBtn.Enabled Then
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
+            SaveRibBtn.Enabled = True
+        End If
     End Sub
 
 
     Private Sub ButtonItem14_Click(sender As Object, e As EventArgs) Handles SaveRibBtn.Click
         If DGV1.RowCount > 1 Then
-            Main.DBOp.WriteInvoice(Me)
+            If Main.DBOp.WriteInvoice(Me) Then
+                SaveRibBtn.ImageOptions.SvgImage = My.Resources.actions_checkcircled
+                SaveRibBtn.Enabled = False
+            End If
             RefreshDGV()
+            Close()
+            Using invfrm As New InvoiceForm
+                invfrm.Enabled = False
+                FillInvoiceData(invfrm)
+                invfrm.Enabled = True
+                invfrm.SaveRibBtn.ImageOptions.SvgImage = My.Resources.actions_checkcircled
+                invfrm.SaveRibBtn.Enabled = False
+                invfrm.ShowDialog()
+            End Using
         Else
             MsgBox("Flag list is empty")
         End If
@@ -179,6 +201,10 @@ Public Class InvoiceForm
             End If
         End Try
 
+        If Not SaveRibBtn.Enabled Then
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
+            SaveRibBtn.Enabled = True
+        End If
     End Sub
     Private Sub Disctxt_TextChanged(sender As Object, e As EventArgs) Handles disctxt.TextChanged
         Try
@@ -214,6 +240,11 @@ Public Class InvoiceForm
             disctxt.Text = 0
             disctxt.SelectAll()
         End Try
+
+        If Not SaveRibBtn.Enabled Then
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
+            SaveRibBtn.Enabled = True
+        End If
 
     End Sub
 
@@ -318,6 +349,11 @@ Public Class InvoiceForm
         If TrmCred.Checked Then
             term = TermTXT.Text
         End If
+
+        If Not SaveRibBtn.Enabled Then
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
+            SaveRibBtn.Enabled = True
+        End If
     End Sub
 
     Private Sub SavePDFRibBtn_Click(sender As Object, e As EventArgs) Handles SavePDFRibBtn.Click
@@ -361,6 +397,11 @@ Public Class InvoiceForm
             disctxt.Text = 0
             disctxt.SelectAll()
         End Try
+
+        If Not SaveRibBtn.Enabled Then
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
+            SaveRibBtn.Enabled = True
+        End If
     End Sub
 
     Private Sub ReloadRibBtn_Click(sender As Object, e As EventArgs) Handles ReloadRibBtn.Click
@@ -373,4 +414,61 @@ Public Class InvoiceForm
         End Using
     End Sub
 
+
+    Private Sub NewInvoiceRibBtn_Click(sender As Object, e As EventArgs) Handles NewInvoiceRibBtn.Click
+        DGV1.Rows.Clear()
+        invnotxt.Text = Main.DBOp.Getinvno()
+        Ordbycb.Text = ""
+        lpotxt.Text = ""
+        cnametxt.Text = ""
+        trntxt.Text = ""
+        DateTimePicker1.Value = Today
+        disctxt.Text = 0
+    End Sub
+
+    Private Sub SaveCreditRibBtn_Click(sender As Object, e As EventArgs) Handles SaveCreditRibBtn.Click
+        If DGV1.RowCount > 1 Then
+            Using printprev As New PrintCredNote
+                printprev.InvoiceForm = Me
+                printprev.ShowDialog()
+            End Using
+        Else
+            MsgBox("Flag list is empty")
+        End If
+    End Sub
+
+    Private Sub invnotxt_TextChanged(sender As Object, e As EventArgs) Handles invnotxt.TextChanged
+        If Not SaveRibBtn.Enabled Then
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
+            SaveRibBtn.Enabled = True
+        End If
+    End Sub
+
+    Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
+        If Not SaveRibBtn.Enabled Then
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
+            SaveRibBtn.Enabled = True
+        End If
+    End Sub
+
+    Private Sub Ordbycb_SelectedIndexChanged(sender As Object, e As EventArgs) Handles Ordbycb.SelectedIndexChanged
+        If Not SaveRibBtn.Enabled Then
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
+            SaveRibBtn.Enabled = True
+        End If
+    End Sub
+
+    Private Sub lpotxt_TextChanged(sender As Object, e As EventArgs) Handles lpotxt.TextChanged
+        If Not SaveRibBtn.Enabled Then
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
+            SaveRibBtn.Enabled = True
+        End If
+    End Sub
+
+    Private Sub trntxt_TextChanged(sender As Object, e As EventArgs) Handles trntxt.TextChanged
+        If Not SaveRibBtn.Enabled Then
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
+            SaveRibBtn.Enabled = True
+        End If
+    End Sub
 End Class

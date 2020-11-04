@@ -462,7 +462,6 @@ Public Class DatabaseOperations
 
                         Next
 
-                        MsgBox("Saved!", vbOKOnly, "Done")
 
                     Catch ex As Exception
                         MsgBox(ex.ToString, MessageBoxIcon.Error, "Error")

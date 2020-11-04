@@ -228,10 +228,27 @@ Public Class StatementForm
                 PDFData += "</table>"
 
                 Console.WriteLine("Convert HTML to PDF")
-                HtmlConverter.ConvertToPdf(PDFData, New FileStream(Application.StartupPath &
-                                         String.Format("\Statement {0}.pdf", getStatementRange()), FileMode.Create, FileAccess.Write))
+                Dim pdfName As String = InputBox("Enter name of pdf", "Name", String.Format("{0} Statement {1}.pdf",
+                                                         CompLB.SelectedItems(0)(0).ToString,
+                                                         getStatementRange()))
+                If Not pdfName.Contains("Statement") Then
+                    WForm.Close()
+                    .Close(Outlook.OlInspectorClose.olDiscard)
+                    Exit Sub
+                End If
+
+                If Not pdfName.EndsWith(".pdf") Then
+                    pdfName = pdfName & ".pdf"
+                End If
+                HtmlConverter.ConvertToPdf(PDFData, New FileStream(
+                                           String.Format("{0}\Ravi Flags\Statements\{1}",
+                                                         Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                                                         pdfName),
+                                           FileMode.Create, FileAccess.Write))
                 Console.WriteLine("Attach file")
-                .Attachments.Add(Application.StartupPath & String.Format("\Statement {0}.pdf", getStatementRange()))
+                .Attachments.Add(String.Format("{0}\Ravi Flags\Statements\{1}",
+                                                         Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                                                         pdfName),,)
                 Console.WriteLine("Close Waitform")
                 WForm.Close()
                 Console.WriteLine("Show Outlook message")

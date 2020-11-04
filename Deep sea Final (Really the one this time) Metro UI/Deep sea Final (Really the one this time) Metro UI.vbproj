@@ -223,6 +223,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="PrintCredNote.Designer.vb">
+      <DependentUpon>PrintCredNote.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PrintCredNote.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PrintPreview.Designer.vb">
       <DependentUpon>PrintPreview.vb</DependentUpon>
     </Compile>
@@ -269,6 +275,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InvoiceForm.resx">
       <DependentUpon>InvoiceForm.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.vb</DependentUpon>
@@ -279,6 +286,9 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PrintCredNote.resx">
+      <DependentUpon>PrintCredNote.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PrintPreview.resx">
       <DependentUpon>PrintPreview.vb</DependentUpon>
@@ -309,6 +319,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Deepseaico.ico" />
+    <None Include="Resources\save.svg" />
+    <None Include="Resources\actions_checkcircled.svg" />
+    <None Include="Resources\new.svg" />
+    <None Include="Resources\saveas.svg" />
     <None Include="Resources\business_eurocircled.svg" />
     <None Include="packages.config" />
     <None Include="Resources\addnewdatasource_16x16.png" />
