@@ -64,6 +64,18 @@ Public Class InvoiceForm
     Private Sub InvoiceForm_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         InvoiceFlagList.Dispose()
         dt.Dispose()
+        With Main
+            .RefreshDGVthread()
+            .ISearchTB.Clear()
+            .ISDateDTP.Value = CDate("1/1/2020")
+            .IEDateDTP.Value = Today
+            Dim dataView As DataView = .InvoicesDataTable.DefaultView
+            .InvoicesDGV.DataSource = dataView
+            dataView.RowFilter = ""
+            .BarStaticItem1.Caption = "Records: " & .InvoicesDGV.RowCount &
+                        " Total: " & .InvoicesDataTable.Compute("SUM(Total)", dataView.RowFilter).ToString &
+                        " VAT: " & .InvoicesDataTable.Compute("SUM(VAT)", dataView.RowFilter).ToString
+        End With
     End Sub
 
     Private Sub Main_DragEnter(sender As Object, e As DragEventArgs) Handles Me.DragEnter

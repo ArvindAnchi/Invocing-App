@@ -66,6 +66,7 @@ Partial Class Main
         Me.ISDateLBL = New System.Windows.Forms.Label()
         Me.BehaviorManager1 = New DevExpress.Utils.Behaviors.BehaviorManager(Me.components)
         Me.BarButtonItem4 = New DevExpress.XtraBars.BarButtonItem()
+        Me.Button2 = New System.Windows.Forms.Button()
         CType(Me.RibbonControl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.InvoicesDGV, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.FilterGB.SuspendLayout()
@@ -77,11 +78,11 @@ Partial Class Main
         Me.RibbonControl.ExpandCollapseItem.Id = 0
         Me.RibbonControl.Items.AddRange(New DevExpress.XtraBars.BarItem() {Me.RibbonControl.ExpandCollapseItem, Me.RibbonControl.SearchEditItem, Me.NewInvBtnItm, Me.OpenBtnItm, Me.PrintBtnItm, Me.CanceledBtnItm, Me.DeleteBtnItm, Me.BarButtonItem3, Me.PaidBtnItm, Me.GenStmtBtnItm, Me.BarButtonItem7, Me.BarStaticItem1, Me.SkinDropDownButtonItem1, Me.RefreshBtn, Me.BarButtonItem2, Me.BarButtonItem5, Me.VATAccBtn})
         Me.RibbonControl.Location = New System.Drawing.Point(0, 0)
-        Me.RibbonControl.MaxItemId = 27
+        Me.RibbonControl.MaxItemId = 28
         Me.RibbonControl.Name = "RibbonControl"
         Me.RibbonControl.Pages.AddRange(New DevExpress.XtraBars.Ribbon.RibbonPage() {Me.InvoiceRT, Me.StmtRT, Me.RibbonPage1})
         Me.RibbonControl.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonControlStyle.Office2019
-        Me.RibbonControl.Size = New System.Drawing.Size(990, 162)
+        Me.RibbonControl.Size = New System.Drawing.Size(941, 162)
         Me.RibbonControl.StatusBar = Me.RibbonStatusBar
         '
         'NewInvBtnItm
@@ -241,10 +242,10 @@ Partial Class Main
         '
         Me.RibbonStatusBar.ItemLinks.Add(Me.BarStaticItem1)
         Me.RibbonStatusBar.ItemLinks.Add(Me.SkinDropDownButtonItem1)
-        Me.RibbonStatusBar.Location = New System.Drawing.Point(0, 444)
+        Me.RibbonStatusBar.Location = New System.Drawing.Point(0, 455)
         Me.RibbonStatusBar.Name = "RibbonStatusBar"
         Me.RibbonStatusBar.Ribbon = Me.RibbonControl
-        Me.RibbonStatusBar.Size = New System.Drawing.Size(990, 26)
+        Me.RibbonStatusBar.Size = New System.Drawing.Size(941, 26)
         '
         'WorkspaceManager1
         '
@@ -292,7 +293,7 @@ Partial Class Main
         Me.InvoicesDGV.RowHeadersVisible = False
         Me.InvoicesDGV.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.InvoicesDGV.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.InvoicesDGV.Size = New System.Drawing.Size(984, 200)
+        Me.InvoicesDGV.Size = New System.Drawing.Size(935, 211)
         Me.InvoicesDGV.TabIndex = 6
         '
         'FilterGB
@@ -311,9 +312,9 @@ Partial Class Main
         Me.FilterGB.Controls.Add(Me.ISearchLBL)
         Me.FilterGB.Controls.Add(Me.IEDateLBL)
         Me.FilterGB.Controls.Add(Me.ISDateLBL)
-        Me.FilterGB.Location = New System.Drawing.Point(3, 168)
+        Me.FilterGB.Location = New System.Drawing.Point(3, 171)
         Me.FilterGB.Name = "FilterGB"
-        Me.FilterGB.Size = New System.Drawing.Size(984, 68)
+        Me.FilterGB.Size = New System.Drawing.Size(836, 68)
         Me.FilterGB.TabIndex = 5
         Me.FilterGB.TabStop = False
         Me.FilterGB.Text = "Filter"
@@ -431,16 +432,28 @@ Partial Class Main
         Me.BarButtonItem4.ImageOptions.SvgImage = CType(resources.GetObject("BarButtonItem4.ImageOptions.SvgImage"), DevExpress.Utils.Svg.SvgImage)
         Me.BarButtonItem4.Name = "BarButtonItem4"
         '
+        'Button2
+        '
+        Me.Button2.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Button2.Location = New System.Drawing.Point(845, 177)
+        Me.Button2.Name = "Button2"
+        Me.Button2.Size = New System.Drawing.Size(93, 62)
+        Me.Button2.TabIndex = 9
+        Me.Button2.Text = "Refresh"
+        Me.Button2.UseVisualStyleBackColor = True
+        '
         'Main
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 470)
+        Me.ClientSize = New System.Drawing.Size(941, 481)
+        Me.Controls.Add(Me.Button2)
         Me.Controls.Add(Me.InvoicesDGV)
         Me.Controls.Add(Me.FilterGB)
         Me.Controls.Add(Me.RibbonStatusBar)
         Me.Controls.Add(Me.RibbonControl)
         Me.IconOptions.SvgImage = CType(resources.GetObject("Main.IconOptions.SvgImage"), DevExpress.Utils.Svg.SvgImage)
+        Me.MinimumSize = New System.Drawing.Size(941, 354)
         Me.Name = "Main"
         Me.Ribbon = Me.RibbonControl
         Me.StatusBar = Me.RibbonStatusBar
@@ -498,4 +511,5 @@ Partial Class Main
     Friend WithEvents VATAccBtn As DevExpress.XtraBars.BarButtonItem
     Friend WithEvents VatGrp As DevExpress.XtraBars.Ribbon.RibbonPageGroup
     Friend WithEvents Button1 As Button
+    Friend WithEvents Button2 As Button
 End Class

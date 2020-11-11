@@ -6,9 +6,9 @@ Public Class Main
     Public DBOp As New DatabaseOperations
     Private loading As Boolean = True
 
-    Private InvoicesDataTable As DataTable
+    Public InvoicesDataTable As DataTable
     'Dim thread As Threading.Thread = New Threading.Thread(AddressOf RefreshDGVthread) With {.IsBackground = True}
-    Private Sub RefreshDGVthread()
+    Public Sub RefreshDGVthread()
         Try
             Using dt As DataTable = DBOp.LoadInvoicesDGV()
                 InvoicesDataTable = dt
@@ -33,13 +33,12 @@ Public Class Main
     End Sub
 
     Private Sub Main_Load(sender As Object, e As EventArgs) Handles Me.Load
-        Enabled = False
         AllowDrop = True
+        InvoicesDGV.Enabled = False
         InvoicesDGV.BackgroundColor = Color.White
-
         RefreshDGVthread()
         AllRB.Checked = True
-        Enabled = True
+        InvoicesDGV.Enabled = True
     End Sub
     Private Sub NewInvBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles NewInvBtnItm.ItemClick
         Using infrm As New InvoiceForm
@@ -318,4 +317,18 @@ Public Class Main
         End With
     End Sub
 
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        InvoicesDGV.Enabled = False
+        RefreshDGVthread()
+        ISearchTB.Clear()
+        ISDateDTP.Value = CDate("1/1/2020")
+        IEDateDTP.Value = Today
+        Dim dataView As DataView = InvoicesDataTable.DefaultView
+        InvoicesDGV.DataSource = dataView
+        dataView.RowFilter = ""
+        BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
+                    " Total: " & InvoicesDataTable.Compute("SUM(Total)", dataView.RowFilter).ToString &
+                    " VAT: " & InvoicesDataTable.Compute("SUM(VAT)", dataView.RowFilter).ToString
+        InvoicesDGV.Enabled = True
+    End Sub
 End Class
