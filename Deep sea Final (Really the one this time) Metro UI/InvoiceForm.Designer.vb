@@ -81,6 +81,7 @@ Partial Class InvoiceForm
         '
         Me.FluentDesignFormContainer1.Appearance.BackColor = System.Drawing.Color.White
         Me.FluentDesignFormContainer1.Appearance.Options.UseBackColor = True
+        Me.FluentDesignFormContainer1.AutoScroll = False
         Me.FluentDesignFormContainer1.Controls.Add(Me.VatCB)
         Me.FluentDesignFormContainer1.Controls.Add(Me.AutoCompleteLB)
         Me.FluentDesignFormContainer1.Controls.Add(Me.FLine9)
@@ -134,9 +135,9 @@ Partial Class InvoiceForm
         'AutoCompleteLB
         '
         Me.AutoCompleteLB.FormattingEnabled = True
-        Me.AutoCompleteLB.Location = New System.Drawing.Point(686, 296)
+        Me.AutoCompleteLB.Location = New System.Drawing.Point(683, 344)
         Me.AutoCompleteLB.Name = "AutoCompleteLB"
-        Me.AutoCompleteLB.Size = New System.Drawing.Size(120, 95)
+        Me.AutoCompleteLB.Size = New System.Drawing.Size(120, 30)
         Me.AutoCompleteLB.TabIndex = 1
         Me.AutoCompleteLB.Visible = False
         '
@@ -325,12 +326,12 @@ Partial Class InvoiceForm
         Me.prcnos.BackColor = System.Drawing.Color.White
         Me.prcnos.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.prcnos.ForeColor = System.Drawing.Color.Black
-        Me.prcnos.Location = New System.Drawing.Point(716, 394)
+        Me.prcnos.Location = New System.Drawing.Point(733, 394)
         Me.prcnos.Name = "prcnos"
         Me.prcnos.Size = New System.Drawing.Size(80, 86)
         Me.prcnos.TabIndex = 183
         Me.prcnos.Text = "AED 0.00" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "AED 0.00" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "AED 0.00" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "AED 0.00" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "AED 0.00"
-        Me.prcnos.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me.prcnos.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'TrmCred
         '
@@ -508,17 +509,29 @@ Partial Class InvoiceForm
         Me.AccordionControl1.Margin = New System.Windows.Forms.Padding(2)
         Me.AccordionControl1.Name = "AccordionControl1"
         Me.AccordionControl1.OptionsMinimizing.AllowMinimizeMode = DevExpress.Utils.DefaultBoolean.[False]
-        Me.AccordionControl1.ScrollBarMode = DevExpress.XtraBars.Navigation.ScrollBarMode.Touch
+        Me.AccordionControl1.ScrollBarMode = DevExpress.XtraBars.Navigation.ScrollBarMode.Hidden
         Me.AccordionControl1.SelectElementMode = DevExpress.XtraBars.Navigation.SelectElementMode.MouseDown
         Me.AccordionControl1.Size = New System.Drawing.Size(176, 306)
         Me.AccordionControl1.TabIndex = 1
         '
         'SaveRibBtn
         '
+        Me.SaveRibBtn.Appearance.Disabled.BackColor = System.Drawing.Color.DimGray
+        Me.SaveRibBtn.Appearance.Disabled.BorderColor = System.Drawing.Color.White
+        Me.SaveRibBtn.Appearance.Disabled.ForeColor = System.Drawing.Color.White
+        Me.SaveRibBtn.Appearance.Disabled.Options.UseBackColor = True
+        Me.SaveRibBtn.Appearance.Disabled.Options.UseBorderColor = True
+        Me.SaveRibBtn.Appearance.Disabled.Options.UseForeColor = True
         Me.SaveRibBtn.Appearance.Hovered.BackColor = System.Drawing.SystemColors.InactiveCaption
         Me.SaveRibBtn.Appearance.Hovered.Options.UseBackColor = True
         Me.SaveRibBtn.Appearance.Normal.BackColor = System.Drawing.Color.White
         Me.SaveRibBtn.Appearance.Normal.Options.UseBackColor = True
+        Me.SaveRibBtn.Appearance.Pressed.BackColor = System.Drawing.Color.Silver
+        Me.SaveRibBtn.Appearance.Pressed.BackColor2 = System.Drawing.Color.White
+        Me.SaveRibBtn.Appearance.Pressed.BorderColor = System.Drawing.Color.White
+        Me.SaveRibBtn.Appearance.Pressed.Options.UseBackColor = True
+        Me.SaveRibBtn.Appearance.Pressed.Options.UseBorderColor = True
+        Me.SaveRibBtn.Enabled = False
         Me.SaveRibBtn.ImageOptions.SvgImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.save
         Me.SaveRibBtn.Name = "SaveRibBtn"
         Me.SaveRibBtn.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item

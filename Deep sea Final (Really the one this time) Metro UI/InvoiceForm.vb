@@ -21,7 +21,7 @@ Public Class InvoiceForm
                 Ordbycb.Items.Add(item(0))
             Next
         End If
-
+        SaveRibBtn.Enabled = False
         For value As Integer = 0 To dt.Rows.Count - 1
             cnametxt.Items.Add(dt.Rows(value)(1))
         Next
@@ -142,14 +142,10 @@ Public Class InvoiceForm
                 SaveRibBtn.Enabled = False
             End If
             RefreshDGV()
-            Close()
             Using invfrm As New InvoiceForm
-                invfrm.Enabled = False
-                FillInvoiceData(invfrm)
-                invfrm.Enabled = True
+                FillInvoiceData(Me)
                 invfrm.SaveRibBtn.ImageOptions.SvgImage = My.Resources.actions_checkcircled
                 invfrm.SaveRibBtn.Enabled = False
-                invfrm.ShowDialog()
             End Using
         Else
             MsgBox("Flag list is empty")
@@ -405,13 +401,7 @@ Public Class InvoiceForm
     End Sub
 
     Private Sub ReloadRibBtn_Click(sender As Object, e As EventArgs) Handles ReloadRibBtn.Click
-        Close()
-        Using invfrm As New InvoiceForm
-            invfrm.Enabled = False
-            FillInvoiceData(invfrm)
-            invfrm.Enabled = True
-            invfrm.ShowDialog()
-        End Using
+        FillInvoiceData(Me)
     End Sub
 
 

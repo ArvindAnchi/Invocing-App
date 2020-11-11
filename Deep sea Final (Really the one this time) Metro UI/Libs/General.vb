@@ -54,7 +54,7 @@ Module General
     Function FillInvoiceData(invfrm As InvoiceForm, Optional InvoicesDGVRow As DataGridViewRow = Nothing) As Boolean
         Try
             'Clear all rows from DGV to add datasource
-            'invfrm.DGV1.Columns.Clear()
+            invfrm.DGV1.Rows.Clear()
             'Populate details of invoice
             Dim Invoice As List(Of DataTable)
             If InvoicesDGVRow IsNot Nothing Then
