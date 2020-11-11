@@ -70,8 +70,7 @@ Public Class Main
                 invfrm.Enabled = False
                 FillInvoiceData(invfrm, row)
                 invfrm.Enabled = True
-                invfrm.SaveRibBtn.ImageOptions.SvgImage = My.Resources.actions_checkcircled
-                invfrm.SaveRibBtn.Enabled = False
+                invfrm.saveBtnEnable = False
                 invfrm.ShowDialog()
             End Using
         Next
@@ -214,8 +213,7 @@ Public Class Main
                 invfrm.Enabled = False
                 FillInvoiceData(invfrm, row)
                 invfrm.Enabled = True
-                invfrm.SaveRibBtn.ImageOptions.SvgImage = My.Resources.actions_checkcircled
-                invfrm.SaveRibBtn.Enabled = False
+                invfrm.saveBtnEnable = False
                 invfrm.ShowDialog()
             End Using
         Next

@@ -7,6 +7,7 @@ Public Class InvoiceForm
     Dim dt As DataTable = Main.DBOp.LoadCompLST
     Dim flags As String() = File.ReadAllLines(Application.StartupPath + "\Flags")
     Public term As Integer = 30
+    Public saveBtnEnable As Boolean = True
 
     Private Sub InvoiceForm_Load(sender As Object, e As EventArgs) Handles Me.Load
         AllowDrop = True
@@ -21,7 +22,12 @@ Public Class InvoiceForm
                 Ordbycb.Items.Add(item(0))
             Next
         End If
-        SaveRibBtn.Enabled = False
+        If saveBtnEnable Then
+            SaveRibBtn.Enabled = True
+        Else
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.actions_checkcircled
+            SaveRibBtn.Enabled = False
+        End If
         For value As Integer = 0 To dt.Rows.Count - 1
             cnametxt.Items.Add(dt.Rows(value)(1))
         Next
@@ -154,11 +160,9 @@ Public Class InvoiceForm
                 SaveRibBtn.Enabled = False
             End If
             RefreshDGV()
-            Using invfrm As New InvoiceForm
-                FillInvoiceData(Me)
-                invfrm.SaveRibBtn.ImageOptions.SvgImage = My.Resources.actions_checkcircled
-                invfrm.SaveRibBtn.Enabled = False
-            End Using
+            FillInvoiceData(Me)
+            SaveRibBtn.ImageOptions.SvgImage = My.Resources.actions_checkcircled
+            SaveRibBtn.Enabled = False
         Else
             MsgBox("Flag list is empty")
         End If
@@ -413,6 +417,8 @@ Public Class InvoiceForm
     End Sub
 
     Private Sub ReloadRibBtn_Click(sender As Object, e As EventArgs) Handles ReloadRibBtn.Click
+        SaveRibBtn.ImageOptions.SvgImage = My.Resources.actions_checkcircled
+        SaveRibBtn.Enabled = False
         FillInvoiceData(Me)
     End Sub
 

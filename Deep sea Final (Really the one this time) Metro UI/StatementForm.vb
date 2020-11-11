@@ -187,7 +187,7 @@ Public Class StatementForm
 
     Private Sub SendAsPDF_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles SendAsPDF.ItemClick
 
-        Dim WForm As Form = WaitForm("Please wait while the statement generates.")
+        Dim WForm As New WaitForm1
 
         Try
             Console.WriteLine("Initialize Outlook")

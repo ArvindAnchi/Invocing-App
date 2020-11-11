@@ -130,43 +130,13 @@ Module General
         Next
         Return True
     End Function
-    Function WaitForm(Message As String) As Form
-        Dim pwfrm As New Form
-        Dim Label1 As New Label
-        With pwfrm
-            .AutoScaleDimensions = New SizeF(6.0!, 13.0!)
-            .AutoScaleMode = AutoScaleMode.Font
-            .ClientSize = New Size(336, 119)
-            .ControlBox = False
-            .Controls.Add(Label1)
-            .MaximumSize = New Size(352, 158)
-            .MinimumSize = New Size(352, 158)
-            .Name = "pwfrm"
-            .StartPosition = FormStartPosition.CenterParent
-            .Text = "Wait"
-            .TopMost = True
-            .ResumeLayout(False)
-            .PerformLayout()
-        End With
-        With Label1
-            .AutoSize = True
-            .BackColor = Color.Transparent
-            .Font = New Font("Microsoft Sans Serif", 15.75!, FontStyle.Regular, GraphicsUnit.Point, CType(0, Byte))
-            .Location = New Point(36, 37)
-            .Name = "Label1"
-            .Size = New Size(238, 25)
-            .TabIndex = 0
-            .Text = Message
-            .TextAlign = ContentAlignment.MiddleCenter
-        End With
-        Return pwfrm
-    End Function
+
     Function Readmefexcel(InvoiceForm As InvoiceForm, Optional filepath As String = Nothing) As Boolean
         If filepath Is Nothing Then
             filepath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
         End If
 
-        Dim WForm As Form = WaitForm("Reading contents of file please wait.")
+        Dim WForm As New WaitForm1
 
         Try
             InvoiceForm.DGV1.CurrentCell = InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.Rows.Count - 1).Cells(0)
