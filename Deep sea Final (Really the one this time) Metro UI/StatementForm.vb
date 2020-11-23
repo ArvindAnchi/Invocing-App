@@ -186,82 +186,95 @@ Public Class StatementForm
     End Sub
 
     Private Sub SendAsPDF_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles SendAsPDF.ItemClick
+        Using WForm As New DevExpress.Utils.WaitDialogForm("Please wait")
+            WForm.Show()
+            Try
+                Console.WriteLine("Initialize Outlook")
+                Dim oApp As Outlook.Application = New Outlook.Application
+                Dim mailItem As Outlook.MailItem = TryCast(oApp.CreateItem(Outlook.OlItemType.olMailItem), Outlook.MailItem)
 
-        Dim WForm As New WaitForm1
+                Dim mySignature As String
+                Dim message As String
+                Dim PDFData As String
+                'Hide()
+                TopMost = False
+                'Enabled = False
 
-        Try
-            Console.WriteLine("Initialize Outlook")
-            Dim oApp As Outlook.Application = New Outlook.Application
-            Dim mailItem As Outlook.MailItem = TryCast(oApp.CreateItem(Outlook.OlItemType.olMailItem), Outlook.MailItem)
+                With mailItem
+                    Console.WriteLine("Show Wait form")
 
-            Dim mySignature As String
-            Dim message As String
-            Dim PDFData As String
-            'Hide()
-            TopMost = False
-            'Enabled = False
-            With mailItem
-                Console.WriteLine("Show Wait form")
-                WForm.Show()
-                .Subject = String.Format("Statement {0}", getStatementRange())
-                Console.WriteLine("Start HTML Data generation")
-                PDFData = "<table cellspacing = -1> <tr bgcolor = ""#D9E1F2"">"
-                For i As Integer = 0 To StmtDGV.ColumnCount - 1
-                    PDFData += "<th style=""padding: 0 5px; border: 1px solid #AAAAAA;"">" & StmtDGV.Columns(i).HeaderText & "</th>"
-                Next
-                PDFData += "</tr>"
-                Try
-                    For i As Integer = 0 To StmtDGV.RowCount - 1
-                        PDFData += "<tr>"
-                        For j As Integer = 0 To StmtDGV.ColumnCount - 1
-                            PDFData += "<td style = ""font-family: Calibri, sans-serif; padding: 0 5px; border-left: 1px solid #AAAAAA; border-right: 1px solid #AAAAAA;"" align='center'>" & StmtDGV.Rows(i).Cells(j).Value & "</td>"
-                        Next
-                        PDFData += "</tr>"
+                    .Subject = String.Format("Statement {0}", getStatementRange())
+                    Console.WriteLine("Start HTML Data generation")
+                    PDFData = "<table cellspacing = -1> <tr bgcolor = ""#D9E1F2"">"
+                    For i As Integer = 0 To StmtDGV.ColumnCount - 1
+                        PDFData += "<th style=""padding: 0 5px; border: 1px solid #AAAAAA;"">" & StmtDGV.Columns(i).HeaderText & "</th>"
                     Next
-                    PDFData += "<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>Total" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & Net & "</b></td></tr>"
-                    Console.WriteLine("HTML data generated")
-                Catch ex As Exception
-                    Console.WriteLine("Error: " & ex.ToString)
-                    .Close(Outlook.OlInspectorClose.olDiscard)
-                End Try
+                    PDFData += "</tr>"
+                    Try
+                        For i As Integer = 0 To StmtDGV.RowCount - 1
+                            PDFData += "<tr>"
+                            For j As Integer = 0 To StmtDGV.ColumnCount - 1
+                                PDFData += "<td style = ""font-family: Calibri, sans-serif; padding: 0 5px; border-left: 1px solid #AAAAAA; border-right: 1px solid #AAAAAA;"" align='center'>" & StmtDGV.Rows(i).Cells(j).Value & "</td>"
+                            Next
+                            PDFData += "</tr>"
+                        Next
+                        PDFData += "<tr bgcolor = ""#D9E1F2""><td style=""padding: 0 5px; border: 1px solid #AAAAAA;"" align='right' colspan='6'><b>Total" & "</b></td><td style=""padding: 0 5px; border: 1px solid #AAAAAA;""><b>" & Net & "</b></td></tr>"
+                        Console.WriteLine("HTML data generated")
+                    Catch ex As Exception
+                        Console.WriteLine("Error: " & ex.ToString)
+                        .Close(Outlook.OlInspectorClose.olDiscard)
+                    End Try
 
-                PDFData += "</table>"
+                    PDFData += "</table>"
 
-                Console.WriteLine("Convert HTML to PDF")
-                Dim pdfName As String = InputBox("Enter name of pdf", "Name", String.Format("{0} Statement {1}.pdf",
-                                                         CompLB.SelectedItems(0)(0).ToString,
-                                                         getStatementRange()))
-                If Not pdfName.Contains("Statement") Then
+                    Console.WriteLine("Convert HTML to PDF")
+                    WForm.Hide()
+                    Dim pdfName As String = InputBox("Enter name of pdf", "Name", String.Format("{0} Statement {1}.pdf",
+                                                             CompLB.SelectedItems(0)(0).ToString,
+                                                             getStatementRange()))
+                    WForm.Show()
+                    If Not pdfName.Contains("Statement") Then
+                        WForm.Close()
+                        .Close(Outlook.OlInspectorClose.olDiscard)
+                        Exit Sub
+                    End If
+
+                    If Not pdfName.EndsWith(".pdf") Then
+                        pdfName = pdfName & ".pdf"
+                    End If
+                    HtmlConverter.ConvertToPdf(PDFData, New FileStream(
+                                               String.Format("{0}\Ravi Flags\Statements\{1}",
+                                                             Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                                                             pdfName),
+                                               FileMode.Create, FileAccess.Write))
+                    Console.WriteLine("Attach file")
+                    .Attachments.Add(String.Format("{0}\Ravi Flags\Statements\{1}",
+                                                             Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                                                             pdfName),,)
+                    Console.WriteLine("Close Waitform")
                     WForm.Close()
-                    .Close(Outlook.OlInspectorClose.olDiscard)
-                    Exit Sub
-                End If
-
-                If Not pdfName.EndsWith(".pdf") Then
-                    pdfName = pdfName & ".pdf"
-                End If
-                HtmlConverter.ConvertToPdf(PDFData, New FileStream(
-                                           String.Format("{0}\Ravi Flags\Statements\{1}",
-                                                         Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                                                         pdfName),
-                                           FileMode.Create, FileAccess.Write))
-                Console.WriteLine("Attach file")
-                .Attachments.Add(String.Format("{0}\Ravi Flags\Statements\{1}",
-                                                         Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                                                         pdfName),,)
-                Console.WriteLine("Close Waitform")
+                    Console.WriteLine("Show Outlook message")
+                    .Display()
+                    mySignature = .HTMLBody
+                    message = "Dear Sir,<br><br>Please find the attached statement and kindly arrange the payment soon. <br><br>"
+                    .HTMLBody = message + mySignature
+                End With
+            Catch ex As Exception
+                Console.WriteLine("Error (Main): " & ex.ToString)
                 WForm.Close()
-                Console.WriteLine("Show Outlook message")
-                .Display()
-                mySignature = .HTMLBody
-                message = "Dear Sir,<br><br>Please find the attached statement and kindly arrange the payment soon. <br><br>"
-                .HTMLBody = message + mySignature
-            End With
-        Catch ex As Exception
-            Console.WriteLine("Error (Main): " & ex.ToString)
-            WForm.Close()
-        End Try
+            End Try
+        End Using
     End Sub
 
-
+    Private Sub StmtDGV_DoubleClick(sender As Object, e As EventArgs) Handles StmtDGV.DoubleClick
+        For Each row As DataGridViewRow In StmtDGV.SelectedRows
+            Using invfrm As New InvoiceForm
+                invfrm.Enabled = False
+                FillInvoiceData(invfrm, row)
+                invfrm.Enabled = True
+                invfrm.saveBtnEnable = False
+                invfrm.ShowDialog()
+            End Using
+        Next
+    End Sub
 End Class
