@@ -34,10 +34,10 @@ Module General
             Return image
         End Try
     End Function
-    Function RefreshDGV() As Boolean
+    Async Function RefreshDGV() As Task(Of Boolean)
         With Main
             With .InvoicesDGV
-                Using dt As DataTable = dbop.LoadInvoicesDGV()
+                Using dt As DataTable = Await dbop.LoadInvoicesDGV()
                     Dim dataView As DataView = dt.DefaultView
                     If Not String.IsNullOrEmpty(Main.ISearchTB.Text) Then
                         dataView.RowFilter = If(Main.ISearchTB.Text(0) <> "(", Main.DVRowFilter(Main.PaidRB.Checked, Main.RetcanRB.Checked, Main.UPaidRB.Checked), Main.FilterString)
@@ -62,6 +62,7 @@ Module General
             Else
                 Invoice = dbop.ReadInvocie(Main.InvoicesDGV.Rows(0).Cells(0).Value.ToString)
             End If
+            'Console.Write(Invoice)
             Dim InvoiceData As DataTable = Invoice(0)
             With InvoiceData
                 invfrm.invnotxt.Text = .Rows(0).Item(0).ToString()
@@ -86,12 +87,19 @@ Module General
                 Else
                     invfrm.VatCB.Checked = False
                 End If
+                'Console.WriteLine(.Rows.Count)
+                For Each dataRow As DataRow In .Rows
+                    For Each item In dataRow.ItemArray
+                        'Console.WriteLine(item)
+                    Next
+                Next
 
                 invfrm.disctxt.Text = Math.Floor(.Rows(0).Item(7))
+                invfrm.updatePrcLbl = False
                 invfrm.prcnos.Text = FormatNumber(.Rows(0).Item(8).ToString()) & vbNewLine &
                           FormatNumber(.Rows(0).Item(9).ToString()) & vbNewLine &
                           FormatNumber(.Rows(0).Item(10).ToString()) & vbNewLine &
-                          FormatNumber(.Rows(0).Item(11).ToString()) & vbNewLine &
+                          If(If(IsDBNull(.Rows(0).Item(11)), False, .Rows(0).Item(11)), FormatNumber(.Rows(0).Item(10) * 5 / 100), 0) & vbNewLine &
                           FormatNumber(.Rows(0).Item(12).ToString())
             End With
             'Fill invoice flag list and fix decimal, column size
@@ -135,81 +143,79 @@ Module General
         If filepath Is Nothing Then
             filepath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
         End If
+        Using WForm As New DevExpress.Utils.WaitDialogForm("Please wait")
+            Try
+                InvoiceForm.DGV1.CurrentCell = InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.Rows.Count - 1).Cells(0)
 
-        Dim WForm As New WaitForm1
+                WForm.Show()
 
-        Try
-            InvoiceForm.DGV1.CurrentCell = InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.Rows.Count - 1).Cells(0)
+                Dim xlApp As New Excel.Application
+                Dim xlWorkBook As Excel.Workbook = xlApp.Workbooks.Open(filepath)
+                xlWorkBook = xlApp.Workbooks.Open(filepath)
+                Dim xlsheets As Excel.Sheets = DirectCast(xlWorkBook.Worksheets, Excel.Sheets)
+                Dim xlsheet As Excel.Worksheet = DirectCast(xlWorkBook.Worksheets(1), Excel.Worksheet)
+                'Dim xlSheet = xlWorkBook.Worksheets(1)
+                InvoiceForm.disctxt.Text = "0"
+                InvoiceForm.TrmCred.Checked = True
+                InvoiceForm.TermTXT.Text = "30"
+                InvoiceForm.cnametxt.Text = "Middle east Fuji LLC"
+                InvoiceForm.lpotxt.Text = xlsheet.Range("h9").Value.ToString & "/" & xlsheet.Range("h10").Value.ToString
+                InvoiceForm.DateTimePicker1.Text = xlsheet.Range("h8").Value.ToString
+                InvoiceForm.trntxt.Text = xlsheet.Range("h11").Value.ToString
+                InvoiceForm.Ordbycb.Text = xlsheet.Range("a12").Value.ToString.Split(":"c)(1).Substring(1)
+                Dim i As Integer = 16
+                Dim sno As Integer = 1
+                While True
+                    If Not xlsheet.Range("d" & i).Value Is Nothing Then
+                        If Not xlsheet.Range("a" & i).Value Is Nothing Then
+                            InvoiceForm.DGV1.Rows.Add(sno, xlsheet.Range("d" & i).Value, "PCS", CInt(xlsheet.Range("g" & i).Value),
+                                                          xlsheet.Range("i" & i).Value, 0)
+                            sno += 1
+                            If InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(0).RowIndex <>
+                                    -1 Then
+                                'calculate the total from price and quantity
+                                If InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(3).Value IsNot "" And
+                                    InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(4).Value IsNot "" Then
 
-            WForm.Show()
-
-            Dim xlApp As New Excel.Application
-            Dim xlWorkBook As Excel.Workbook = xlApp.Workbooks.Open(filepath)
-            xlWorkBook = xlApp.Workbooks.Open(filepath)
-            Dim xlsheets As Excel.Sheets = DirectCast(xlWorkBook.Worksheets, Excel.Sheets)
-            Dim xlsheet As Excel.Worksheet = DirectCast(xlWorkBook.Worksheets(1), Excel.Worksheet)
-            'Dim xlSheet = xlWorkBook.Worksheets(1)
-            InvoiceForm.disctxt.Text = "0"
-            InvoiceForm.TrmCred.Checked = True
-            InvoiceForm.TermTXT.Text = "30"
-            InvoiceForm.cnametxt.Text = "Middle east Fuji LLC"
-            InvoiceForm.lpotxt.Text = xlsheet.Range("h9").Value.ToString & "/" & xlsheet.Range("h10").Value.ToString
-            InvoiceForm.DateTimePicker1.Text = xlsheet.Range("h8").Value.ToString
-            InvoiceForm.trntxt.Text = xlsheet.Range("h11").Value.ToString
-            InvoiceForm.Ordbycb.Text = xlsheet.Range("a12").Value.ToString.Split(":"c)(1).Substring(1)
-            Dim i As Integer = 16
-            Dim sno As Integer = 1
-            While True
-                If Not xlsheet.Range("d" & i).Value Is Nothing Then
-                    If Not xlsheet.Range("a" & i).Value Is Nothing Then
-                        InvoiceForm.DGV1.Rows.Add(sno, xlsheet.Range("d" & i).Value, "PCS", CInt(xlsheet.Range("g" & i).Value),
-                                                      xlsheet.Range("i" & i).Value, 0)
-                        sno += 1
-                        If InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(0).RowIndex <>
-                                -1 Then
-                            'calculate the total from price and quantity
-                            If InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(3).Value IsNot "" And
-                                InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(4).Value IsNot "" Then
-
-                                InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(5).Value =
-                                   InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(3).Value *
-                                   InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(4).Value
+                                    InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(5).Value =
+                                       InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(3).Value *
+                                       InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(4).Value
+                                End If
                             End If
+                        Else
+                            InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(1).Value =
+                                CStr(InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(1).Value) &
+                                " " & CStr(xlsheet.Range("d" & i).Value)
                         End If
                     Else
-                        InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(1).Value =
-                            CStr(InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(1).Value) &
-                            " " & CStr(xlsheet.Range("d" & i).Value)
+                        If xlsheet.Range("a" & i + 4).Value.ToString = "ACC" Then
+                            i += 4
+                        Else
+                            Exit While
+                        End If
                     End If
-                Else
-                    If xlsheet.Range("a" & i + 4).Value.ToString = "ACC" Then
-                        i += 4
-                    Else
-                        Exit While
-                    End If
-                End If
-                i += 1
+                    i += 1
 
-            End While
-            With InvoiceForm.DGV1
-                .Columns(3).DefaultCellStyle.Format() = "0.00"
-                .Columns(4).DefaultCellStyle.Format() = "0.00"
-                .Columns(5).DefaultCellStyle.Format() = "0.00"
-            End With
-            xlWorkBook.Close()
-            xlApp.Quit()
-            WForm.Close()
-            'InvoiceForm.Hide()
-        Catch ex As Exception
-            WForm.Close()
-            MsgBox(ex.ToString)
-            Return False
-        Finally
-            'Force clean up
-            GC.Collect()
-            GC.WaitForPendingFinalizers()
-        End Try
-
+                End While
+                With InvoiceForm.DGV1
+                    .Columns(3).DefaultCellStyle.Format() = "0.00"
+                    .Columns(4).DefaultCellStyle.Format() = "0.00"
+                    .Columns(5).DefaultCellStyle.Format() = "0.00"
+                End With
+                xlWorkBook.Close()
+                xlApp.Quit()
+                WForm.Close()
+                'InvoiceForm.Hide()
+            Catch ex As Exception
+                WForm.Close()
+                MsgBox(ex.ToString)
+                Return False
+            Finally
+                'Force clean up
+                GC.Collect()
+                GC.WaitForPendingFinalizers()
+            End Try
+        End Using
         Return True
 
     End Function

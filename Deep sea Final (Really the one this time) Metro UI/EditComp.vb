@@ -1,7 +1,8 @@
 ﻿Public Class EditComp
     Dim dt As DataTable = Main.DBOp.LoadCompLST
     Private Sub ncokbtn_Click(sender As Object, e As EventArgs) Handles ncokbtn.Click
-        If Main.DBOp.AddCompToDB(ecnametxt.Text, ecitytxt.Text, etrntxt.Text, eemailtxt.Text, eDiscText.Text) Then
+        Console.Write(ecnamelb.SelectedValue)
+        If Main.DBOp.UpdateComp(dt.Rows(ecnamelb.SelectedIndex)(0), ecnametxt.Text, ecitytxt.Text, etrntxt.Text, eemailtxt.Text, eDiscText.Text) Then
             MsgBox("Saved", vbOKOnly, "Saved")
             Close()
         End If
@@ -18,11 +19,17 @@
         Close()
     End Sub
 
+    Private Function validateDbText(text As Object) As String
+        Return If(IsDBNull(text), "", text)
+    End Function
+
     Private Sub ecnamelb_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ecnamelb.SelectedIndexChanged
-        ecnametxt.Text = dt.Rows(ecnamelb.SelectedIndex)(1)
-        etrntxt.Text = dt.Rows(ecnamelb.SelectedIndex)(2)
-        eDiscText.Text = dt.Rows(ecnamelb.SelectedIndex)(3)
-        ecitytxt.Text = dt.Rows(ecnamelb.SelectedIndex)(4)
-        eemailtxt.Text = dt.Rows(ecnamelb.SelectedIndex)(5)
+
+        ecnametxt.Text = validateDbText(dt.Rows(ecnamelb.SelectedIndex)(1))
+        etrntxt.Text = validateDbText(dt.Rows(ecnamelb.SelectedIndex)(2))
+        eDiscText.Text = validateDbText(dt.Rows(ecnamelb.SelectedIndex)(3))
+        ecitytxt.Text = validateDbText(dt.Rows(ecnamelb.SelectedIndex)(4))
+        eemailtxt.Text = validateDbText(dt.Rows(ecnamelb.SelectedIndex)(5))
+
     End Sub
 End Class

@@ -152,22 +152,24 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    Public Function LoadInvoicesDGV() As DataTable
+
+    Public Async Function LoadInvoicesDGV() As Task(Of DataTable)
 
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
                 cmd.CommandText = "GetInvoices"
                 cmd.CommandType = CommandType.StoredProcedure
                 Dim dt As New DataTable
-
-                Try
-                    cn.Open()
-                    dt.Load(cmd.ExecuteReader)
-                    cn.Close()
-                Catch ex As Exception
-                    MsgBox(ex.ToString)
-                End Try
-
+                Using da As New SqlDataAdapter(cmd)
+                    Await Task.Run(Function() da.Fill(dt))
+                End Using
+                'Try
+                '    cn.Open()
+                '    dt.Load(cmd.ExecuteReader)
+                '    cn.Close()
+                'Catch ex As Exception
+                '    MsgBox(ex.ToString)
+                'End Try
                 Return dt
 
             End Using
@@ -275,6 +277,50 @@ Public Class DatabaseOperations
         End Using
         Return res
     End Function
+
+    Public Function ReadAllInvocies() As List(Of List(Of DataTable))
+        Dim res As New List(Of List(Of DataTable))
+        Dim index As Integer = 0
+        Using cn As New SqlConnection(ConnectionString)
+            Using cmd As New SqlCommand With {.Connection = cn}
+                cn.Open()
+                While index <= 712
+                    Dim temp As New List(Of DataTable)
+                    cmd.Parameters.Clear()
+                    cmd.CommandText = "GetInvoiceHeadder"
+                    cmd.CommandType = CommandType.StoredProcedure
+                    Dim dt As New DataTable
+                    cmd.Parameters.AddWithValue("@InvoiceNumber", index)
+                    Try
+                        dt.Load(cmd.ExecuteReader)
+                    Catch ex As Exception
+                        'cn.Close()
+                        Console.WriteLine(ex.ToString)
+                        Console.WriteLine("Continue While")
+                        Continue While
+                    End Try
+                    cmd.Parameters.Clear()
+                    cmd.CommandText = "GetInvoiceFlags"
+
+                    Dim dtinvdata As New DataTable
+                    cmd.Parameters.AddWithValue("@InvoiceNumber", index)
+                    Try
+                        dtinvdata.Load(cmd.ExecuteReader)
+                    Catch ex As Exception
+                        cn.Close()
+                        MsgBox(ex.ToString)
+                    End Try
+                    temp.Add(dt)
+                    temp.Add(dtinvdata)
+                    res.Add(temp)
+                    index += 1
+                End While
+                cn.Close()
+            End Using
+        End Using
+        Return res
+    End Function
+
     Public Function GetOrdById(OrdByName As String, compID As String) As Integer
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
@@ -304,7 +350,20 @@ Public Class DatabaseOperations
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
 
-                cmd.CommandText = "SELECT Id AS [Reference Number], Company AS [Company Name], Amount, Date AS [Date] FROM Expense"
+                cmd.CommandText = <SQL>
+
+                    SELECT
+                        Id AS [Reference Number],
+                        Date AS [Date],
+                        Supplier AS [Supplier Name],
+                        Trn AS [TRN Number],
+                        CAST(Amount - (Amount / (100/5 + 1)) AS numeric(9, 2)) AS [Amount before VAT],
+                        CAST(Amount / (100/5 + 1) AS numeric(9, 2)) AS [VAT],
+                        CAST(Amount AS numeric(9, 2)) AS [Final amount]
+                    FROM Expense
+                    ORDER BY Date DESC
+
+                </SQL>.Value
                 cmd.CommandType = CommandType.Text
 
                 Dim dt As New DataTable
@@ -399,6 +458,7 @@ Public Class DatabaseOperations
                     cn.Open()
                     Try
                         cmd.ExecuteNonQuery()
+                        Console.WriteLine(String.Format("Total: {0}", .prcnos.Text.Split(vbNewLine)(0)))
                     Catch ex As Exception
                         MsgBox(ex.ToString)
                         MsgBox(ex.ToString, MessageBoxIcon.Error, "Error")
@@ -598,21 +658,24 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    Public Function AddExpenses(ExpFrm As Expenses) As Boolean
+    Public Function UpdateComp(cid As String, cname As String, City As String, trn As String, email As String, Disc As Integer) As Boolean
+
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
                 cmd.CommandText = <SQL>
 
-                    INSERT INTO 
-                        Expense (Id, Company, Amount, Date)
+                    UPDATE Companies 
+                    SET CompName = @cname, City = @City, TRN = @trn, Email = @email, Discount = @Disc
+                    WHERE CompID = @cid
 
-                    VALUES 
-                        (@Id, @company, @amount, @date)</SQL>.Value
+                </SQL>.Value
 
-                cmd.Parameters.AddWithValue("@Id", ExpFrm.aereftxt.Text)
-                cmd.Parameters.AddWithValue("@company", ExpFrm.aecomptxt.Text)
-                cmd.Parameters.AddWithValue("@amount", ExpFrm.aeammounttxt.Text)
-                cmd.Parameters.AddWithValue("@date", ExpFrm.aedtpicker.Value)
+                cmd.Parameters.AddWithValue("@cid", cid)
+                cmd.Parameters.AddWithValue("@cname", cname)
+                cmd.Parameters.AddWithValue("@City", City)
+                cmd.Parameters.AddWithValue("@trn", trn)
+                cmd.Parameters.AddWithValue("@email", email)
+                cmd.Parameters.AddWithValue("@Disc", Disc)
 
 
                 Dim dt As New DataTable
@@ -623,6 +686,40 @@ Public Class DatabaseOperations
                     cn.Close()
                 Catch ex As Exception
                     MsgBox(ex.ToString, MessageBoxIcon.Error, "Error")
+                    Return False
+                End Try
+
+                Return True
+
+            End Using
+        End Using
+    End Function
+    Public Function AddExpenses(ExpFrm As Expenses) As Boolean
+        Using cn As New SqlConnection(ConnectionString)
+            Using cmd As New SqlCommand With {.Connection = cn}
+                cmd.CommandText = <SQL>
+
+                    INSERT INTO 
+                        Expense (Id, Supplier, Amount, Date, Trn)
+
+                    VALUES 
+                        (@Id, @supplier, @amount, @date, @Trn)</SQL>.Value
+
+                cmd.Parameters.AddWithValue("@Id", ExpFrm.aereftxt.Text)
+                cmd.Parameters.AddWithValue("@supplier", ExpFrm.aecomptxt.Text)
+                cmd.Parameters.AddWithValue("@amount", If(String.IsNullOrEmpty(ExpFrm.aeammounttxt.Text), DBNull.Value, CDbl(ExpFrm.aeammounttxt.Text)))
+                cmd.Parameters.AddWithValue("@date", ExpFrm.aedtpicker.Value)
+                cmd.Parameters.AddWithValue("@Trn", If(String.IsNullOrEmpty(ExpFrm.aetrntxt.Text), DBNull.Value, ExpFrm.aetrntxt.Text))
+
+
+                Dim dt As New DataTable
+
+                Try
+                    cn.Open()
+                    dt.Load(cmd.ExecuteReader)
+                    cn.Close()
+                Catch ex As Exception
+                    MsgBox(ex.ToString)
                     Return False
                 End Try
 
