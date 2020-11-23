@@ -77,10 +77,10 @@ Public Class PrintCredNote
                                 e.Graphics.DrawString(InvoiceForm.DGV1.Columns(If(colll > 6, colll - 2, colll)).HeaderText,
                                                               New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
                             ElseIf colll = 5 Then
-                                Console.WriteLine("Write ""Disc.""")
+                                'Console.WriteLine("Write ""Disc.""")
                                 e.Graphics.DrawString("Disc.", New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
                             ElseIf colll = 6 Then
-                                Console.WriteLine("Write ""VAT""")
+                                'Console.WriteLine("Write ""VAT""")
                                 e.Graphics.DrawString("VAT", New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
                             End If
 
@@ -128,7 +128,7 @@ Public Class PrintCredNote
                                     e.Graphics.DrawString(InvoiceForm.DGV1.Rows(thisNDX).Cells(If(colll > 5, colll - 2, colll)).FormattedValue.ToString(),
                                                   New Font("Calibria", 10, FontStyle.Regular), brush, rc, fmt)
                                 ElseIf colll = 5 Then
-                                    Console.WriteLine((InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) & " * 5 / 100 = " & (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) * 5 / 100)
+                                    'Console.WriteLine((InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) & " * 5 / 100 = " & (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) * 5 / 100)
 
                                     e.Graphics.DrawString((InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100).ToString("N2"), New Font("Calibria", 10, FontStyle.Regular), brush, rc, fmt)
                                 ElseIf colll = 6 Then

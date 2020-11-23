@@ -117,10 +117,10 @@ Public Class PrintPreview
                                 e.Graphics.DrawString(InvoiceForm.DGV1.Columns(If(colll > 6, colll - 2, colll)).HeaderText,
                                                               New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
                             ElseIf colll = 5 Then
-                                Console.WriteLine("Write ""Disc.""")
+                                'Console.WriteLine("Write ""Disc.""")
                                 e.Graphics.DrawString("Disc.", New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
                             ElseIf colll = 6 Then
-                                Console.WriteLine("Write ""VAT""")
+                                'Console.WriteLine("Write ""VAT""")
                                 e.Graphics.DrawString("VAT", New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
                             End If
 
@@ -168,7 +168,7 @@ Public Class PrintPreview
                                     e.Graphics.DrawString(InvoiceForm.DGV1.Rows(thisNDX).Cells(If(colll > 5, colll - 2, colll)).FormattedValue.ToString(),
                                                   New Font("Calibria", 10, FontStyle.Regular), brush, rc, fmt)
                                 ElseIf colll = 5 Then
-                                    Console.WriteLine((InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) & " * 5 / 100 = " & (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) * 5 / 100)
+                                    'Console.WriteLine((InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) & " * 5 / 100 = " & (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) * 5 / 100)
 
                                     e.Graphics.DrawString((InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100).ToString("N2"), New Font("Calibria", 10, FontStyle.Regular), brush, rc, fmt)
                                 ElseIf colll = 6 Then
@@ -330,6 +330,7 @@ Public Class PrintPreview
         End If
         'PrintPreviewControl1.Document = PrintDocument1
         ComboBox2.SelectedIndex = 0
+
     End Sub
 
     Private Sub TrackBar1_Scroll(sender As Object, e As EventArgs) Handles TrackBar1.Scroll
@@ -358,11 +359,18 @@ Public Class PrintPreview
         Dim pset As PrinterSettings = PrintDocument1.PrinterSettings
         PrintDocument1.PrinterSettings.PrinterName = "Microsoft Print to PDF"
         PrintDocument1.PrinterSettings.PrintToFile = True
-        If Not IO.Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) & "\Invoices-PDF\") Then
-            IO.Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) & "\Invoices-PDF\")
+        Dim savePath As String = String.Format("{0}\Invoices-PDF\{1}\{2}\",
+                                               Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                                               InvoiceForm.DateTimePicker1.Value.Year,
+                                               MonthName(InvoiceForm.DateTimePicker1.Value.Month))
+        If Not IO.Directory.Exists(savePath) Then
+            IO.Directory.CreateDirectory(savePath)
         End If
-        PrintDocument1.PrinterSettings.PrintFileName = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) &
-            "\Invoices-PDF\" & InvoiceForm.invnotxt.Text & "," & InvoiceForm.cnametxt.Text & ".pdf"
+        PrintDocument1.PrinterSettings.PrintFileName = String.Format("{0}\{1},{2}.pdf",
+                                                                     savePath,
+                                                                     InvoiceForm.invnotxt.Text,
+                                                                     InvoiceForm.cnametxt.Text)
+
         If (PrintDocument1.PrinterSettings.IsValid) Then
             PrintDocument1.Print()
         End If
