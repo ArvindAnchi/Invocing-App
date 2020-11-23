@@ -4,8 +4,8 @@
         Close()
     End Sub
 
-    Private Sub SrchBtn_Click(sender As Object, e As EventArgs) Handles SrchBtn.Click
-        Using dt As DataTable = mainfrm.DBOp.LoadInvoicesDGV()
+    Private Async Sub SrchBtn_Click(sender As Object, e As EventArgs) Handles SrchBtn.Click
+        Using dt As DataTable = Await mainfrm.DBOp.LoadInvoicesDGV()
             Dim searchtbtext As String = ""
             Dim dataView As DataView = dt.DefaultView
             Dim lastindex = DataGridView1.RowCount - 2
