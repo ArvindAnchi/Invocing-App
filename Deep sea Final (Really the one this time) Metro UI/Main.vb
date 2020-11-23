@@ -8,9 +8,9 @@ Public Class Main
 
     Public InvoicesDataTable As DataTable
     'Dim thread As Threading.Thread = New Threading.Thread(AddressOf RefreshDGVthread) With {.IsBackground = True}
-    Public Sub RefreshDGVthread()
+    Public Async Sub RefreshDGVthread()
         Try
-            Using dt As DataTable = DBOp.LoadInvoicesDGV()
+            Using dt As DataTable = Await DBOp.LoadInvoicesDGV()
                 InvoicesDataTable = dt
                 With InvoicesDGV
                     .DataSource = InvoicesDataTable
@@ -20,7 +20,7 @@ Public Class Main
 
                 Autoweight(InvoicesDGV, {8, 8, 32, 15, 8, 5, 8, 8, 8, 8})
 
-                Refresh()
+                'Refresh()
                 ISDateDTP.Value = CDate("1/1/2020")
                 BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
                     " Total: " & dt.Compute("SUM(Total)", dt.DefaultView.RowFilter).ToString &
@@ -51,17 +51,20 @@ Public Class Main
             infrm.ShowDialog()
         End Using
     End Sub
+
     Private Sub PrintBtnItm_ItemClick(sender As Object, e As EventArgs) Handles PrintBtnItm.ItemClick
         For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
-            Using printprev As New PrintPreview
-                Dim invfrm As New InvoiceForm
-                FillInvoiceData(invfrm, row)
-                invfrm.Show()
-                printprev.InvoiceForm = invfrm
-                printprev.ShowDialog()
-                printprev.PrintBtn.PerformClick()
-                invfrm.Dispose()
-            End Using
+            If If(IsDBNull(row.Cells(8).Value), True, If(CBool(row.Cells(8).Value), False, True)) Then
+                Using printprev As New PrintPreview
+                    Using invfrm As New InvoiceForm
+                        FillInvoiceData(invfrm, row)
+                        invfrm.Show()
+                        printprev.InvoiceForm = invfrm
+                        printprev.ShowDialog()
+                        printprev.PrintBtn.PerformClick()
+                    End Using
+                End Using
+            End If
         Next
     End Sub
     Private Sub OpenBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles OpenBtnItm.ItemClick
@@ -75,17 +78,8 @@ Public Class Main
             End Using
         Next
     End Sub
-    Private Sub PrintBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles PrintBtnItm.ItemClick
-        For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
-            Using printprev As New PrintPreview
-                Using invfrm As New InvoiceForm
-                    FillInvoiceData(invfrm, row)
-                    printprev.InvoiceForm = invfrm
-                End Using
-            End Using
-        Next
-    End Sub
-    Private Sub CanceledBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles CanceledBtnItm.ItemClick
+
+    Private Async Sub CanceledBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles CanceledBtnItm.ItemClick
         If MsgBox("Invoice canceled?", vbYesNo, "Cancel") = vbYes Then
             For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
                 If row.Cells(6).Value.ToString = "True" Then
@@ -94,10 +88,10 @@ Public Class Main
                     DBOp.InvoiceCanceled(CInt(row.Cells(0).Value.ToString), True)
                 End If
             Next
-            RefreshDGV()
+            Await RefreshDGV()
         End If
     End Sub
-    Private Sub DeleteBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles DeleteBtnItm.ItemClick
+    Private Async Sub DeleteBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles DeleteBtnItm.ItemClick
         If MsgBox("Are you sure you want to delete the invoice?", vbYesNo, "Delete invoice") = vbYes Then
             For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
                 If InputBox("Enter invoice number: " & row.Cells(0).Value.ToString &
@@ -107,10 +101,10 @@ Public Class Main
 
                 End If
             Next
-            RefreshDGV()
+            Await RefreshDGV()
         End If
     End Sub
-    Private Sub PaidBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles PaidBtnItm.ItemClick
+    Private Async Sub PaidBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles PaidBtnItm.ItemClick
         If MsgBox("Paid?", vbYesNo, "Paid") = vbYes Then
             For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
                 If row.Cells(5).Value.ToString <> "True" Then
@@ -123,7 +117,7 @@ Public Class Main
                 DBOp.InvoicePaid(CInt(row.Cells(0).Value.ToString), False, Nothing)
             Next
         End If
-        RefreshDGV()
+        Await RefreshDGV()
     End Sub
     Private Sub GenStmtBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles GenStmtBtnItm.ItemClick
         Using stfrm As New StatementForm
@@ -329,4 +323,81 @@ Public Class Main
                     " VAT: " & InvoicesDataTable.Compute("SUM(VAT)", dataView.RowFilter).ToString
         InvoicesDGV.Enabled = True
     End Sub
+
+    Private Sub InvoicesDGV_CellMouseDown(sender As Object, e As DataGridViewCellMouseEventArgs) Handles InvoicesDGV.CellMouseDown
+        If e.Button = MouseButtons.Right Then
+            InvoicesDGV.CurrentCell = InvoicesDGV.Rows(e.RowIndex).Cells(0)
+        End If
+    End Sub
+
+    Private Sub OpenToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenToolStripMenuItem.Click
+        For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
+            Using invfrm As New InvoiceForm
+                invfrm.Enabled = False
+                FillInvoiceData(invfrm, row)
+                invfrm.Enabled = True
+                invfrm.saveBtnEnable = False
+                invfrm.ShowDialog()
+            End Using
+        Next
+    End Sub
+
+    Private Async Sub AToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AToolStripMenuItem.Click
+        If MsgBox("Paid?", vbYesNo, "Paid") = vbYes Then
+            For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
+                If row.Cells(5).Value.ToString <> "True" Then
+                    DBOp.InvoicePaid(CInt(row.Cells(0).Value.ToString), True, CType(Now, String))
+                End If
+            Next
+
+        Else
+            For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
+                DBOp.InvoicePaid(CInt(row.Cells(0).Value.ToString), False, Nothing)
+            Next
+        End If
+        Await RefreshDGV()
+    End Sub
+
+    Private Async Sub DeleteToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DeleteToolStripMenuItem.Click
+        If MsgBox("Invoice canceled?", vbYesNo, "Cancel") = vbYes Then
+            For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
+                If row.Cells(6).Value.ToString = "True" Then
+                    DBOp.InvoiceCanceled(CInt(row.Cells(0).Value.ToString), False)
+                Else
+                    DBOp.InvoiceCanceled(CInt(row.Cells(0).Value.ToString), True)
+                End If
+            Next
+            Await RefreshDGV()
+        End If
+    End Sub
+
+    Private Async Sub DeleteToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles DeleteToolStripMenuItem1.Click
+        If MsgBox("Are you sure you want to delete the invoice?", vbYesNo, "Delete invoice") = vbYes Then
+            For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
+                If InputBox("Enter invoice number: " & row.Cells(0).Value.ToString &
+                                    " to confirm deletion of invoice") = row.Cells(0).Value.ToString Then
+
+                    DBOp.RemoveInvoice(CInt(row.Cells(0).Value.ToString))
+
+                End If
+            Next
+            Await RefreshDGV()
+        End If
+    End Sub
+
+    Private Sub PrintToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PrintToolStripMenuItem.Click
+        For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
+            If If(IsDBNull(row.Cells(8).Value), True, If(CBool(row.Cells(8).Value), False, True)) Then
+                Using printprev As New PrintPreview
+                    Using invfrm As New InvoiceForm
+                        FillInvoiceData(invfrm, row)
+                        invfrm.Show()
+                        printprev.InvoiceForm = invfrm
+                        printprev.ShowDialog()
+                    End Using
+                End Using
+            End If
+        Next
+    End Sub
+
 End Class
