@@ -8,7 +8,7 @@ Public Class InvoiceForm
     Dim flags As String() = File.ReadAllLines(Application.StartupPath + "\Flags")
     Public term As Integer = 30
     Public saveBtnEnable As Boolean = True
-
+    Public updatePrcLbl As Boolean = True
     Private Sub InvoiceForm_Load(sender As Object, e As EventArgs) Handles Me.Load
         AllowDrop = True
         If DGV1.RowCount > 13 Then
@@ -31,6 +31,7 @@ Public Class InvoiceForm
         For value As Integer = 0 To dt.Rows.Count - 1
             cnametxt.Items.Add(dt.Rows(value)(1))
         Next
+
     End Sub
     Private Sub Cnametxt_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cnametxt.SelectedIndexChanged
 
@@ -72,12 +73,16 @@ Public Class InvoiceForm
         dt.Dispose()
         With Main
             .RefreshDGVthread()
-            .ISearchTB.Clear()
-            .ISDateDTP.Value = CDate("1/1/2020")
-            .IEDateDTP.Value = Today
+            '.ISearchTB.Clear()
+            '.ISDateDTP.Value = CDate("1/1/2020")
+            '.IEDateDTP.Value = Today
             Dim dataView As DataView = .InvoicesDataTable.DefaultView
+            If String.IsNullOrEmpty(.ISearchTB.Text) Then
+                dataView.RowFilter = ""
+            Else
+                dataView.RowFilter = If(.ISearchTB.Text(0) <> "(", .DVRowFilter(.PaidRB.Checked, .RetcanRB.Checked, .UPaidRB.Checked), .FilterString)
+            End If
             .InvoicesDGV.DataSource = dataView
-            dataView.RowFilter = ""
             .BarStaticItem1.Caption = "Records: " & .InvoicesDGV.RowCount &
                         " Total: " & .InvoicesDataTable.Compute("SUM(Total)", dataView.RowFilter).ToString &
                         " VAT: " & .InvoicesDataTable.Compute("SUM(VAT)", dataView.RowFilter).ToString
@@ -153,13 +158,13 @@ Public Class InvoiceForm
     End Sub
 
 
-    Private Sub ButtonItem14_Click(sender As Object, e As EventArgs) Handles SaveRibBtn.Click
+    Private Async Sub ButtonItem14_Click(sender As Object, e As EventArgs) Handles SaveRibBtn.Click
         If DGV1.RowCount > 1 Then
             If Main.DBOp.WriteInvoice(Me) Then
                 SaveRibBtn.ImageOptions.SvgImage = My.Resources.actions_checkcircled
                 SaveRibBtn.Enabled = False
             End If
-            RefreshDGV()
+            Await RefreshDGV()
             FillInvoiceData(Me)
             SaveRibBtn.ImageOptions.SvgImage = My.Resources.actions_checkcircled
             SaveRibBtn.Enabled = False
@@ -184,14 +189,14 @@ Public Class InvoiceForm
                 End If
 
             End If
-            If DGV1.Rows(0).Cells(3).Value IsNot Nothing AndAlso DGV1.Rows(0).Cells(4).Value IsNot Nothing Then
+            If updatePrcLbl AndAlso DGV1.Rows(0).Cells(3).Value IsNot Nothing AndAlso DGV1.Rows(0).Cells(4).Value IsNot Nothing Then
                 Dim total As Double = 0
                 Dim disc As Double = 0
 
                 For Each row As DataGridViewRow In DGV1.Rows
                     total += CDbl(row.Cells(5).Value)
-
                 Next
+
                 disc = total * CInt(disctxt.Text) / 100
                 prcnos.Text = FormatNumber(total) & vbNewLine &
                 FormatNumber(disc) & vbNewLine &
@@ -206,7 +211,7 @@ Public Class InvoiceForm
             End With
 
         Catch ex As Exception
-            'MsgBox(ex.ToString)
+            Console.WriteLine(ex.ToString)
             If String.IsNullOrEmpty(disctxt.Text) Then
                 disctxt.Text = 0
                 disctxt.SelectAll()
@@ -478,5 +483,38 @@ Public Class InvoiceForm
             SaveRibBtn.ImageOptions.SvgImage = My.Resources.save
             SaveRibBtn.Enabled = True
         End If
+    End Sub
+    '---------Write existing invoices to seperate folders by date--------------
+    Private Sub Button1_Click(sender As Object, e As EventArgs) 'Handles Button1.Click
+        For Each Invoice In Main.DBOp.ReadAllInvocies
+            Try
+                'Clear all rows from DGV to add datasource
+                DGV1.Rows.Clear()
+                'Console.Write(Invoice)
+                Dim InvoiceData As DataTable = Invoice(0)
+                With InvoiceData
+                    Dim invno = .Rows(0).Item(0).ToString()
+                    Dim cname = .Rows(0).Item(2).ToString()
+                    Dim invDate = CDate(.Rows(0).Item(1).ToString)
+
+                    Dim savePath As String = String.Format("{0}\Invoices-PDF\{1}\{2}\",
+                                               Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                                               invDate.Year,
+                                               MonthName(invDate.Month))
+
+                    If Not IO.Directory.Exists(savePath) Then
+                        IO.Directory.CreateDirectory(savePath)
+                    End If
+
+                    File.Move(String.Format("{0}\Invoices-PDF\{1},{2}.pdf",
+                                            Environment.GetFolderPath(Environment.SpecialFolder.Desktop), invno, cname),
+                              String.Format("{0}\{1},{2}.pdf", savePath, invno, cname))
+                End With
+
+            Catch ex As Exception
+                Console.WriteLine(ex.ToString)
+                Continue For
+            End Try
+        Next
     End Sub
 End Class
