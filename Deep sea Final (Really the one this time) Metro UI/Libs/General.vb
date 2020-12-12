@@ -34,33 +34,43 @@ Module General
             Return image
         End Try
     End Function
-    Async Function RefreshDGV() As Task(Of Boolean)
-        With Main
-            With .InvoicesDGV
-                Using dt As DataTable = Await dbop.LoadInvoicesDGV()
-                    Dim dataView As DataView = dt.DefaultView
-                    If Not String.IsNullOrEmpty(Main.ISearchTB.Text) Then
-                        dataView.RowFilter = If(Main.ISearchTB.Text(0) <> "(", Main.DVRowFilter(Main.PaidRB.Checked, Main.RetcanRB.Checked, Main.UPaidRB.Checked), Main.FilterString)
-                    End If
-                    .DataSource = dataView
-                    .Columns(4).DefaultCellStyle.Format() = "0.00"
+    Function RefreshMainDGV() As Boolean
+        Try
+            With Main
+                Using dt As DataTable = dbop.GetInvoiceListToPopulateInvoiceDGV()
+                    With .InvoicesDGV
+                        Dim dataView As DataView = dt.DefaultView
+                        If Not String.IsNullOrEmpty(Main.ISearchTB.Text) Then
+                            dataView.RowFilter = If(Main.ISearchTB.Text(0) <> "(", Main.DVRowFilter(Main.PaidRB.Checked, Main.RetcanRB.Checked, Main.UPaidRB.Checked), Main.FilterString)
+                        End If
+                        .DataSource = dataView
+                        .Columns(4).DefaultCellStyle.Format() = "0.00"
+                        .Columns(5).DefaultCellStyle.Format() = "0.00"
+                    End With
+                    .InvoicesDataTable = dt
+                    SetDGVFillWeight(.InvoicesDGV, {8, 8, 32, 15, 8, 5, 8, 8, 8, 8})
+                    .ISDateDTP.Value = CDate("1/1/2020")
+                    .BarStaticItem1.Caption = "Records: " & .InvoicesDGV.RowCount &
+                        " Total: " & dt.Compute("SUM(Total)", dt.DefaultView.RowFilter).ToString &
+                        " VAT: " & dt.Compute("SUM(VAT)", dt.DefaultView.RowFilter).ToString
                 End Using
             End With
-            .BarStaticItem1.Caption = "Records: " & .InvoicesDGV.RowCount
-            Autoweight(.InvoicesDGV, {8, 8, 32, 15, 8, 5, 8, 8, 8})
-        End With
-        Return True
+            Return True
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+            Return False
+        End Try
     End Function
     Function FillInvoiceData(invfrm As InvoiceForm, Optional InvoicesDGVRow As DataGridViewRow = Nothing) As Boolean
         Try
             'Clear all rows from DGV to add datasource
-            invfrm.DGV1.Rows.Clear()
+            invfrm.InvoiceItemsDGV.Rows.Clear()
             'Populate details of invoice
             Dim Invoice As List(Of DataTable)
             If InvoicesDGVRow IsNot Nothing Then
-                Invoice = dbop.ReadInvocie(InvoicesDGVRow.Cells(0).Value.ToString)
+                Invoice = dbop.GetInvoiceData(InvoicesDGVRow.Cells(0).Value.ToString)
             Else
-                Invoice = dbop.ReadInvocie(Main.InvoicesDGV.Rows(0).Cells(0).Value.ToString)
+                Invoice = dbop.GetInvoiceData(Main.InvoicesDGV.Rows(0).Cells(0).Value.ToString)
             End If
             'Console.Write(Invoice)
             Dim InvoiceData As DataTable = Invoice(0)
@@ -95,23 +105,18 @@ Module General
                 Next
 
                 invfrm.disctxt.Text = Math.Floor(.Rows(0).Item(7))
-                invfrm.updatePrcLbl = False
-                invfrm.prcnos.Text = FormatNumber(.Rows(0).Item(8).ToString()) & vbNewLine &
-                          FormatNumber(.Rows(0).Item(9).ToString()) & vbNewLine &
-                          FormatNumber(.Rows(0).Item(10).ToString()) & vbNewLine &
-                          If(If(IsDBNull(.Rows(0).Item(11)), False, .Rows(0).Item(11)), FormatNumber(.Rows(0).Item(10) * 5 / 100), 0) & vbNewLine &
-                          FormatNumber(.Rows(0).Item(12).ToString())
             End With
             'Fill invoice flag list and fix decimal, column size
             For row As Integer = 0 To Invoice(1).Rows.Count - 1
-                invfrm.DGV1.Rows.Add(Invoice(1).Rows(row).ItemArray)
+                invfrm.InvoiceItemsDGV.Rows.Add(Invoice(1).Rows(row).ItemArray)
             Next
             'invfrm.DGV1.DataSource = Invoice(1)
-            With invfrm.DGV1
+            With invfrm.InvoiceItemsDGV
                 .Columns(4).DefaultCellStyle.Format() = "0.00"
                 .Columns(5).DefaultCellStyle.Format() = "0.00"
             End With
-            Autoweight(invfrm.DGV1, {4, 20, 6, 6, 6, 6})
+            UpdateInvoiceAmmountsDetails(invfrm)
+            SetDGVFillWeight(invfrm.InvoiceItemsDGV, {4, 20, 6, 6, 6, 6})
             invfrm.InvoiceFlagList = Invoice(1) 'Assign for changing datatable
         Catch ex As Exception
             MsgBox(ex.ToString)
@@ -127,7 +132,7 @@ Module General
             Return (s & "00").Substring(0, pos + 3)
         End If
     End Function
-    Function Autoweight(ByRef DGV As DataGridView, ByRef Weights As Integer()) As Boolean
+    Function SetDGVFillWeight(ByRef DGV As DataGridView, ByRef Weights As Integer()) As Boolean
         For col As Integer = 0 To DGV.ColumnCount - 1
             'MsgBox(DGV.Columns(col).HeaderText)
             Try
@@ -138,14 +143,14 @@ Module General
         Next
         Return True
     End Function
-
     Function Readmefexcel(InvoiceForm As InvoiceForm, Optional filepath As String = Nothing) As Boolean
         If filepath Is Nothing Then
             filepath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
         End If
+        Main.Cursor = Cursors.WaitCursor
         Using WForm As New DevExpress.Utils.WaitDialogForm("Please wait")
             Try
-                InvoiceForm.DGV1.CurrentCell = InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.Rows.Count - 1).Cells(0)
+                InvoiceForm.InvoiceItemsDGV.CurrentCell = InvoiceForm.InvoiceItemsDGV.Rows(InvoiceForm.InvoiceItemsDGV.Rows.Count - 1).Cells(0)
 
                 WForm.Show()
 
@@ -166,25 +171,25 @@ Module General
                 Dim i As Integer = 16
                 Dim sno As Integer = 1
                 While True
-                    If Not xlsheet.Range("d" & i).Value Is Nothing Then
-                        If Not xlsheet.Range("a" & i).Value Is Nothing Then
-                            InvoiceForm.DGV1.Rows.Add(sno, xlsheet.Range("d" & i).Value, "PCS", CInt(xlsheet.Range("g" & i).Value),
+                    If xlsheet.Range("d" & i).Value IsNot Nothing Then
+                        If xlsheet.Range("a" & i).Value IsNot Nothing Then
+                            InvoiceForm.InvoiceItemsDGV.Rows.Add(sno, xlsheet.Range("d" & i).Value, "PCS", CInt(xlsheet.Range("g" & i).Value),
                                                           xlsheet.Range("i" & i).Value, 0)
                             sno += 1
-                            If InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(0).RowIndex <>
+                            If InvoiceForm.InvoiceItemsDGV.Rows(InvoiceForm.InvoiceItemsDGV.CurrentRow.Index - 1).Cells(0).RowIndex <>
                                     -1 Then
                                 'calculate the total from price and quantity
-                                If InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(3).Value IsNot "" And
-                                    InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(4).Value IsNot "" Then
+                                If InvoiceForm.InvoiceItemsDGV.Rows(InvoiceForm.InvoiceItemsDGV.CurrentRow.Index - 1).Cells(3).Value IsNot "" And
+                                    InvoiceForm.InvoiceItemsDGV.Rows(InvoiceForm.InvoiceItemsDGV.CurrentRow.Index - 1).Cells(4).Value IsNot "" Then
 
-                                    InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(5).Value =
-                                       InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(3).Value *
-                                       InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(4).Value
+                                    InvoiceForm.InvoiceItemsDGV.Rows(InvoiceForm.InvoiceItemsDGV.CurrentRow.Index - 1).Cells(5).Value =
+                                       InvoiceForm.InvoiceItemsDGV.Rows(InvoiceForm.InvoiceItemsDGV.CurrentRow.Index - 1).Cells(3).Value *
+                                       InvoiceForm.InvoiceItemsDGV.Rows(InvoiceForm.InvoiceItemsDGV.CurrentRow.Index - 1).Cells(4).Value
                                 End If
                             End If
                         Else
-                            InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(1).Value =
-                                CStr(InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.CurrentRow.Index - 1).Cells(1).Value) &
+                            InvoiceForm.InvoiceItemsDGV.Rows(InvoiceForm.InvoiceItemsDGV.CurrentRow.Index - 1).Cells(1).Value =
+                                CStr(InvoiceForm.InvoiceItemsDGV.Rows(InvoiceForm.InvoiceItemsDGV.CurrentRow.Index - 1).Cells(1).Value) &
                                 " " & CStr(xlsheet.Range("d" & i).Value)
                         End If
                     Else
@@ -197,7 +202,7 @@ Module General
                     i += 1
 
                 End While
-                With InvoiceForm.DGV1
+                With InvoiceForm.InvoiceItemsDGV
                     .Columns(3).DefaultCellStyle.Format() = "0.00"
                     .Columns(4).DefaultCellStyle.Format() = "0.00"
                     .Columns(5).DefaultCellStyle.Format() = "0.00"
@@ -214,13 +219,14 @@ Module General
                 'Force clean up
                 GC.Collect()
                 GC.WaitForPendingFinalizers()
+                Main.Cursor = Cursors.Default
             End Try
         End Using
         Return True
 
     End Function
     Function ReadPDF(InvoiceForm As InvoiceForm, targetFileName As String) As Boolean
-
+        Main.Cursor = Cursors.WaitCursor
         Dim fileReader As String()
         fileReader = File.ReadAllLines(targetFileName)
 
@@ -254,7 +260,7 @@ Module General
                 InvoiceForm.DateTimePicker1.Text = lines(23)
                 InvoiceForm.trntxt.Text = "100293529200003"
                 InvoiceForm.Ordbycb.Text = InputBox("Order by", "", "Mr. Shyam")
-                InvoiceForm.DGV1.CurrentCell = InvoiceForm.DGV1.Rows(InvoiceForm.DGV1.Rows.Count - 1).Cells(0)
+                InvoiceForm.InvoiceItemsDGV.CurrentCell = InvoiceForm.InvoiceItemsDGV.Rows(InvoiceForm.InvoiceItemsDGV.Rows.Count - 1).Cells(0)
 
                 Dim flagline As New List(Of Integer)
 
@@ -290,7 +296,7 @@ Module General
                         line += 1
                         price = lines(line)
                         line += 4
-                        InvoiceForm.DGV1.Rows.Add("", disc, unit, qty, price)
+                        InvoiceForm.InvoiceItemsDGV.Rows.Add("", disc, unit, qty, price)
                         If lines(line).ToUpper.Contains("FLAG") Or lines(line).ToLower.Contains("subtotal") Then
                             Exit While
                         End If
@@ -301,7 +307,7 @@ Module General
                 Return False
             End If
         End Using
-
+        Main.Cursor = Cursors.Default
         Return True
     End Function
 
@@ -365,5 +371,38 @@ Module General
         End If
         Return False
 
+    End Function
+    Function UpdateInvoiceAmmountsDetails(InvoiceForm As InvoiceForm)
+        Try
+
+            With InvoiceForm
+                If .InvoiceItemsDGV.Rows(0).Cells(3).Value IsNot Nothing AndAlso .InvoiceItemsDGV.Rows(0).Cells(4).Value IsNot Nothing Then
+                    Dim total As Double = 0
+                    Dim disc As Double = 0
+                    Console.WriteLine(.InvoiceItemsDGV.Rows.Count)
+                    For rowindex As Integer = 0 To .InvoiceItemsDGV.Rows.Count - 1
+                        total += CDbl(.InvoiceItemsDGV.Rows(rowindex).Cells(5).Value)
+                        Console.WriteLine(String.Format("Row index: {0} | Ammount: {1}", .InvoiceItemsDGV.Rows(rowindex).Index, CDbl(.InvoiceItemsDGV.Rows(rowindex).Cells(5).Value)))
+                    Next
+
+                    disc = total * CInt(.disctxt.Text) / 100
+                    .prcnos.Text = FormatNumber(total) & vbNewLine &
+                        FormatNumber(disc) & vbNewLine &
+                        FormatNumber(total - disc) & vbNewLine &
+                        If(.VatCB.Checked, FormatNumber((total - disc) * 5 / 100), FormatNumber(0)) & vbNewLine &
+                        If(.VatCB.Checked, FormatNumber((total - disc) + ((total - disc) * 5 / 100)), FormatNumber(total - disc))
+
+                    Console.WriteLine("Total: " & total)
+                End If
+
+                With .InvoiceItemsDGV
+                    .Columns(4).DefaultCellStyle.Format = "0.00"
+                    .Columns(5).DefaultCellStyle.Format = "0.00"
+                End With
+            End With
+        Catch ex As Exception
+            Return False
+        End Try
+        Return True
     End Function
 End Module

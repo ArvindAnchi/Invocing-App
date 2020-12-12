@@ -2,7 +2,7 @@
 
 Public Class Expenses
     Private expDataTeable As DataTable
-
+    Private clickToFillFlag As Boolean = False
     Private Sub Expenses_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         DateTimePicker1.Value = New DateTime(Today.Year, Today.Month - 3, 1, 0, 0, 0)
         DateTimePicker2.Value = New DateTime(Today.Year, Today.Month - 1, Date.DaysInMonth(Today.Year, Today.Month - 1), 0, 0, 0)
@@ -14,7 +14,7 @@ Public Class Expenses
                 Ctrl.text = String.Empty
             End If
         Next
-        Autoweight(ExpDGV, {30, 30, 100, 50, 30, 30, 30})
+        SetDGVFillWeight(ExpDGV, {30, 30, 100, 50, 30, 30, 30})
         If ExpDGV.RowCount > 0 Then
             If ExpDGV.RowCount > 11 Then
                 For Each Line As FLine In {FLine1, FLine2, FLine3, FLine4, FLine5, FLine6, FLine8, FLine9}
@@ -28,7 +28,7 @@ Public Class Expenses
 
     End Sub
 
-    Private Sub aeclrlbtn_Click(sender As Object, e As EventArgs) Handles aeclrlbtn.Click
+    Private Sub Aeclrlbtn_Click(sender As Object, e As EventArgs) Handles aeclrlbtn.Click
         For Each Ctrl In Controls
             If TryCast(Ctrl, TextBox) IsNot Nothing Then
                 Ctrl.text = String.Empty
@@ -37,7 +37,7 @@ Public Class Expenses
         aedtpicker.Value = Today
     End Sub
 
-    Private Sub aeaddbtn_Click(sender As Object, e As EventArgs) Handles aeaddbtn.Click
+    Private Sub Aeaddbtn_Click(sender As Object, e As EventArgs) Handles aeaddbtn.Click
 
         Main.DBOp.AddExpenses(Me)
         ExpDGV.DataSource = Main.DBOp.GetExpenses
@@ -95,9 +95,10 @@ Public Class Expenses
             worksheet.Cells.EntireColumn.AutoFit()
             worksheet.Cells(1, 1).Select()
 
-            Dim SaveDialog As New SaveFileDialog()
-            SaveDialog.Filter = "Excel Files(*.xlsx)|*.xlsx|All files (*.*)|*.*"
-            SaveDialog.FilterIndex = 1
+            Dim SaveDialog As New SaveFileDialog With {
+                .Filter = "Excel Files(*.xlsx)|*.xlsx|All files (*.*)|*.*",
+                .FilterIndex = 1
+            }
 
             If SaveDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
                 workbook.SaveAs(SaveDialog.FileName)
@@ -115,7 +116,7 @@ Public Class Expenses
         End Try
     End Sub
 
-    Private Sub releaseObject(ByVal obj As Object)
+    Private Sub ReleaseObject(ByVal obj As Object)
         Try
             Runtime.InteropServices.Marshal.ReleaseComObject(obj)
             obj = Nothing
@@ -148,25 +149,25 @@ Public Class Expenses
         DateTimePicker2.Value = New DateTime(Today.Year, Today.Month - 1, Date.DaysInMonth(Today.Year, Today.Month - 1), 0, 0, 0)
     End Sub
 
-    Private Sub aereftxt_GotFocus(sender As Object, e As EventArgs) Handles aereftxt.GotFocus
+    Private Sub Aereftxt_GotFocus(sender As Object, e As EventArgs) Handles aereftxt.GotFocus
         aereftxt.SelectAll()
     End Sub
 
-    Private Sub aecomptxt_GotFocus(sender As Object, e As EventArgs) Handles aecomptxt.GotFocus
+    Private Sub Aecomptxt_GotFocus(sender As Object, e As EventArgs) Handles aecomptxt.GotFocus
         aecomptxt.SelectAll()
     End Sub
 
-    Private Sub aeammounttxt_GotFocus(sender As Object, e As EventArgs) Handles aeammounttxt.GotFocus
+    Private Sub Aeammounttxt_GotFocus(sender As Object, e As EventArgs) Handles aeammounttxt.GotFocus
         aeammounttxt.SelectAll()
     End Sub
 
-    Private Sub aetrntxt_GotFocus(sender As Object, e As EventArgs) Handles aetrntxt.GotFocus
+    Private Sub Aetrntxt_GotFocus(sender As Object, e As EventArgs) Handles aetrntxt.GotFocus
         aetrntxt.SelectAll()
     End Sub
 
     Private Sub ExpDGV_SelectionChanged(sender As Object, e As EventArgs) Handles ExpDGV.SelectionChanged
 
-        If ExpDGV.SelectedRows.Count > 0 Then
+        If clickToFillFlag AndAlso ExpDGV.SelectedRows.Count > 0 Then
             aereftxt.Text = ExpDGV.SelectedRows(0).Cells(0).Value
             aedtpicker.Value = ExpDGV.SelectedRows(0).Cells(1).Value
             aetrntxt.Text = ExpDGV.SelectedRows(0).Cells(3).Value
@@ -184,7 +185,7 @@ Public Class Expenses
 
     End Sub
 
-    Private Sub ExpDGV_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles ExpDGV.CellContentClick
-
+    Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
+        clickToFillFlag = CheckBox1.Checked
     End Sub
 End Class

@@ -5,7 +5,7 @@ Public Class VATReport
         VATSDateDTP.Value = New DateTime(Today.Year, Today.Month - 3, 1, 0, 0, 0)
         VATEDateDTP.Value = New DateTime(Today.Year, Today.Month - 1, Date.DaysInMonth(Today.Year, Today.Month - 1), 0, 0, 0)
 
-        Using dt As DataTable = Main.DBOp.GetVATReport(VATSDateDTP.Value, VATEDateDTP.Value)
+        Using dt As DataTable = Main.DBOp.GetInvoiceDetailsForVAT(VATSDateDTP.Value, VATEDateDTP.Value)
             Dim dataView As DataView = dt.DefaultView
 
             VatDGV.DataSource = dt
@@ -29,7 +29,7 @@ Public Class VATReport
     End Sub
 
     Private Sub VATSDateDTP_ValueChanged(sender As Object, e As EventArgs) Handles VATSDateDTP.ValueChanged, VATEDateDTP.ValueChanged
-        Using dt As DataTable = Main.DBOp.GetVATReport(VATSDateDTP.Value, VATEDateDTP.Value)
+        Using dt As DataTable = Main.DBOp.GetInvoiceDetailsForVAT(VATSDateDTP.Value, VATEDateDTP.Value)
             Dim dataView As DataView = dt.DefaultView
 
             VatDGV.DataSource = dt

@@ -30,6 +30,8 @@ Partial Class AddComp
         Me.ncokbtn = New System.Windows.Forms.Button()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label4 = New System.Windows.Forms.Label()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.nAddrText = New System.Windows.Forms.TextBox()
         Me.nDiscText = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
@@ -54,7 +56,7 @@ Partial Class AddComp
         '
         Me.Label3.AutoSize = True
         Me.Label3.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(164, 72)
+        Me.Label3.Location = New System.Drawing.Point(164, 65)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(76, 15)
         Me.Label3.TabIndex = 171
@@ -62,25 +64,25 @@ Partial Class AddComp
         '
         'ntrntxt
         '
-        Me.ntrntxt.Location = New System.Drawing.Point(167, 90)
+        Me.ntrntxt.Location = New System.Drawing.Point(167, 83)
         Me.ntrntxt.MaximumSize = New System.Drawing.Size(363, 20)
         Me.ntrntxt.Name = "ntrntxt"
-        Me.ntrntxt.Size = New System.Drawing.Size(203, 21)
+        Me.ntrntxt.Size = New System.Drawing.Size(203, 20)
         Me.ntrntxt.TabIndex = 3
         '
         'ncitytxt
         '
-        Me.ncitytxt.Location = New System.Drawing.Point(25, 90)
+        Me.ncitytxt.Location = New System.Drawing.Point(25, 83)
         Me.ncitytxt.MaximumSize = New System.Drawing.Size(363, 20)
         Me.ncitytxt.Name = "ncitytxt"
-        Me.ncitytxt.Size = New System.Drawing.Size(136, 21)
+        Me.ncitytxt.Size = New System.Drawing.Size(136, 20)
         Me.ncitytxt.TabIndex = 2
         '
         'Label21
         '
         Me.Label21.AutoSize = True
         Me.Label21.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label21.Location = New System.Drawing.Point(22, 126)
+        Me.Label21.Location = New System.Drawing.Point(22, 106)
         Me.Label21.Name = "Label21"
         Me.Label21.Size = New System.Drawing.Size(198, 15)
         Me.Label21.TabIndex = 172
@@ -88,15 +90,15 @@ Partial Class AddComp
         '
         'nemailtxt
         '
-        Me.nemailtxt.Location = New System.Drawing.Point(23, 144)
+        Me.nemailtxt.Location = New System.Drawing.Point(23, 124)
         Me.nemailtxt.MaximumSize = New System.Drawing.Size(363, 20)
         Me.nemailtxt.Name = "nemailtxt"
-        Me.nemailtxt.Size = New System.Drawing.Size(347, 21)
+        Me.nemailtxt.Size = New System.Drawing.Size(347, 20)
         Me.nemailtxt.TabIndex = 4
         '
         'nccnslbtn
         '
-        Me.nccnslbtn.Location = New System.Drawing.Point(194, 201)
+        Me.nccnslbtn.Location = New System.Drawing.Point(308, 170)
         Me.nccnslbtn.Name = "nccnslbtn"
         Me.nccnslbtn.Size = New System.Drawing.Size(110, 37)
         Me.nccnslbtn.TabIndex = 6
@@ -105,7 +107,7 @@ Partial Class AddComp
         '
         'ncokbtn
         '
-        Me.ncokbtn.Location = New System.Drawing.Point(78, 201)
+        Me.ncokbtn.Location = New System.Drawing.Point(192, 170)
         Me.ncokbtn.Name = "ncokbtn"
         Me.ncokbtn.Size = New System.Drawing.Size(110, 37)
         Me.ncokbtn.TabIndex = 5
@@ -116,7 +118,7 @@ Partial Class AddComp
         '
         Me.Label2.AutoSize = True
         Me.Label2.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(22, 72)
+        Me.Label2.Location = New System.Drawing.Point(22, 65)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(28, 15)
         Me.Label2.TabIndex = 174
@@ -132,23 +134,41 @@ Partial Class AddComp
         Me.Label4.TabIndex = 176
         Me.Label4.Text = "Discount"
         '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label5.Location = New System.Drawing.Point(373, 22)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(51, 15)
+        Me.Label5.TabIndex = 195
+        Me.Label5.Text = "Address"
+        '
+        'nAddrText
+        '
+        Me.nAddrText.Location = New System.Drawing.Point(376, 40)
+        Me.nAddrText.Multiline = True
+        Me.nAddrText.Name = "nAddrText"
+        Me.nAddrText.Size = New System.Drawing.Size(186, 104)
+        Me.nAddrText.TabIndex = 194
+        '
         'nDiscText
         '
-        Me.nDiscText.Location = New System.Drawing.Point(308, 41)
-        Me.nDiscText.MaximumSize = New System.Drawing.Size(363, 20)
-        Me.nDiscText.MaxLength = 2
+        Me.nDiscText.Location = New System.Drawing.Point(308, 40)
         Me.nDiscText.Name = "nDiscText"
-        Me.nDiscText.Size = New System.Drawing.Size(62, 20)
-        Me.nDiscText.TabIndex = 1
+        Me.nDiscText.Size = New System.Drawing.Size(62, 21)
+        Me.nDiscText.TabIndex = 196
         '
         'AddComp
         '
         Me.AcceptButton = Me.ncokbtn
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(393, 261)
-        Me.Controls.Add(Me.Label4)
+        Me.ClientSize = New System.Drawing.Size(613, 231)
         Me.Controls.Add(Me.nDiscText)
+        Me.Controls.Add(Me.Label5)
+        Me.Controls.Add(Me.nAddrText)
+        Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.ncnametxt)
         Me.Controls.Add(Me.Label1)
@@ -161,7 +181,9 @@ Partial Class AddComp
         Me.Controls.Add(Me.ncokbtn)
         Me.IconOptions.ShowIcon = False
         Me.MaximizeBox = False
+        Me.MaximumSize = New System.Drawing.Size(613, 261)
         Me.MinimizeBox = False
+        Me.MinimumSize = New System.Drawing.Size(613, 261)
         Me.Name = "AddComp"
         Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
@@ -182,5 +204,7 @@ Partial Class AddComp
     Friend WithEvents ncokbtn As Button
     Friend WithEvents Label2 As Label
     Friend WithEvents Label4 As Label
+    Friend WithEvents Label5 As Label
+    Friend WithEvents nAddrText As TextBox
     Friend WithEvents nDiscText As TextBox
 End Class

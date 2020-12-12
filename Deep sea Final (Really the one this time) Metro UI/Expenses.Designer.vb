@@ -51,6 +51,7 @@ Partial Class Expenses
         Me.FLine3 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
         Me.FLine2 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
         Me.FLine1 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
+        Me.CheckBox1 = New System.Windows.Forms.CheckBox()
         CType(Me.ExpDGV, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
         Me.StatusStrip1.SuspendLayout()
@@ -60,7 +61,7 @@ Partial Class Expenses
         '
         Me.Label20.AutoSize = True
         Me.Label20.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label20.Location = New System.Drawing.Point(274, 12)
+        Me.Label20.Location = New System.Drawing.Point(12, 12)
         Me.Label20.Name = "Label20"
         Me.Label20.Size = New System.Drawing.Size(52, 15)
         Me.Label20.TabIndex = 209
@@ -68,16 +69,16 @@ Partial Class Expenses
         '
         'aereftxt
         '
-        Me.aereftxt.Location = New System.Drawing.Point(15, 30)
+        Me.aereftxt.Location = New System.Drawing.Point(15, 72)
         Me.aereftxt.Name = "aereftxt"
         Me.aereftxt.Size = New System.Drawing.Size(225, 21)
-        Me.aereftxt.TabIndex = 0
+        Me.aereftxt.TabIndex = 2
         '
         'Label1
         '
         Me.Label1.AutoSize = True
         Me.Label1.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(12, 12)
+        Me.Label1.Location = New System.Drawing.Point(12, 54)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(112, 15)
         Me.Label1.TabIndex = 204
@@ -104,34 +105,34 @@ Partial Class Expenses
         '
         'aeclrlbtn
         '
-        Me.aeclrlbtn.Location = New System.Drawing.Point(408, 104)
+        Me.aeclrlbtn.Location = New System.Drawing.Point(378, 105)
         Me.aeclrlbtn.Name = "aeclrlbtn"
-        Me.aeclrlbtn.Size = New System.Drawing.Size(103, 36)
+        Me.aeclrlbtn.Size = New System.Drawing.Size(73, 36)
         Me.aeclrlbtn.TabIndex = 217
         Me.aeclrlbtn.Text = "Clear"
         Me.aeclrlbtn.UseVisualStyleBackColor = True
         '
         'aeaddbtn
         '
-        Me.aeaddbtn.Location = New System.Drawing.Point(517, 104)
+        Me.aeaddbtn.Location = New System.Drawing.Point(457, 105)
         Me.aeaddbtn.Name = "aeaddbtn"
-        Me.aeaddbtn.Size = New System.Drawing.Size(122, 36)
+        Me.aeaddbtn.Size = New System.Drawing.Size(92, 36)
         Me.aeaddbtn.TabIndex = 216
         Me.aeaddbtn.Text = "Add"
         Me.aeaddbtn.UseVisualStyleBackColor = True
         '
         'aeammounttxt
         '
-        Me.aeammounttxt.Location = New System.Drawing.Point(15, 72)
+        Me.aeammounttxt.Location = New System.Drawing.Point(15, 114)
         Me.aeammounttxt.Name = "aeammounttxt"
         Me.aeammounttxt.Size = New System.Drawing.Size(225, 21)
-        Me.aeammounttxt.TabIndex = 2
+        Me.aeammounttxt.TabIndex = 4
         '
         'Label2
         '
         Me.Label2.AutoSize = True
         Me.Label2.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(12, 54)
+        Me.Label2.Location = New System.Drawing.Point(12, 96)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(52, 15)
         Me.Label2.TabIndex = 218
@@ -139,14 +140,15 @@ Partial Class Expenses
         '
         'aecomptxt
         '
-        Me.aecomptxt.Location = New System.Drawing.Point(277, 30)
+        Me.aecomptxt.Location = New System.Drawing.Point(15, 30)
         Me.aecomptxt.Name = "aecomptxt"
-        Me.aecomptxt.Size = New System.Drawing.Size(362, 21)
-        Me.aecomptxt.TabIndex = 1
+        Me.aecomptxt.Size = New System.Drawing.Size(225, 21)
+        Me.aecomptxt.TabIndex = 0
         '
         'ExpDGV
         '
         Me.ExpDGV.AllowUserToAddRows = False
+        Me.ExpDGV.AllowUserToResizeRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.Azure
         Me.ExpDGV.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         Me.ExpDGV.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
@@ -181,16 +183,16 @@ Partial Class Expenses
         '
         'aetrntxt
         '
-        Me.aetrntxt.Location = New System.Drawing.Point(15, 114)
+        Me.aetrntxt.Location = New System.Drawing.Point(277, 30)
         Me.aetrntxt.Name = "aetrntxt"
-        Me.aetrntxt.Size = New System.Drawing.Size(225, 21)
-        Me.aetrntxt.TabIndex = 4
+        Me.aetrntxt.Size = New System.Drawing.Size(362, 21)
+        Me.aetrntxt.TabIndex = 1
         '
         'Label3
         '
         Me.Label3.AutoSize = True
         Me.Label3.Font = New System.Drawing.Font("Calibri", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(12, 96)
+        Me.Label3.Location = New System.Drawing.Point(274, 12)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(78, 15)
         Me.Label3.TabIndex = 231
@@ -200,7 +202,7 @@ Partial Class Expenses
         '
         Me.Button1.Location = New System.Drawing.Point(277, 105)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(125, 36)
+        Me.Button1.Size = New System.Drawing.Size(95, 36)
         Me.Button1.TabIndex = 232
         Me.Button1.Text = "Export to excel"
         Me.Button1.UseVisualStyleBackColor = True
@@ -369,12 +371,23 @@ Partial Class Expenses
         Me.FLine1.Size = New System.Drawing.Size(1, 442)
         Me.FLine1.TabIndex = 223
         '
+        'CheckBox1
+        '
+        Me.CheckBox1.AutoSize = True
+        Me.CheckBox1.Location = New System.Drawing.Point(555, 116)
+        Me.CheckBox1.Name = "CheckBox1"
+        Me.CheckBox1.Size = New System.Drawing.Size(86, 17)
+        Me.CheckBox1.TabIndex = 241
+        Me.CheckBox1.Text = "Fill from DGV"
+        Me.CheckBox1.UseVisualStyleBackColor = True
+        '
         'Expenses
         '
         Me.AcceptButton = Me.aeaddbtn
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1003, 670)
+        Me.Controls.Add(Me.CheckBox1)
         Me.Controls.Add(Me.StatusStrip1)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.FLine9)
@@ -447,4 +460,5 @@ Partial Class Expenses
     Friend WithEvents Button2 As Button
     Friend WithEvents StatusStrip1 As StatusStrip
     Friend WithEvents ToolStripStatusLabel1 As ToolStripStatusLabel
+    Friend WithEvents CheckBox1 As CheckBox
 End Class

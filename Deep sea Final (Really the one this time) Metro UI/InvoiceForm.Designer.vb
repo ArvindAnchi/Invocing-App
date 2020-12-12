@@ -22,8 +22,8 @@ Partial Class InvoiceForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(InvoiceForm))
         Me.FluentDesignFormContainer1 = New DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormContainer()
         Me.VatCB = New System.Windows.Forms.CheckBox()
@@ -37,7 +37,7 @@ Partial Class InvoiceForm
         Me.FLine2 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
         Me.FLine1 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
         Me.prclbl = New System.Windows.Forms.Label()
-        Me.DGV1 = New System.Windows.Forms.DataGridView()
+        Me.InvoiceItemsDGV = New System.Windows.Forms.DataGridView()
         Me.SNoClm = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.descclm = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.UCLM = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -73,7 +73,7 @@ Partial Class InvoiceForm
         Me.AccordionControlElement5 = New DevExpress.XtraBars.Navigation.AccordionControlElement()
         Me.AccordionControlElement1 = New DevExpress.XtraBars.Navigation.AccordionControlElement()
         Me.FluentDesignFormContainer1.SuspendLayout()
-        CType(Me.DGV1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.InvoiceItemsDGV, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.AccordionControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -93,7 +93,7 @@ Partial Class InvoiceForm
         Me.FluentDesignFormContainer1.Controls.Add(Me.FLine2)
         Me.FluentDesignFormContainer1.Controls.Add(Me.FLine1)
         Me.FluentDesignFormContainer1.Controls.Add(Me.prclbl)
-        Me.FluentDesignFormContainer1.Controls.Add(Me.DGV1)
+        Me.FluentDesignFormContainer1.Controls.Add(Me.InvoiceItemsDGV)
         Me.FluentDesignFormContainer1.Controls.Add(Me.prcnos)
         Me.FluentDesignFormContainer1.Controls.Add(Me.TrmCred)
         Me.FluentDesignFormContainer1.Controls.Add(Me.TrmCash)
@@ -242,40 +242,41 @@ Partial Class InvoiceForm
         Me.prclbl.Text = "Total:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Discount:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Net Total:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "VAT:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Grand Total:"
         Me.prclbl.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        'DGV1
+        'InvoiceItemsDGV
         '
-        Me.DGV1.AllowUserToResizeRows = False
-        DataGridViewCellStyle1.BackColor = System.Drawing.Color.Azure
-        Me.DGV1.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
-        Me.DGV1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+        Me.InvoiceItemsDGV.AllowUserToResizeRows = False
+        DataGridViewCellStyle3.BackColor = System.Drawing.Color.Azure
+        Me.InvoiceItemsDGV.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle3
+        Me.InvoiceItemsDGV.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.DGV1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
-        Me.DGV1.BackgroundColor = System.Drawing.Color.White
-        Me.DGV1.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.DGV1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleVertical
-        Me.DGV1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.[Single]
-        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(CType(CType(1, Byte), Integer), CType(CType(115, Byte), Integer), CType(CType(199, Byte), Integer))
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Tahoma", 8.25!)
-        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DGV1.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.DGV1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DGV1.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.SNoClm, Me.descclm, Me.UCLM, Me.QtyColm, Me.PrcClm, Me.TtlClm})
-        Me.DGV1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
-        Me.DGV1.EnableHeadersVisualStyles = False
-        Me.DGV1.GridColor = System.Drawing.Color.FromArgb(CType(CType(200, Byte), Integer), CType(CType(200, Byte), Integer), CType(CType(200, Byte), Integer))
-        Me.DGV1.Location = New System.Drawing.Point(8, 172)
-        Me.DGV1.Name = "DGV1"
-        Me.DGV1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        Me.DGV1.RowHeadersVisible = False
-        Me.DGV1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.DGV1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect
-        Me.DGV1.Size = New System.Drawing.Size(643, 308)
-        Me.DGV1.TabIndex = 5
+        Me.InvoiceItemsDGV.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
+        Me.InvoiceItemsDGV.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells
+        Me.InvoiceItemsDGV.BackgroundColor = System.Drawing.Color.White
+        Me.InvoiceItemsDGV.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.InvoiceItemsDGV.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleVertical
+        Me.InvoiceItemsDGV.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.[Single]
+        DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(CType(CType(1, Byte), Integer), CType(CType(115, Byte), Integer), CType(CType(199, Byte), Integer))
+        DataGridViewCellStyle4.Font = New System.Drawing.Font("Tahoma", 8.25!)
+        DataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.WindowText
+        DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.InvoiceItemsDGV.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle4
+        Me.InvoiceItemsDGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.InvoiceItemsDGV.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.SNoClm, Me.descclm, Me.UCLM, Me.QtyColm, Me.PrcClm, Me.TtlClm})
+        Me.InvoiceItemsDGV.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
+        Me.InvoiceItemsDGV.EnableHeadersVisualStyles = False
+        Me.InvoiceItemsDGV.GridColor = System.Drawing.Color.FromArgb(CType(CType(200, Byte), Integer), CType(CType(200, Byte), Integer), CType(CType(200, Byte), Integer))
+        Me.InvoiceItemsDGV.Location = New System.Drawing.Point(8, 172)
+        Me.InvoiceItemsDGV.Name = "InvoiceItemsDGV"
+        Me.InvoiceItemsDGV.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
+        Me.InvoiceItemsDGV.RowHeadersVisible = False
+        Me.InvoiceItemsDGV.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.InvoiceItemsDGV.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect
+        Me.InvoiceItemsDGV.Size = New System.Drawing.Size(643, 308)
+        Me.InvoiceItemsDGV.TabIndex = 5
         '
         'SNoClm
         '
@@ -644,13 +645,13 @@ Partial Class InvoiceForm
         Me.Text = "Invoice"
         Me.FluentDesignFormContainer1.ResumeLayout(False)
         Me.FluentDesignFormContainer1.PerformLayout()
-        CType(Me.DGV1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.InvoiceItemsDGV, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.AccordionControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
     Friend WithEvents FluentDesignFormContainer1 As DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormContainer
-    Friend WithEvents DGV1 As DataGridView
+    Friend WithEvents InvoiceItemsDGV As DataGridView
     Friend WithEvents prcnos As Label
     Friend WithEvents TrmCred As RadioButton
     Friend WithEvents TrmCash As RadioButton

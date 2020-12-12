@@ -3,17 +3,19 @@
 Public Class DatabaseOperations
 
     Public ConnectionString As String = "Server=.\SQLEXPRESS;Database=Deep Sea;Trusted_Connection=True;"
-    Public filesupdatedlist As New List(Of String)
-    'Read operations
-    Public Function Getinvno() As String
+#Region "Read operations"
+    Public Function GetNewInvoiceNumber() As String
 
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
                 cmd.CommandText = <SQL>
+
                     Select 
                         MAX(CAST([InvoiceNumber] AS INT))
         
-                    From Invoices;</SQL>.Value
+                    From Invoices;
+
+                </SQL>.Value
 
                 Dim dt As New DataTable
                 Try
@@ -29,7 +31,7 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    Public Function Getcompid(CompanyName As String) As Integer
+    Public Function GetCompanyId(CompanyName As String) As Integer
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
                 cmd.CommandText = <SQL>
@@ -57,7 +59,7 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    Public Function LoadOrdByName(CompanyName As String) As DataTable
+    Public Function GetOrderbyNamesListForCompany(CompanyName As String) As DataTable
 
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
@@ -70,7 +72,7 @@ Public Class DatabaseOperations
                     Where CompID = @CompID
                 </SQL>.Value
 
-                cmd.Parameters.AddWithValue("@CompID", Getcompid(CompanyName))
+                cmd.Parameters.AddWithValue("@CompID", GetCompanyId(CompanyName))
 
                 Using dt As New DataTable
                     Try
@@ -88,7 +90,7 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    Public Function LoadCompLST() As DataTable
+    Public Function GetAllCompaniesList() As DataTable
 
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
@@ -99,7 +101,8 @@ Public Class DatabaseOperations
                         TRN,
                         Discount,
                         City,
-                        Email
+                        Email,
+                        Address
                 
                     FROM Companies
 
@@ -122,7 +125,7 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    Public Function LoadCompEmail(ByVal CompanyName As String) As String
+    Public Function GetCompanyEmailId(ByVal CompanyName As String) As String
 
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
@@ -135,7 +138,7 @@ Public Class DatabaseOperations
                     Where CompID = @CompID
                 </SQL>.Value
 
-                cmd.Parameters.AddWithValue("@CompID", Getcompid(CompanyName))
+                cmd.Parameters.AddWithValue("@CompID", GetCompanyId(CompanyName))
 
                 Using dt As New DataTable
                     Try
@@ -152,16 +155,62 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-
-    Public Async Function LoadInvoicesDGV() As Task(Of DataTable)
+    Public Function GetCompanyAddress(ByVal CompanyName As String) As String
 
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
-                cmd.CommandText = "GetInvoices"
-                cmd.CommandType = CommandType.StoredProcedure
+                cmd.CommandText = <SQL>
+                    SELECT                         
+                        Address
+                
+                    FROM Companies
+                    
+                    Where CompID = @CompID
+                </SQL>.Value
+
+                cmd.Parameters.AddWithValue("@CompID", GetCompanyId(CompanyName))
+
+                Using dt As New DataTable
+                    Try
+                        cn.Open()
+                        dt.Load(cmd.ExecuteReader)
+                        cn.Close()
+                    Catch ex As Exception
+                        MsgBox(ex.ToString, MessageBoxIcon.Error, "Error")
+                    End Try
+
+                    Return dt.Rows(0).ItemArray(0).ToString()
+                End Using
+
+            End Using
+        End Using
+    End Function
+    Public Function GetInvoiceListToPopulateInvoiceDGV() As DataTable
+        Using cn As New SqlConnection(ConnectionString)
+            Using cmd As New SqlCommand With {.Connection = cn}
+                cmd.CommandText = <SQL>
+
+                    SELECT
+		                CAST(Invoices.InvoiceNumber AS int) AS [Invoice Number],
+		                Invoices.InvoiceDate AS [Invoice Date],
+		                Companies.CompName AS [Company name],
+		                Invoices.LPONumber AS [LPO number],
+		                CAST((Invoices.Total - (Invoices.Total * Invoices.Discount / 100)) + ((Invoices.Total -(Invoices.Total * Invoices.Discount / 100)) * 5 / 100) AS numeric(9, 2)) AS Total,
+		                CAST((Invoices.Total - (Invoices.Total * Invoices.Discount / 100)) * 5 / 100 AS numeric(9, 2)) AS [VAT],
+		                Invoices.Paid,
+		                Invoices.PaidDate AS [Date of payment],
+		                Invoices.ReturnedCanceled AS Canceled,
+		                Invoices.Term AS [Terms of payment]
+	                FROM	Invoices,
+				            Companies
+	                WHERE Invoices.CompID = Companies.CompID
+	                ORDER BY CAST(Invoices.InvoiceNumber AS int) DESC;
+
+                </SQL>.Value
+
                 Dim dt As New DataTable
                 Using da As New SqlDataAdapter(cmd)
-                    Await Task.Run(Function() da.Fill(dt))
+                    da.Fill(dt)
                 End Using
                 'Try
                 '    cn.Open()
@@ -175,33 +224,24 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    Public Function LoadVATDGV() As DataTable
+    Public Function GetCompanyListForStatement() As DataTable
 
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
-                cmd.CommandText = "GetVATDetails"
-                cmd.CommandType = CommandType.StoredProcedure
-                Dim dt As New DataTable
+                cmd.CommandText = <SQL>
 
-                Try
-                    cn.Open()
-                    dt.Load(cmd.ExecuteReader)
-                    cn.Close()
-                Catch ex As Exception
-                    MsgBox(ex.ToString, MessageBoxIcon.Error, "Error")
-                End Try
+	                SELECT
+		                Companies.CompName AS [Company name],
+		                SUM(Invoices.Total) AS [Amount]
 
-                Return dt
+	                FROM	Companies,
+				                Invoices
 
-            End Using
-        End Using
-    End Function
-    Public Function LoadCompLSTDGV() As DataTable
+	                WHERE Companies.CompID = Invoices.CompID
+	                AND Invoices.Paid = 0
 
-        Using cn As New SqlConnection(ConnectionString)
-            Using cmd As New SqlCommand With {.Connection = cn}
-                cmd.CommandText = "GetCompanies"
-                cmd.CommandType = CommandType.StoredProcedure
+	                GROUP BY Companies.CompName;
+                </SQL>.Value
 
                 Dim dt As New DataTable
 
@@ -219,17 +259,37 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    Public Function LoadStmntDGV(selectedcompindex As DataRowView) As DataTable
+    Public Function GetInvoicesForStatement(selectedcompindex As DataRowView) As DataTable
 
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
-                cmd.CommandText = "GenStatement"
-                cmd.CommandType = CommandType.StoredProcedure
+                cmd.CommandText = <SQL>
+
+                    SELECT
+			            Invoices.InvoiceNumber AS [Invoice Number],
+			            Invoices.InvoiceDate AS [Date],
+			            Invoices.LPONumber AS [LPO Number],
+			            Invoices.Total,
+			            CAST(Invoices.Total * Invoices.Discount / 100 AS numeric(9, 2)) AS [Discount],
+			            CAST((Invoices.Total - (Invoices.Total * Invoices.Discount / 100)) * 5 / 100 AS numeric(9, 2)) AS [VAT], 
+			            CAST((Invoices.Total - (Invoices.Total * Invoices.Discount / 100)) + ((Invoices.Total -(Invoices.Total * Invoices.Discount / 100)) * 5 / 100) AS numeric(9, 2)) AS [Grand total] 
+
+		            FROM	Invoices,
+					        Companies
+
+		            WHERE Invoices.CompID = Companies.CompID
+		            AND Companies.CompID = @CompID
+		            AND Invoices.Paid = 0
+		            AND (Invoices.ReturnedCanceled = 0 OR Invoices.ReturnedCanceled IS NULL)
+
+		            ORDER BY Invoices.InvoiceDate ASC;
+
+                </SQL>.Value
 
                 Dim dt As New DataTable
 
 
-                cmd.Parameters.AddWithValue("@compID", Getcompid(selectedcompindex.Item(0)))
+                cmd.Parameters.AddWithValue("@CompID", GetCompanyId(selectedcompindex.Item(0)))
 
                 Try
                     cn.Open()
@@ -244,12 +304,35 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    Public Function ReadInvocie(Invoicenumber As String) As List(Of DataTable)
+    Public Function GetInvoiceData(Invoicenumber As String) As List(Of DataTable)
         Dim res As New List(Of DataTable)
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
-                cmd.CommandText = "GetInvoiceHeadder"
-                cmd.CommandType = CommandType.StoredProcedure
+                cmd.CommandText = <SQL>	
+                    SELECT
+		                Invoices.InvoiceNumber,
+		                Invoices.InvoiceDate,
+		                Companies.CompName,
+		                Companies.TRN,
+		                Invoices.LPONumber,
+		                OrdBy.OrdbyName,
+		                Invoices.Term,
+		                Invoices.Discount,
+		                Invoices.Total,
+		                Invoices.Total * Invoices.Discount / 100 AS [Discount],
+		                Invoices.Total - (Invoices.Total * Invoices.Discount / 100) AS [Net Total],
+		                --0 AS [VAT],
+		                Invoices.Vat AS [VAT],
+		                (Invoices.Total - (Invoices.Total * Invoices.Discount / 100)) + ((Invoices.Total - (Invoices.Total * Invoices.Discount / 100)) * 5 / 100) AS [Grand total]
+
+	                FROM	Invoices,
+				            Companies,
+				            OrdBy
+
+	                WHERE Invoices.CompID = Companies.CompID
+	                    AND Invoices.InvoiceNumber = @InvoiceNumber
+	                    AND Invoices.OrdById = OrdBy.OrdById;
+                </SQL>.Value
                 Dim dt As New DataTable
                 cmd.Parameters.AddWithValue("@InvoiceNumber", Invoicenumber)
                 Try
@@ -260,7 +343,20 @@ Public Class DatabaseOperations
                     MsgBox(ex.ToString, MessageBoxIcon.Error, "Error")
                 End Try
                 cmd.Parameters.Clear()
-                cmd.CommandText = "GetInvoiceFlags"
+
+                cmd.CommandText = <SQL>	
+                    SELECT
+		                ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS [S.N.],
+		                [Description] AS [Description],
+		                [Unit] AS [Unit],
+		                [Quantity] AS [Quantity],
+		                ROUND([Price], 2) AS [Price],
+		                [Quantity] * [Price] AS [Total]
+
+	                FROM Invoicedata
+
+	                WHERE [InvoiceNumber] = @InvoiceNumber;
+                </SQL>.Value
 
                 Dim dtinvdata As New DataTable
                 cmd.Parameters.AddWithValue("@InvoiceNumber", Invoicenumber)
@@ -277,59 +373,21 @@ Public Class DatabaseOperations
         End Using
         Return res
     End Function
-
-    Public Function ReadAllInvocies() As List(Of List(Of DataTable))
-        Dim res As New List(Of List(Of DataTable))
-        Dim index As Integer = 0
-        Using cn As New SqlConnection(ConnectionString)
-            Using cmd As New SqlCommand With {.Connection = cn}
-                cn.Open()
-                While index <= 712
-                    Dim temp As New List(Of DataTable)
-                    cmd.Parameters.Clear()
-                    cmd.CommandText = "GetInvoiceHeadder"
-                    cmd.CommandType = CommandType.StoredProcedure
-                    Dim dt As New DataTable
-                    cmd.Parameters.AddWithValue("@InvoiceNumber", index)
-                    Try
-                        dt.Load(cmd.ExecuteReader)
-                    Catch ex As Exception
-                        'cn.Close()
-                        Console.WriteLine(ex.ToString)
-                        Console.WriteLine("Continue While")
-                        Continue While
-                    End Try
-                    cmd.Parameters.Clear()
-                    cmd.CommandText = "GetInvoiceFlags"
-
-                    Dim dtinvdata As New DataTable
-                    cmd.Parameters.AddWithValue("@InvoiceNumber", index)
-                    Try
-                        dtinvdata.Load(cmd.ExecuteReader)
-                    Catch ex As Exception
-                        cn.Close()
-                        MsgBox(ex.ToString)
-                    End Try
-                    temp.Add(dt)
-                    temp.Add(dtinvdata)
-                    res.Add(temp)
-                    index += 1
-                End While
-                cn.Close()
-            End Using
-        End Using
-        Return res
-    End Function
-
-    Public Function GetOrdById(OrdByName As String, compID As String) As Integer
+    Public Function GetOrderbyIdAndInsertIntoTableIfOneDoesntExist(OrdByName As String, compID As String) As Integer
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
 
                 Dim result As Integer
                 cn.Open()
 
-                cmd.CommandText = "GetOrdByID"
-                cmd.CommandType = CommandType.StoredProcedure
+                cmd.CommandText = <SQL>	
+                    IF (NOT EXISTS(SELECT [OrdById] FROM [Deep Sea].[dbo].[OrdBy] WHERE [CompID] = @CompID AND [OrdbyName] = @ODname))
+		                INSERT INTO OrdBy (CompID, OrdbyName) VALUES (@CompID, @ODname)
+	                SELECT [OrdById]
+	                  FROM [Deep Sea].[dbo].[OrdBy]
+	                  WHERE [CompID] = @CompID AND [OrdbyName] = @ODname
+                </SQL>.Value
+
                 cmd.Parameters.AddWithValue("@CompID", compID)
                 cmd.Parameters.AddWithValue("@ODname", OrdByName)
 
@@ -381,14 +439,28 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-
-    Public Function GetVATReport(StartDate As Date, EndDate As Date) As DataTable
+    Public Function GetInvoiceDetailsForVAT(StartDate As Date, EndDate As Date) As DataTable
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
 
+                cmd.CommandText = <SQL>
+                    SELECT
+		                Invoices.InvoiceNumber AS [Invoice number],
+		                Companies.CompName AS [Company],
+	                    Companies.City AS [City],
+		                Companies.TRN,
+		                Invoices.InvoiceDate AS [Date],
+		                Invoices.LPONumber AS [LPO number],
+	                    CAST(Invoices.Total - (Invoices.Total * Invoices.Discount / 100) AS numeric(9, 2)) AS [Net total],
+	                    CAST((Invoices.Total - (Invoices.Total * Invoices.Discount / 100)) * 5 / 100 AS numeric(9, 2)) AS [VAT], 
+	                    CAST((Invoices.Total - (Invoices.Total * Invoices.Discount / 100)) + ((Invoices.Total -(Invoices.Total * Invoices.Discount / 100)) * 5 / 100) AS numeric(9, 2)) AS [Grand total] 
 
-                cmd.CommandText = "GetVATDetails"
-                cmd.CommandType = CommandType.StoredProcedure
+                    FROM Companies INNER JOIN Invoices ON Invoices.CompID = Companies.CompID
+
+                    WHERE (Invoices.ReturnedCanceled = 0 OR Invoices.ReturnedCanceled IS NULL)
+		                AND Invoices.InvoiceDate BETWEEN @StartDate AND @EndDate
+                </SQL>.Value
+
                 cmd.Parameters.AddWithValue("@StartDate", StartDate)
                 cmd.Parameters.AddWithValue("@EndDate", EndDate)
 
@@ -407,18 +479,27 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    'Write operations
-    Public Function WriteInvoice(invoicefrm As InvoiceForm) As Boolean
+#End Region
+#Region "Write operations"
+    Public Function WriteNewInvoice(invoicefrm As InvoiceForm) As Boolean
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
 
                 With invoicefrm
                     '//////////----Write Invoices table----//////////'
 
-                    cmd.CommandText = "WriteInvoicesTable"
-                    cmd.CommandType = CommandType.StoredProcedure
+                    cmd.CommandText = <SQL>
+                        IF (NOT EXISTS (SELECT invoicenumber FROM invoices WHERE invoicenumber = @InvoiceNumber))
+		                    INSERT INTO invoices (invoicenumber, compid, lponumber, invoicedate, ordbyid, total, discount, term, Paid, Vat)
+		                    VALUES (@InvoiceNumber, @CompID, @LPONumber, @InvoiceDate, @OrdBy, @Total, @Discount, @Term, 0, @Vat)
+	                    ELSE
+		                    UPDATE invoices
+		                    SET	compid = @CompID, lponumber = @LPONumber, invoicedate = @InvoiceDate, ordbyid = @OrdBy, total = @Total, discount = @Discount, term = @Term, Vat = @Vat
+		                    WHERE invoicenumber = @InvoiceNumber
+                    </SQL>.Value
 
-                    Dim comid As Integer = Getcompid(.cnametxt.Text)
+
+                    Dim comid As Integer = GetCompanyId(.cnametxt.Text)
                     cmd.Parameters.AddWithValue("@InvoiceNumber", .invnotxt.Text)
                     If comid = 0 Then
                         Dim NewCompFrm As New AddComp
@@ -428,7 +509,7 @@ Public Class DatabaseOperations
                         NewCompFrm.ntrntxt.Enabled = False
                         NewCompFrm.nDiscText.Text = .disctxt.Text
                         NewCompFrm.ShowDialog()
-                        comid = Getcompid(.cnametxt.Text)
+                        comid = GetCompanyId(.cnametxt.Text)
                     End If
                     cmd.Parameters.AddWithValue("@CompID", comid)
                     cmd.Parameters.AddWithValue("@LPONumber", .lpotxt.Text)
@@ -439,7 +520,7 @@ Public Class DatabaseOperations
                         Return False
                     End Try
 
-                    cmd.Parameters.AddWithValue("@OrdBy", GetOrdById(.Ordbycb.Text, comid))
+                    cmd.Parameters.AddWithValue("@OrdBy", GetOrderbyIdAndInsertIntoTableIfOneDoesntExist(.Ordbycb.Text, comid))
                     cmd.Parameters.AddWithValue("@Total", .prcnos.Text.Split(vbNewLine)(0))
                     cmd.Parameters.AddWithValue("@Discount", .disctxt.Text)
 
@@ -466,8 +547,13 @@ Public Class DatabaseOperations
                         Return False
                     End Try
 
-                    cmd.CommandText = "CheckInvoiceData"
-                    cmd.CommandType = CommandType.StoredProcedure
+                    cmd.CommandText = <SQL>
+                        IF (EXISTS (SELECT invoicenumber FROM Invoicedata WHERE invoicenumber = @InvoiceNumber))
+		                    SELECT 1
+	                    ELSE
+		                    SELECT 0    
+                    </SQL>.Value
+
                     cmd.Parameters.Clear()
                     cmd.Parameters.AddWithValue("@InvoiceNumber", .invnotxt.Text)
                     Dim invoicePresent As String = cmd.ExecuteScalar()
@@ -500,7 +586,7 @@ Public Class DatabaseOperations
                     '//////////----Write Invoicedata table----//////////'
                     Try
 
-                        For row As Integer = 0 To invoicefrm.DGV1.Rows.Count - 2
+                        For row As Integer = 0 To invoicefrm.InvoiceItemsDGV.Rows.Count - 2
 
                             cmd.CommandText = <SQL>
                                 INSERT INTO 
@@ -513,10 +599,10 @@ Public Class DatabaseOperations
                             cmd.Parameters.Clear()
 
                             cmd.Parameters.AddWithValue("@InvoiceNumber", .invnotxt.Text)
-                            cmd.Parameters.AddWithValue("@Description", .DGV1.Rows(row).Cells(1).Value)
-                            cmd.Parameters.AddWithValue("@Unit", .DGV1.Rows(row).Cells(2).Value)
-                            cmd.Parameters.AddWithValue("@Quantity", .DGV1.Rows(row).Cells(3).Value)
-                            cmd.Parameters.AddWithValue("@Price", .DGV1.Rows(row).Cells(4).Value)
+                            cmd.Parameters.AddWithValue("@Description", .InvoiceItemsDGV.Rows(row).Cells(1).Value)
+                            cmd.Parameters.AddWithValue("@Unit", .InvoiceItemsDGV.Rows(row).Cells(2).Value)
+                            cmd.Parameters.AddWithValue("@Quantity", .InvoiceItemsDGV.Rows(row).Cells(3).Value)
+                            cmd.Parameters.AddWithValue("@Price", .InvoiceItemsDGV.Rows(row).Cells(4).Value)
 
                             cmd.ExecuteNonQuery()
 
@@ -536,11 +622,13 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    Public Function InvoicePaid(InvoiceNumber As Integer, Paid As Boolean, pdate As String) As Boolean
+    Public Function SetInvoicePaidStatus(InvoiceNumber As Integer, Paid As Boolean, pdate As String) As Boolean
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
 
-                cmd.CommandText = "UPDATE Invoices SET Paid = @tf, PaidDate = @pda Where InvoiceNumber = @InvoiceNumber"
+                cmd.CommandText = <SQL>
+                    UPDATE Invoices SET Paid = @tf, PaidDate = @pda Where InvoiceNumber = @InvoiceNumber
+                </SQL>.Value
 
                 cmd.Parameters.AddWithValue("@tf", Paid)
 
@@ -564,10 +652,12 @@ Public Class DatabaseOperations
         End Using
         Return True
     End Function
-    Public Function InvoiceCanceled(InvoiceNumber As Integer, Paid As Boolean) As Boolean
+    Public Function SetInvoiceCanceledStatus(InvoiceNumber As Integer, Paid As Boolean) As Boolean
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
-                cmd.CommandText = "UPDATE Invoices SET ReturnedCanceled = @tf Where InvoiceNumber = @InvoiceNumber"
+                cmd.CommandText = <SQL>
+                    UPDATE Invoices SET ReturnedCanceled = @tf Where InvoiceNumber = @InvoiceNumber
+                </SQL>.Value
                 cmd.Parameters.AddWithValue("@tf", Paid)
                 cmd.Parameters.AddWithValue("@InvoiceNumber", InvoiceNumber)
                 Try
@@ -623,23 +713,24 @@ Public Class DatabaseOperations
         End Using
         Return True
     End Function
-    Public Function AddCompToDB(cname As String, City As String, trn As String, email As String, Disc As Integer) As Boolean
+    Public Function AddNewCompany(cname As String, City As String, trn As String, email As String, Disc As Integer, Address As String) As Boolean
 
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
                 cmd.CommandText = <SQL>
 
                     INSERT INTO 
-                        Companies (CompName, City, TRN, Email, Discount)
+                        Companies (CompName, City, TRN, Email, Discount, Address)
 
                     VALUES 
-                        (@cname, @City, @trn, @email, @Disc)</SQL>.Value
+                        (@cname, @City, @trn, @email, @Disc, @Address)</SQL>.Value
 
                 cmd.Parameters.AddWithValue("@cname", cname)
                 cmd.Parameters.AddWithValue("@City", City)
                 cmd.Parameters.AddWithValue("@trn", trn)
                 cmd.Parameters.AddWithValue("@email", email)
                 cmd.Parameters.AddWithValue("@Disc", Disc)
+                cmd.Parameters.AddWithValue("@Address", Address)
 
 
                 Dim dt As New DataTable
@@ -658,14 +749,14 @@ Public Class DatabaseOperations
             End Using
         End Using
     End Function
-    Public Function UpdateComp(cid As String, cname As String, City As String, trn As String, email As String, Disc As Integer) As Boolean
+    Public Function UpdateCompanyDetails(cid As String, cname As String, City As String, trn As String, email As String, Disc As Integer, Address As String) As Boolean
 
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
                 cmd.CommandText = <SQL>
 
                     UPDATE Companies 
-                    SET CompName = @cname, City = @City, TRN = @trn, Email = @email, Discount = @Disc
+                    SET CompName = @cname, City = @City, TRN = @trn, Email = @email, Discount = @Disc, Address = @Address
                     WHERE CompID = @cid
 
                 </SQL>.Value
@@ -676,6 +767,7 @@ Public Class DatabaseOperations
                 cmd.Parameters.AddWithValue("@trn", trn)
                 cmd.Parameters.AddWithValue("@email", email)
                 cmd.Parameters.AddWithValue("@Disc", Disc)
+                cmd.Parameters.AddWithValue("@Address", Address)
 
 
                 Dim dt As New DataTable
@@ -730,5 +822,5 @@ Public Class DatabaseOperations
 
         Return False
     End Function
-
 End Class
+#End Region

@@ -10,7 +10,7 @@ Public Class StatementForm
     Private Net As String
 
     Private Sub StatementForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Dim companies As DataTable = Main.DBOp.LoadCompLSTDGV
+        Dim companies As DataTable = Main.DBOp.GetCompanyListForStatement
         companies.Rows.Add("All companies")
         CompLB.DataSource = companies
         CompLB.DisplayMember = "Company name"
@@ -25,9 +25,9 @@ Public Class StatementForm
     End Sub
 
     Private Sub CompLB_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CompLB.SelectedIndexChanged
-        Autoweight(StmtDGV, {6, 6, 10, 6, 6, 6, 6})
+        SetDGVFillWeight(StmtDGV, {6, 6, 10, 6, 6, 6, 6})
         Try
-            Using dt As DataTable = Main.DBOp.LoadStmntDGV(CompLB.SelectedItem)
+            Using dt As DataTable = Main.DBOp.GetInvoicesForStatement(CompLB.SelectedItem)
                 Dim dataView As DataView = dt.DefaultView
 
                 dataView.RowFilter = "[Date] >= '" & CDate("1/" & SDateLB.SelectedIndex + 1 & "/" & SYearLBL.Text) & "'" &
@@ -61,7 +61,7 @@ Public Class StatementForm
             EDateLB.SelectedIndex = 0
         End If
         Try
-            Using dt As DataTable = Main.DBOp.LoadStmntDGV(CompLB.SelectedItem)
+            Using dt As DataTable = Main.DBOp.GetInvoicesForStatement(CompLB.SelectedItem)
                 Dim dataView As DataView = dt.DefaultView
                 Dim cols As String = ""
                 dataView.RowFilter = "[Date] >= '" & CDate("1/" & SDateLB.SelectedIndex + 1 & "/" & SYearLBL.Text) & "'" &
@@ -151,7 +151,7 @@ Public Class StatementForm
             TopMost = False
             With mailItem
                 .Subject = String.Format("Statement {0}", getStatementRange())
-                .To = Main.DBOp.LoadCompEmail(CompLB.Text)
+                .To = Main.DBOp.GetCompanyEmailId(CompLB.Text)
                 message = "Dear Sir,<br><br>Please find the statement below and kindly arrange the payment soon. <br><br>"
                 message += "<table cellspacing = -1> <tr bgcolor = ""#D9E1F2"">"
                 For i As Integer = 0 To StmtDGV.ColumnCount - 1
@@ -272,7 +272,7 @@ Public Class StatementForm
                 invfrm.Enabled = False
                 FillInvoiceData(invfrm, row)
                 invfrm.Enabled = True
-                invfrm.saveBtnEnable = False
+                invfrm.SaveBtnEnable = False
                 invfrm.ShowDialog()
             End Using
         Next

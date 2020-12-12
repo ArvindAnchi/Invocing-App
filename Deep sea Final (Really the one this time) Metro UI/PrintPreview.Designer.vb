@@ -22,7 +22,7 @@ Partial Class PrintPreview
         Me.ComboBox2 = New System.Windows.Forms.ComboBox()
         Me.PrintPreviewControl1 = New System.Windows.Forms.PrintPreviewControl()
         Me.PrintDocument1 = New System.Drawing.Printing.PrintDocument()
-        Me.Label4 = New System.Windows.Forms.Label()
+        Me.PageNoLabel = New System.Windows.Forms.Label()
         Me.NumericUpDown1 = New System.Windows.Forms.NumericUpDown()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.TrackBar1 = New System.Windows.Forms.TrackBar()
@@ -68,16 +68,16 @@ Partial Class PrintPreview
         'PrintDocument1
         '
         '
-        'Label4
+        'PageNoLabel
         '
-        Me.Label4.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(470, 88)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(31, 13)
-        Me.Label4.TabIndex = 52
-        Me.Label4.Text = "Page"
-        Me.Label4.Visible = False
+        Me.PageNoLabel.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.PageNoLabel.AutoSize = True
+        Me.PageNoLabel.Location = New System.Drawing.Point(470, 88)
+        Me.PageNoLabel.Name = "PageNoLabel"
+        Me.PageNoLabel.Size = New System.Drawing.Size(31, 13)
+        Me.PageNoLabel.TabIndex = 52
+        Me.PageNoLabel.Text = "Page"
+        Me.PageNoLabel.Visible = False
         '
         'NumericUpDown1
         '
@@ -129,6 +129,7 @@ Partial Class PrintPreview
         Me.TextBox1.Name = "TextBox1"
         Me.TextBox1.Size = New System.Drawing.Size(73, 21)
         Me.TextBox1.TabIndex = 47
+        Me.TextBox1.Text = "1"
         '
         'Label5
         '
@@ -191,6 +192,7 @@ Partial Class PrintPreview
         '
         'BWCB
         '
+        Me.BWCB.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.BWCB.AutoSize = True
         Me.BWCB.Checked = True
         Me.BWCB.CheckState = System.Windows.Forms.CheckState.Checked
@@ -231,7 +233,7 @@ Partial Class PrintPreview
         Me.Controls.Add(Me.BWCB)
         Me.Controls.Add(Me.ComboBox2)
         Me.Controls.Add(Me.PrintPreviewControl1)
-        Me.Controls.Add(Me.Label4)
+        Me.Controls.Add(Me.PageNoLabel)
         Me.Controls.Add(Me.NumericUpDown1)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.TrackBar1)
@@ -259,7 +261,7 @@ Partial Class PrintPreview
     Friend WithEvents ComboBox2 As ComboBox
     Friend WithEvents PrintPreviewControl1 As PrintPreviewControl
     Friend WithEvents PrintDocument1 As Printing.PrintDocument
-    Friend WithEvents Label4 As Label
+    Friend WithEvents PageNoLabel As Label
     Friend WithEvents NumericUpDown1 As NumericUpDown
     Friend WithEvents Label3 As Label
     Friend WithEvents TrackBar1 As TrackBar
