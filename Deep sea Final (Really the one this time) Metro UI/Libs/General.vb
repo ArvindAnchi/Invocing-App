@@ -379,10 +379,10 @@ Module General
                 If .InvoiceItemsDGV.Rows(0).Cells(3).Value IsNot Nothing AndAlso .InvoiceItemsDGV.Rows(0).Cells(4).Value IsNot Nothing Then
                     Dim total As Double = 0
                     Dim disc As Double = 0
-                    Console.WriteLine(.InvoiceItemsDGV.Rows.Count)
+                    'Console.WriteLine(.InvoiceItemsDGV.Rows.Count)
                     For rowindex As Integer = 0 To .InvoiceItemsDGV.Rows.Count - 1
                         total += CDbl(.InvoiceItemsDGV.Rows(rowindex).Cells(5).Value)
-                        Console.WriteLine(String.Format("Row index: {0} | Ammount: {1}", .InvoiceItemsDGV.Rows(rowindex).Index, CDbl(.InvoiceItemsDGV.Rows(rowindex).Cells(5).Value)))
+                        'Console.WriteLine(String.Format("Row index: {0} | Ammount: {1}", .InvoiceItemsDGV.Rows(rowindex).Index, CDbl(.InvoiceItemsDGV.Rows(rowindex).Cells(5).Value)))
                     Next
 
                     disc = total * CInt(.disctxt.Text) / 100
@@ -392,7 +392,7 @@ Module General
                         If(.VatCB.Checked, FormatNumber((total - disc) * 5 / 100), FormatNumber(0)) & vbNewLine &
                         If(.VatCB.Checked, FormatNumber((total - disc) + ((total - disc) * 5 / 100)), FormatNumber(total - disc))
 
-                    Console.WriteLine("Total: " & total)
+                    'Console.WriteLine("Total: " & total)
                 End If
 
                 With .InvoiceItemsDGV

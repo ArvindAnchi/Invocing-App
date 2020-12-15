@@ -652,13 +652,13 @@ Public Class DatabaseOperations
         End Using
         Return True
     End Function
-    Public Function SetInvoiceCanceledStatus(InvoiceNumber As Integer, Paid As Boolean) As Boolean
+    Public Function SetInvoiceCanceledStatus(InvoiceNumber As Integer, Canceled As Boolean) As Boolean
         Using cn As New SqlConnection(ConnectionString)
             Using cmd As New SqlCommand With {.Connection = cn}
                 cmd.CommandText = <SQL>
                     UPDATE Invoices SET ReturnedCanceled = @tf Where InvoiceNumber = @InvoiceNumber
                 </SQL>.Value
-                cmd.Parameters.AddWithValue("@tf", Paid)
+                cmd.Parameters.AddWithValue("@tf", Canceled)
                 cmd.Parameters.AddWithValue("@InvoiceNumber", InvoiceNumber)
                 Try
                     cn.Open()

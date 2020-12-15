@@ -57,14 +57,14 @@ Public Class Main
     Private Sub CanceledBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles CanceledBtnItm.ItemClick
         If MsgBox("Invoice canceled?", vbYesNo, "Cancel") = vbYes Then
             For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
-                If row.Cells(6).Value.ToString = "True" Then
-                    DBOp.SetInvoiceCanceledStatus(CInt(row.Cells(0).Value.ToString), False)
-                Else
-                    DBOp.SetInvoiceCanceledStatus(CInt(row.Cells(0).Value.ToString), True)
-                End If
+                DBOp.SetInvoiceCanceledStatus(CInt(row.Cells(0).Value.ToString), True)
             Next
-            RefreshMainDGV()
+        Else
+            For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
+                DBOp.SetInvoiceCanceledStatus(CInt(row.Cells(0).Value.ToString), False)
+            Next
         End If
+        RefreshMainDGV()
     End Sub
     Private Sub DeleteBtnItm_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles DeleteBtnItm.ItemClick
         If MsgBox("Are you sure you want to delete the invoice?", vbYesNo, "Delete invoice") = vbYes Then
@@ -289,7 +289,6 @@ Public Class Main
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        Dim selectedIndex As DataGridViewSelectedRowCollection = InvoicesDGV.SelectedRows
         InvoicesDGV.Enabled = False
         RefreshMainDGV()
         ISearchTB.Clear()
@@ -302,9 +301,6 @@ Public Class Main
                     " Total: " & InvoicesDataTable.Compute("SUM(Total)", dataView.RowFilter).ToString &
                     " VAT: " & InvoicesDataTable.Compute("SUM(VAT)", dataView.RowFilter).ToString
         InvoicesDGV.Enabled = True
-        For Each SelectedRow As DataGridViewRow In selectedIndex
-            SelectedRow.Selected = True
-        Next
     End Sub
 
     Private Sub InvoicesDGV_CellMouseDown(sender As Object, e As DataGridViewCellMouseEventArgs) Handles InvoicesDGV.CellMouseDown
@@ -344,14 +340,14 @@ Public Class Main
     Private Sub DeleteToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DeleteToolStripMenuItem.Click
         If MsgBox("Invoice canceled?", vbYesNo, "Cancel") = vbYes Then
             For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
-                If row.Cells(6).Value.ToString = "True" Then
-                    DBOp.SetInvoiceCanceledStatus(CInt(row.Cells(0).Value.ToString), False)
-                Else
-                    DBOp.SetInvoiceCanceledStatus(CInt(row.Cells(0).Value.ToString), True)
-                End If
+                DBOp.SetInvoiceCanceledStatus(CInt(row.Cells(0).Value.ToString), True)
             Next
-            RefreshMainDGV()
+        Else
+            For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
+                DBOp.SetInvoiceCanceledStatus(CInt(row.Cells(0).Value.ToString), False)
+            Next
         End If
+        RefreshMainDGV()
     End Sub
 
     Private Sub DeleteToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles DeleteToolStripMenuItem1.Click
@@ -396,4 +392,5 @@ Public Class Main
         'proc.WaitForExit()
         'e.Cancel = False
     End Sub
+
 End Class

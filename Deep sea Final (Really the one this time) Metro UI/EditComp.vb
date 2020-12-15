@@ -33,4 +33,18 @@
         eAddrText.Text = ValidateDbText(dt.Rows(ecnamelb.SelectedIndex)(6))
 
     End Sub
+
+    Private Sub eAddrText_TextChanged(sender As Object, e As EventArgs) Handles eAddrText.TextChanged
+        If eAddrText.Lines.Length > 3 Then
+            eAddrText.Undo()
+            eAddrText.ClearUndo()
+            MsgBox("Only 3 lines are allowed.")
+        End If
+    End Sub
+
+    Private Sub eAddrText_KeyPress(sender As Object, e As KeyPressEventArgs) Handles eAddrText.KeyPress
+        If eAddrText.Lines.Length >= 3 AndAlso e.KeyChar = vbCrLf Then
+            e.Handled = True
+        End If
+    End Sub
 End Class

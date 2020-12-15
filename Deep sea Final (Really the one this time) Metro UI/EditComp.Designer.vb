@@ -89,7 +89,7 @@ Partial Class EditComp
         Me.etrntxt.Location = New System.Drawing.Point(324, 71)
         Me.etrntxt.MaximumSize = New System.Drawing.Size(363, 20)
         Me.etrntxt.Name = "etrntxt"
-        Me.etrntxt.Size = New System.Drawing.Size(203, 20)
+        Me.etrntxt.Size = New System.Drawing.Size(203, 21)
         Me.etrntxt.TabIndex = 180
         '
         'ecitytxt
@@ -97,7 +97,7 @@ Partial Class EditComp
         Me.ecitytxt.Location = New System.Drawing.Point(241, 71)
         Me.ecitytxt.MaximumSize = New System.Drawing.Size(363, 20)
         Me.ecitytxt.Name = "ecitytxt"
-        Me.ecitytxt.Size = New System.Drawing.Size(77, 20)
+        Me.ecitytxt.Size = New System.Drawing.Size(77, 21)
         Me.ecitytxt.TabIndex = 179
         '
         'Label21
@@ -115,7 +115,7 @@ Partial Class EditComp
         Me.eemailtxt.Location = New System.Drawing.Point(241, 112)
         Me.eemailtxt.MaximumSize = New System.Drawing.Size(363, 20)
         Me.eemailtxt.Name = "eemailtxt"
-        Me.eemailtxt.Size = New System.Drawing.Size(286, 20)
+        Me.eemailtxt.Size = New System.Drawing.Size(286, 21)
         Me.eemailtxt.TabIndex = 181
         '
         'nccnslbtn
@@ -167,6 +167,7 @@ Partial Class EditComp
         '
         'eAddrText
         '
+        Me.eAddrText.AcceptsReturn = True
         Me.eAddrText.Location = New System.Drawing.Point(541, 29)
         Me.eAddrText.Multiline = True
         Me.eAddrText.Name = "eAddrText"
