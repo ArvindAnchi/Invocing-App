@@ -15,10 +15,8 @@ Public Class PrintPreview
                                                                          ByVal pDevModeOutput As IntPtr,
                                                                          ByVal pDevModeInput As IntPtr,
                                                                          ByVal fMode As Integer) As Integer
-    Public mRow As Integer = 0
-    Public newpage As Boolean = True
-    Public pages As Integer = 0
     Public InvoiceForm As InvoiceForm
+
 
     Sub ShowPrinterProperties(ByVal Settings As PrinterSettings)
 
@@ -37,325 +35,336 @@ Public Class PrintPreview
         GlobalFree(hDevMode)
     End Sub
 
-    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles PrintSettingsBtn.Click
-        PrintDocument1.PrinterSettings.PrinterName = ComboBox1.Text
-        If (PrintDocument1.PrinterSettings.IsValid) Then
-            ShowPrinterProperties(PrintDocument1.PrinterSettings)
+    Private Sub PrintSettingsBtn_Click(sender As Object, e As EventArgs) Handles PrinterSettingsBtn.Click
+        PrintDocument.PrinterSettings.PrinterName = PrinterComboBox.Text
+        If (PrintDocument.PrinterSettings.IsValid) Then
+            ShowPrinterProperties(PrintDocument.PrinterSettings)
+            PrintPreviewControl.InvalidatePreview() 'Refresh the print preview control to display changes.
         Else
             MsgBox("Invalid Printer", MsgBoxStyle.Information)
         End If
-
     End Sub
 
-    Dim col As Color = Color.Gray
+    Private col As Color = Color.Gray
+    Private CurrentDGVRow As Integer = 0
+    Private NextPage As Boolean = False
+    Private Pages As Integer = 0
 
-    Private Sub PrintDocument1_PrintPage(sender As Object, e As PrintPageEventArgs) Handles PrintDocument1.PrintPage
+    Private Sub PrintDocument1_PrintPage(sender As Object, e As PrintPageEventArgs) Handles PrintDocument.PrintPage
         Try
-            Dim brush As New SolidBrush(col)
-            Dim custpen As New Pen(col)
-            Using fmt As StringFormat = New StringFormat(StringFormatFlags.LineLimit)
-                Using format As StringFormat = New StringFormat(StringFormatFlags.LineLimit)
-                    format.Alignment = StringAlignment.Far
-                    fmt.LineAlignment = StringAlignment.Center
-                    fmt.Trimming = StringTrimming.EllipsisCharacter
-                    Dim y As Integer = 325
-
-                    Using newImage As Image = ResizeImage(Image.FromFile(Application.StartupPath & "\" & "Header.jpg"),
-                                                            New Size(800, 143))
-                        e.Graphics.DrawImage(newImage, 25, 50)
-                    End Using
-
-                    e.Graphics.DrawString("فاتورة ضريبية", New Font("times new roman", 16, FontStyle.Bold Or FontStyle.Underline), brush,
-                                              e.PageBounds.Width / 2 - e.Graphics.MeasureString("فاتورة ضريبية",
-                                                                       New Font("times new roman", 16, FontStyle.Bold Or FontStyle.Underline)).Width / 2, 200)
-                    e.Graphics.DrawString("TAX INVOICE", New Font("Ariel", 16, FontStyle.Bold), brush,
-                                              e.PageBounds.Width / 2 - e.Graphics.MeasureString("TAX INVOICE", New Font("Ariel", 16, FontStyle.Bold)).Width / 2,
-                                              e.Graphics.MeasureString("TAX INVOICE", New Font("Ariel", 16, FontStyle.Bold)).Height + 200)
-                    e.Graphics.DrawString("TRN: 100587677400003", New Font("Cambria", 14), brush, 40, 215)
-                    e.Graphics.DrawString("No.: ", New Font("Cambria", 16), brush, 40, 235)
-
-                    e.Graphics.DrawString(InvoiceForm.invnotxt.Text, New Font("Cambria", 16), brush,
-                                              85.86859, 235)
-                    e.Graphics.DrawString("Customer name: " & InvoiceForm.cnametxt.Text, New Font("Cambria", 12), brush, 40, 280)
-                    e.Graphics.DrawString("Date: " & vbCrLf &
-                                              "Cust. TRN: " & vbCrLf &
-                                              "LPO No.: " & vbCrLf &
-                                              "Order by: ", New Font("Cambria", 12), brush, 600, 200, format)
-                    e.Graphics.DrawString(InvoiceForm.DateTimePicker1.Text & vbCrLf &
-                                              InvoiceForm.trntxt.Text & vbCrLf &
-                                              InvoiceForm.lpotxt.Text & vbCrLf &
-                                              InvoiceForm.Ordbycb.Text, New Font("Cambria", 12), brush, 600, 200)
-
-
-                    Dim h As Integer = 0
-                    Dim rc As Rectangle
-
-
-                    Dim row As DataGridViewRow
-
-                    Dim cols As Integer() = {80, 400, 50, 50, 50, 50, 50, 50}
-                    Dim x As Integer
-                    Dim prcrec As Rectangle
-                    If newpage Then
-                        pages += 1
-                        row = InvoiceForm.InvoiceItemsDGV.Rows(mRow)
-                        x = 30
-                        fmt.Alignment = StringAlignment.Center
-                        rc.Offset(1, 2)
-                        Dim flag As Boolean = True
-                        Dim colll As Integer = 0
-                        While colll <= 7
-                            rc = New Rectangle(x, y, cols(colll),
-                                               e.Graphics.MeasureString(InvoiceForm.InvoiceItemsDGV.Rows(0).Cells(0).Value.ToString, New Font("Ariel Black", 11, FontStyle.Bold), cols(colll)).Height)
-
-                            e.Graphics.DrawLine(custpen, rc.X, rc.Y, rc.X + rc.Width, rc.Y)
-                            e.Graphics.DrawLine(custpen, rc.X, rc.Y + rc.Height, rc.X + rc.Width, rc.Y + rc.Height)
-
-                            If InvoiceForm.InvoiceItemsDGV.Rows(0).Cells(If(colll > 5, colll - 2, colll)).Visible And (colll < 5 Or colll > 6) Then
-                                e.Graphics.DrawString(InvoiceForm.InvoiceItemsDGV.Columns(If(colll > 6, colll - 2, colll)).HeaderText,
-                                                              New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
-                            ElseIf colll = 5 Then
-                                'Console.WriteLine("Write ""Disc.""")
-                                e.Graphics.DrawString("Disc.", New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
-                            ElseIf colll = 6 Then
-                                'Console.WriteLine("Write ""VAT""")
-                                e.Graphics.DrawString("VAT", New Font("Ariel Black", 11, FontStyle.Bold), brush, rc, fmt)
-                            End If
-
-                            x += rc.Width
-                            h = Math.Max(h, rc.Height)
-                            colll += 1
-                        End While
-                        y += h
-                        prcrec.X = rc.X
-
-                    End If
-                    newpage = False
-
-
-                    y += 5
-                    Dim thisNDX As Integer
-
-                    For thisNDX = mRow To InvoiceForm.InvoiceItemsDGV.RowCount - 1
-                        If InvoiceForm.InvoiceItemsDGV.Rows(thisNDX).IsNewRow Then Exit For
-
-                        row = InvoiceForm.InvoiceItemsDGV.Rows(thisNDX)
-                        x = 30
-                        h = 0
-                        rc.Offset(2, 2)
-                        Dim flag As Boolean = True
-
-                        Dim colll As Integer = 0
-
-                        While colll <= 7
-
-                            If InvoiceForm.InvoiceItemsDGV.Rows(thisNDX).Cells(If(colll > 5, colll - 2, colll)).Visible Then
-                                rc = New Rectangle(x, y, cols(colll),
-                                                   e.Graphics.MeasureString(InvoiceForm.InvoiceItemsDGV.Rows(thisNDX).Cells(1).Value, New Font("Ariel Black", 11, FontStyle.Bold), 400).Height)
-                                If InvoiceForm.InvoiceItemsDGV.Rows(thisNDX).Cells(If(colll > 5, colll - 2, colll)).ColumnIndex = 1 Then
-                                    fmt.Alignment = StringAlignment.Near
-                                Else
-                                    fmt.Alignment = StringAlignment.Center
-                                End If
-
-                                If InvoiceForm.InvoiceItemsDGV.Rows(thisNDX).Cells(If(colll > 5, colll - 2, colll)).ColumnIndex = 6 Then
-                                    prcrec = rc
-                                End If
-
-                                If (colll < 5 Or colll > 6) Then
-                                    e.Graphics.DrawString(InvoiceForm.InvoiceItemsDGV.Rows(thisNDX).Cells(If(colll > 5, colll - 2, colll)).FormattedValue.ToString(),
-                                                  New Font("Calibria", 10, FontStyle.Regular), brush, rc, fmt)
-                                ElseIf colll = 5 Then
-                                    'Console.WriteLine((InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) & " * 5 / 100 = " & (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.DGV1.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) * 5 / 100)
-
-                                    e.Graphics.DrawString((InvoiceForm.InvoiceItemsDGV.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100).ToString("N2"), New Font("Calibria", 10, FontStyle.Regular), brush, rc, fmt)
-                                ElseIf colll = 6 Then
-                                    e.Graphics.DrawString(((InvoiceForm.InvoiceItemsDGV.Rows(thisNDX).Cells(5).FormattedValue.ToString() - (InvoiceForm.InvoiceItemsDGV.Rows(thisNDX).Cells(5).FormattedValue.ToString() * InvoiceForm.disctxt.Text / 100)) * 5 / 100).ToString("N2"), New Font("Calibria", 10, FontStyle.Regular), brush, rc, fmt)
-                                End If
-
-                                x += rc.Width
-                                h = Math.Max(h, rc.Height)
-                            End If
-                            colll += 1
-                        End While
-
-                        y += h
-                        mRow = thisNDX + 1
-                        If mRow Mod 26 = 0 Then
-                            e.Graphics.DrawString("Continued in next page...", New Font("Cambria", 10), brush,
-                                              e.MarginBounds.Right - 100, y + h)
-                            e.Graphics.DrawLine(custpen, e.MarginBounds.Left - 70, e.MarginBounds.Bottom,
-                                            e.MarginBounds.Right + 55, e.MarginBounds.Bottom)
-
-                            e.Graphics.DrawString(vbCrLf + "Beneficiary Name: RAVINDRA SUMANT CURTAINS FIXING | Bank Name: RAK BANK",
-                                  New Font("Cambria", 10, FontStyle.Regular), brush,
-                                                              e.PageBounds.Width / 2 -
-                                  e.Graphics.MeasureString("Beneficiary Name: RAVINDRA SUMANT CURTAINS FIXING | Bank Name: RAK BANK",
-                                                           New Font("Cambria", 10, FontStyle.Regular)
-                                  ).Width / 2, e.MarginBounds.Bottom)
-                            e.Graphics.DrawString(vbCrLf + vbCrLf + "A/ C NO: 0032850670001 | IBAN NO: AE220400000032850670001 | SWIFT CODE: NRAKAEAK",
-                                  New Font("Cambria", 10, FontStyle.Regular), brush,
-                                                              e.PageBounds.Width / 2 -
-                                  e.Graphics.MeasureString("A/ C NO: 0032850670001 | IBAN NO: AE220400000032850670001 | SWIFT CODE: NRAKAEAK",
-                                                           New Font("Cambria", 10, FontStyle.Regular)
-                                  ).Width / 2, e.MarginBounds.Bottom)
-                            e.HasMorePages = True
-                            newpage = True
-                            Return
-                        End If
-
-                    Next
-                    If rc.Y > e.MarginBounds.Bottom - 300 Then
-                        e.Graphics.DrawString("Continued in next page...", New Font("Cambria", 10), brush,
-                                              e.MarginBounds.Right - 100, y + h)
-                        e.Graphics.DrawLine(custpen, e.MarginBounds.Left - 70, e.MarginBounds.Bottom,
-                                            e.MarginBounds.Right + 55, e.MarginBounds.Bottom)
-
-                        e.Graphics.DrawString(vbCrLf + "Beneficiary Name: RAVINDRA SUMANT CURTAINS FIXING | Bank Name: RAK BANK",
-                                  New Font("Cambria", 10, FontStyle.Regular), brush,
-                                                              e.PageBounds.Width / 2 -
-                                  e.Graphics.MeasureString("Beneficiary Name: RAVINDRA SUMANT CURTAINS FIXING | Bank Name: RAK BANK",
-                                                           New Font("Cambria", 10, FontStyle.Regular)
-                                  ).Width / 2, e.MarginBounds.Bottom)
-                        e.Graphics.DrawString(vbCrLf + vbCrLf + "A/ C NO: 0032850670001 | IBAN NO: AE220400000032850670001 | SWIFT CODE: NRAKAEAK",
-                                  New Font("Cambria", 10, FontStyle.Regular), brush,
-                                                              e.PageBounds.Width / 2 -
-                                  e.Graphics.MeasureString("A/ C NO: 0032850670001 | IBAN NO: AE220400000032850670001 | SWIFT CODE: NRAKAEAK",
-                                                           New Font("Cambria", 10, FontStyle.Regular)
-                                  ).Width / 2, e.MarginBounds.Bottom)
-                        e.HasMorePages = True
-                        newpage = True
-                        Return
-                    End If
-
-                    Dim ofset As Integer = -9
-
-                    e.Graphics.DrawLine(custpen, 30, rc.Y + rc.Height, rc.X + rc.Width, rc.Y + rc.Height)
-                    Dim xval As Integer = 747.29
-                    e.Graphics.DrawString("Total (AED)" & vbNewLine &
-                                              "Discount (" & InvoiceForm.disctxt.Text & "%)" & vbNewLine &
-                                              "VAT (5%)" & vbNewLine &
-                                              "Grand total", New Font("Calibria", 10, FontStyle.Bold),
-                                              brush, xval - 5,
-                                              y + h, format)
-
-                    format.Alignment = StringAlignment.Near
-                    prcrec.Y = y + h
-                    '"Total:" & vbNewLine & "Discount:" & vbNewLine & "Net Total:" & vbNewLine & "VAT:" & vbNewLine & "Grand Total"
-                    Dim prcdata As String() = InvoiceForm.prcnos.Text.Split(vbNewLine)
-                    'MsgBox(prcrec.X + (prcrec.Width / 2) - e.Graphics.MeasureString(prcdata(2), New Font("Calibria", 10)).Width / 2)
-
-                    e.Graphics.DrawString(prcdata(0) &
-                                                  prcdata(1) & '(prcdata(2)) & 
-                                                  prcdata(3) &
-                                                  prcdata(4),
-                                                  New Font("Calibria", 10), brush, xval, y + h, format)
-
-                    If InvoiceForm.TrmCash.Checked Then
-                        e.Graphics.DrawString("Terms: Cash", New Font("Cambria", 10), brush, e.MarginBounds.Left - 50, y + h + 25)
-                    Else
-                        e.Graphics.DrawString("Terms: " & InvoiceForm.TermTXT.Text & " Days",
-                                                      New Font("Cambria", 10), brush, e.MarginBounds.Left - 50, y + h + 25)
-                    End If
-
-                    Dim num As New ClsConversion
-                    'e.Graphics.DrawString("AED " & num.ConvertNumberToWords(Math.Round(CInt(prcdata(2)) + CInt(prcdata(3)), 2).ToString("N2")) & " Fils only",
-                    '                              New Font("Cambria", 10), brush, e.MarginBounds.Left - 50, y + h + 60)
-
-                    e.Graphics.DrawString(vbCrLf + "Received by", New Font("Cambria", 11, FontStyle.Bold Or
-                                                                                   FontStyle.Underline),
-                                                  brush, e.MarginBounds.Left - 50, y + h + 80)
-
-                    e.Graphics.DrawString(vbCrLf + "For Ravindra Sumant curtains fixing", New Font("Cambria", 11,
-                                                                                                FontStyle.Bold Or
-                                                                                                FontStyle.Underline),
-                                          brush, e.MarginBounds.Right - 185, y + h + 80)
+            Dim Brush As New SolidBrush(col)
+            Dim Pen As New Pen(col)
+            Dim Bounds As Rectangle = e.PageBounds
+            Dim RightAlignFormat As New StringFormat With {.Alignment = StringAlignment.Far}
+            Dim LeftAlignFormat As New StringFormat With {.Alignment = StringAlignment.Near}
+            Dim CenterAlignFormat As New StringFormat With {.Alignment = StringAlignment.Center}
+            Dim PrintFooterOnPage As Boolean = True
+            Dim PrintTillEnd As Boolean = True
+            Dim PrintHeadder As Boolean = True
+            With e.Graphics
+#Region "Headder"
+                Using HeadderImage As Image = Image.FromFile(Application.StartupPath & "\" & "Header.png")
+                    .DrawImage(HeadderImage, CSng(Bounds.Width * 5 / 100), CSng(Bounds.Height * 0.03))
                 End Using
-            End Using
+                Using H1Font As New Font("Calibri", 28.25, FontStyle.Bold)
+                    .DrawString("TAX INVOICE",
+                                H1Font,
+                                Brush,
+                                Bounds.Width - .MeasureString("TAX INVOICE", H1Font).Width - (Bounds.Width * 0.05),
+                                .MeasureString("TAX INVOICE", H1Font).Height + CSng(Bounds.Height * 0.0075))
+                End Using
+                Using H1Font As New Font("Calibri", 10, FontStyle.Bold)
+                    .DrawString("Mob.: 055 768 9616 | Tel: 04 333 7487 | E-Mail: raviflags@gmail.com | TRN: 100587677400003 | Dubai, United arab emirates",
+                                H1Font,
+                                Brush,
+                                Bounds.Width * 0.5,
+                                Bounds.Height * 0.116,
+                                CenterAlignFormat)
+                End Using
+                .DrawLine(Pen,
+                          CSng(Bounds.Width * 0.02),
+                          CSng(Bounds.Height * 0.1359),
+                          CSng(Bounds.Width - Bounds.Width * 0.02),
+                          CSng(Bounds.Height * 0.1359))
+#End Region
+#Region "Customer and our details"
+                If Not NextPage Then
+                    Using H2Font As New Font("Calibri", 11, FontStyle.Bold)
+                        .DrawString("BILL TO", H2Font, Brush,
+                                    Bounds.Width * 0.0379,
+                                    Bounds.Height * 0.1532)
+                    End Using
+                    Using H2Font As New Font("Calibri", 11)
+                        .DrawString(String.Format(
+                                                  "{1}{0}TRN: {2}{0}{3}",
+                                                  vbNewLine,
+                                                  InvoiceForm.cnametxt.Text,
+                                                  InvoiceForm.trntxt.Text,
+                                                  Main.DBOp.GetCompanyAddress(InvoiceForm.cnametxt.Text)
+                                                  ),
+                                    H2Font,
+                                    Brush,
+                                    Bounds.Width * 0.0379,
+                                    Bounds.Height * 0.17)
+                    End Using
+                    Using H3Font As New Font("Calibri", 10, FontStyle.Bold)
+                        .DrawString("INVOICE #", H3Font, Brush,
+                                    Bounds.Width - (Bounds.Width * 0.2419),
+                                    Bounds.Height * 0.1604,
+                                    RightAlignFormat)
+                        .DrawString("DATE", H3Font, Brush,
+                                    Bounds.Width - (Bounds.Width * 0.2419),
+                                    Bounds.Height * 0.1838,
+                                    RightAlignFormat)
+                        .DrawString("ORDER BY", H3Font, Brush,
+                                    Bounds.Width - (Bounds.Width * 0.2419),
+                                    Bounds.Height * 0.2069,
+                                    RightAlignFormat)
+                        .DrawString("LPO NUMBER", H3Font, Brush,
+                                    Bounds.Width - (Bounds.Width * 0.2419),
+                                    Bounds.Height * 0.231,
+                                    RightAlignFormat)
+                    End Using
+                    Using H3Font As New Font("Calibri", 10)
+                        .DrawString(InvoiceForm.invnotxt.Text, H3Font, Brush,
+                                    Bounds.Width * 0.7671,
+                                    Bounds.Height * 0.1604,
+                                    LeftAlignFormat)
+                        .DrawString(InvoiceForm.DateTimePicker1.Value, H3Font, Brush,
+                                    Bounds.Width * 0.7671,
+                                    Bounds.Height * 0.1838,
+                                    LeftAlignFormat)
+                        .DrawString(InvoiceForm.Ordbycb.Text, H3Font, Brush,
+                                    Bounds.Width * 0.7671,
+                                    Bounds.Height * 0.2069,
+                                    LeftAlignFormat)
+                        .DrawString(InvoiceForm.lpotxt.Text, H3Font, Brush,
+                                    Bounds.Width * 0.7671,
+                                    Bounds.Height * 0.231,
+                                    LeftAlignFormat)
+                    End Using
+                    .DrawLine(Pen,
+                              CSng(Bounds.Width * 0.02),
+                              CSng(Bounds.Height * 0.2718),
+                              CSng(Bounds.Width - Bounds.Width * 0.02),
+                              CSng(Bounds.Height * 0.2718))
+                Else
+                    PrintHeadder = False
+                End If
+#End Region
+#Region "Invoice Items table"
+                Using H2Font As New Font("Calibri", 11, FontStyle.Bold)
+                    Dim TextHeight As Single = e.Graphics.MeasureString("Test String for Height", H2Font).Height
+                    Dim CellWeights As Double() = {0.071428, 0.571428, 0.071428, 0.071428, 0.071428, 0.071428, 0.071428}
+                    Dim CellTopLocation As Single = If(NextPage, Bounds.Height * 0.1532, Bounds.Height * 0.281)
+                    Dim HeadderCellLeftLocation As Single = Bounds.Width * 0.02
+                    Dim HeadderCellValues As String() = {"S.NO", "DESCRIPTION", "UNIT", "QTY.", "PRICE", "VAT", "TOTAL"}
+                    Dim PreviousCellTopLocation As Single = TextHeight
+                    'Print Headder row
+                    For HeadderColumnIndex As Integer = 0 To HeadderCellValues.Count - 1
+                        Dim CellWidth As Single = (Bounds.Width - Bounds.Width * 0.02 - (Bounds.Width * 0.02)) * CellWeights(HeadderColumnIndex)
+                        .DrawString(HeadderCellValues(HeadderColumnIndex),
+                                    H2Font,
+                                    Brush,
+                                    HeadderCellLeftLocation + (CellWidth / 2),
+                                    CellTopLocation,
+                                    CenterAlignFormat)
+                        HeadderCellLeftLocation += CellWidth
+                    Next
+                    Using H2FontRegular As New Font("Calibri", 11)
+                        PrintFooterOnPage = True
+                        'Calculate Total Height of all cells
+                        Dim TotalHeight As Double = 0
+                        For RowIndex As Integer = CurrentDGVRow To InvoiceForm.InvoiceItemsDGV.Rows.Count - 1
+                            Dim CellRectangle As New RectangleF(0,
+                                PreviousCellTopLocation + CellTopLocation,
+                                5,
+                                e.Graphics.MeasureString(InvoiceForm.InvoiceItemsDGV.Rows(RowIndex).Cells(1).Value,
+                                                        H2FontRegular,
+                                                        (Bounds.Width - Bounds.Width * 0.02 - (Bounds.Width * 0.02)) * CellWeights(1)).Height)
+                            TotalHeight += CellRectangle.Height
+                        Next
+                        Dim MinBound As Double = Bounds.Height * 0.7128 - e.Graphics.MeasureString("Test String for Height", H2FontRegular).Height - CellTopLocation
+                        Dim MaxBound As Double = Bounds.Height * 0.9424 - CellTopLocation
+                        Console.WriteLine(String.Format("Min Bounds: {0}{1}Max Bounds: {2}{1}TotalHeight: {3}{1}NextPage: {4}",
+                                                        MinBound,
+                                                        vbNewLine,
+                                                        MaxBound,
+                                                        TotalHeight,
+                                                        MinBound <= TotalHeight AndAlso TotalHeight <= MaxBound))
 
-            e.Graphics.DrawLine(custpen, e.MarginBounds.Left - 70, e.MarginBounds.Bottom,
-                                e.MarginBounds.Right + 55, e.MarginBounds.Bottom)
-
-            e.Graphics.DrawString(vbCrLf + "Beneficiary Name: RAVINDRA SUMANT CURTAINS FIXING | Bank Name: RAK BANK",
-                                  New Font("Cambria", 10, FontStyle.Regular), brush,
-                                                              e.PageBounds.Width / 2 -
-                                  e.Graphics.MeasureString("Beneficiary Name: RAVINDRA SUMANT CURTAINS FIXING | Bank Name: RAK BANK",
-                                                           New Font("Cambria", 10, FontStyle.Regular)
-                                  ).Width / 2, e.MarginBounds.Bottom)
-            e.Graphics.DrawString(vbCrLf + vbCrLf + "A/ C NO: 0032850670001 | IBAN NO: AE220400000032850670001 | SWIFT CODE: NRAKAEAK",
-                                  New Font("Cambria", 10, FontStyle.Regular), brush,
-                                                              e.PageBounds.Width / 2 -
-                                  e.Graphics.MeasureString("A/ C NO: 0032850670001 | IBAN NO: AE220400000032850670001 | SWIFT CODE: NRAKAEAK",
-                                                           New Font("Cambria", 10, FontStyle.Regular)
-                                  ).Width / 2, e.MarginBounds.Bottom)
-
+                        For RowIndex As Integer = CurrentDGVRow To InvoiceForm.InvoiceItemsDGV.Rows.Count
+                            Dim InvoiceDGVRowData As New List(Of String)
+                            Dim InvoiceDGVColumnStringFormat As New List(Of StringFormat)
+                            Dim CellLeftLocation As Single = Bounds.Width * 0.02
+                            Dim RectangleHeight As Double = 0
+                            If InvoiceForm.InvoiceItemsDGV.Rows(RowIndex).Cells(1).Value = "" Then
+                                Exit For
+                            End If
+                            InvoiceDGVRowData.AddRange({InvoiceForm.InvoiceItemsDGV.Rows(RowIndex).Cells(0).Value.ToString(),
+                                        InvoiceForm.InvoiceItemsDGV.Rows(RowIndex).Cells(1).Value,
+                                        InvoiceForm.InvoiceItemsDGV.Rows(RowIndex).Cells(2).Value,
+                                        InvoiceForm.InvoiceItemsDGV.Rows(RowIndex).Cells(3).Value.ToString(),
+                                        CDbl(InvoiceForm.InvoiceItemsDGV.Rows(RowIndex).Cells(4).Value).ToString("N2"),
+                                        ((CDbl(InvoiceForm.InvoiceItemsDGV.Rows(RowIndex).Cells(5).FormattedValue) -
+                                                                   (CDbl(InvoiceForm.InvoiceItemsDGV.Rows(RowIndex).Cells(5).FormattedValue) *
+                                                                    InvoiceForm.disctxt.Text / 100)) * 5 / 100).ToString("N2"),
+                                        CDbl(InvoiceForm.InvoiceItemsDGV.Rows(RowIndex).Cells(5).Value).ToString("N2")})
+                            InvoiceDGVColumnStringFormat.AddRange({CenterAlignFormat,
+                                                                  LeftAlignFormat,
+                                                                  CenterAlignFormat,
+                                                                  CenterAlignFormat,
+                                                                  CenterAlignFormat,
+                                                                  CenterAlignFormat,
+                                                                  CenterAlignFormat})
+                            Console.WriteLine(If(NextPage, 0.1359, 0.2856))
+                            If Bounds.Height * If(MinBound <= TotalHeight AndAlso TotalHeight <= MaxBound, 0.7128, 0.9424) - (Bounds.Height * If(PrintHeadder, 0.2856, 0.1359) + TextHeight) <= PreviousCellTopLocation Then
+                                PrintFooterOnPage = False
+                                CurrentDGVRow = RowIndex
+                                PreviousCellTopLocation = CellTopLocation
+                                e.HasMorePages = True
+                                Pages += 1
+                                NextPage = True
+                                Return
+                            Else
+                                NextPage = False
+                            End If
+                            For ColumnIndex As Integer = 0 To InvoiceDGVRowData.Count - 1
+                                Dim CellWidth As Single = (Bounds.Width - Bounds.Width * 0.02 - (Bounds.Width * 0.02)) * CellWeights(ColumnIndex)
+                                Dim CellRectangle As New RectangleF(CellLeftLocation,
+                                                           PreviousCellTopLocation + CellTopLocation,
+                                                           CellWidth,
+                                                           e.Graphics.MeasureString(InvoiceDGVRowData(ColumnIndex),
+                                                                                    H2FontRegular,
+                                                                                    CellWidth).Height)
+                                .DrawString(InvoiceDGVRowData(ColumnIndex),
+                                                H2FontRegular,
+                                                Brush,
+                                                CellRectangle,
+                                                InvoiceDGVColumnStringFormat(ColumnIndex))
+                                CellLeftLocation += CellWidth
+                                RectangleHeight = If(CellRectangle.Height > RectangleHeight, CellRectangle.Height, RectangleHeight)
+                            Next
+                            PreviousCellTopLocation += RectangleHeight
+                        Next
+                    End Using
+                End Using
+#End Region
+#Region "Draw Footer"
+                If PrintFooterOnPage Then
+                    .DrawLine(Pen,
+                              CSng(Bounds.Width * 0.02),
+                              CSng(Bounds.Height * 0.7128),
+                              CSng(Bounds.Width - Bounds.Width * 0.02),
+                              CSng(Bounds.Height * 0.7128))
+                    Using H3Font As New Font("Calibri", 10, FontStyle.Bold)
+                        .DrawString(String.Format("TOTAL (AED){0}DISCOUNT ({1}%){0}VAT (5%){0}NET TOTAL",
+                                                  vbNewLine,
+                                                  InvoiceForm.disctxt.Text),
+                                    H3Font,
+                                    Brush,
+                                    Bounds.Width - (Bounds.Width * 0.1099),
+                                    Bounds.Height * 0.7325,
+                                    RightAlignFormat)
+                    End Using
+                    Using H3Font As New Font("Calibri", 10)
+                        Dim prcdata As String() = InvoiceForm.prcnos.Text.Split(vbNewLine)
+                        .DrawString(String.Format("{0}{1}{2}{3}",
+                                                  prcdata(0),
+                                                  prcdata(1),
+                                                  prcdata(3),
+                                                  prcdata(4)),
+                                    H3Font,
+                                    Brush,
+                                    Bounds.Width - (Bounds.Width * 0.0955),
+                                    Bounds.Height * 0.7325)
+                    End Using
+                    .DrawLine(Pen,
+                              CSng(Bounds.Width * 0.02),
+                              CSng(Bounds.Height * 0.8049),
+                              CSng(Bounds.Width - Bounds.Width * 0.02),
+                              CSng(Bounds.Height * 0.8049))
+                    Using H4Font As New Font("Calibri", 9, FontStyle.Bold)
+                        .DrawString("RECIEVED BY",
+                                    H4Font,
+                                    Brush,
+                                    Bounds.Width * 0.0413,
+                                    Bounds.Height * 0.8237)
+                        .DrawString("FOR RAVINDRA SUMANT CURTAINS FIXING",
+                                    H4Font,
+                                    Brush,
+                                    Bounds.Width - (Bounds.Width * 0.0364),
+                                    Bounds.Height * 0.8237,
+                                    RightAlignFormat)
+                    End Using
+                    Using H4Font As New Font("Calibri", 8.5, FontStyle.Bold)
+                        .DrawString("Beneficiary Name: RAVINDRA SUMANT CURTAINS FIXING | Bank Name: RAK BANK | A/ C NO: 0032850670001 | IBAN NO: AE220400000032850670001",
+                                    H4Font,
+                                    Brush,
+                                    Bounds.Width * 0.5,
+                                    Bounds.Height * 0.9424,
+                                    CenterAlignFormat)
+                    End Using
+                End If
+#End Region
+            End With
         Catch ex As Exception
-
             MsgBox(ex.ToString, vbOKOnly, "error")
-
         End Try
 
-
-        If pages > 1 Then
-            NumericUpDown1.Visible = True
-            PageNoLabel.Visible = True
-        End If
-        NumericUpDown1.Maximum = pages - 1
-        PrintPreviewControl1.StartPage = 1
-        PrintPreviewControl1.Document = PrintDocument1
-
+        PrintPreviewControl.StartPage = 0
+        PrintPreviewControl.Document = PrintDocument
+        TotalPagesTextBox.Text = 1
+        TotalPagesLabel.Text = "of " & Pages + 1
+        ZoomSlider.Minimum = PrintPreviewControl.Zoom * 100
     End Sub
 
     Private Sub PrintPreview_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         MaximumSize = Screen.FromRectangle(Bounds).WorkingArea.Size
         Dim pkInstalledPrinters As String
-        PrintPreviewControl1.AutoZoom = True
+        ZoomSlider.Minimum = PrintPreviewControl.Zoom * 100
         ' Find all printers installed
         For Each pkInstalledPrinters In PrinterSettings.InstalledPrinters
-            ComboBox1.Items.Add(pkInstalledPrinters)
+            PrinterComboBox.Items.Add(pkInstalledPrinters)
         Next pkInstalledPrinters
 
-        For Each Res In PrintDocument1.PrinterSettings.PrinterResolutions
-            ComboBox3.Items.Add(Res)
+        For Each Res In PrintDocument.PrinterSettings.PrinterResolutions
+            PrintQualityComboBox.Items.Add(Res)
         Next
 
         'Set the combo to the first printer in the list
-        If ComboBox1.ContainsItemWithSubstring("3630 series") Then
-            ComboBox1.SelectedIndex = ComboBox1.FindSubStringIndex("3630 series")
-            ComboBox3.SelectedIndex = 3
+        If PrinterComboBox.ContainsItemWithSubstring("3630 series") Then
+            PrinterComboBox.SelectedIndex = PrinterComboBox.FindSubStringIndex("3630 series")
+            PrintQualityComboBox.SelectedIndex = 3
         End If
         'PrintPreviewControl1.Document = PrintDocument1
-        ComboBox2.SelectedIndex = 0
+        TextColorComboBox.SelectedIndex = 0
 
     End Sub
 
-    Private Sub TrackBar1_Scroll(sender As Object, e As EventArgs) Handles TrackBar1.Scroll
-        PrintPreviewControl1.Zoom = TrackBar1.Value / 100
-    End Sub
-
-    Private Sub PrintPreview_GotFocus(sender As Object, e As EventArgs) Handles Me.GotFocus
-        TrackBar1.Minimum = PrintPreviewControl1.Zoom * 100
+    Private Sub TrackBar1_Scroll(sender As Object, e As EventArgs) Handles ZoomSlider.Scroll
+        PrintPreviewControl.Zoom = ZoomSlider.Value / 100
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles PrintBtn.Click
 
-        PrintDocument1.PrinterSettings.PrinterName = ComboBox1.Text
-        If BWCB.Checked Then
-            PrintDocument1.DefaultPageSettings.Color = True
+        PrintDocument.PrinterSettings.PrinterName = PrinterComboBox.Text
+        If BlackWhiteCheckBox.Checked Then
+            PrintDocument.DefaultPageSettings.Color = True
         Else
-            PrintDocument1.DefaultPageSettings.Color = False
+            PrintDocument.DefaultPageSettings.Color = False
         End If
-        PrintDocument1.PrinterSettings.Copies = CShort(TextBox1.Text)
-        PrintDocument1.DefaultPageSettings.Color = False
-        PrintDocument1.DefaultPageSettings.PaperSize = (From s As PaperSize In PrintDocument1.PrinterSettings.PaperSizes.Cast(Of PaperSize) Where s.RawKind = PaperKind.A4).FirstOrDefault
-        PrintDocument1.DefaultPageSettings.PrinterResolution = PrintDocument1.PrinterSettings.PrinterResolutions(ComboBox3.SelectedIndex)
+        PrintDocument.PrinterSettings.Copies = CShort(CopiesTextBox.Text)
+        PrintDocument.DefaultPageSettings.Color = False
+        PrintDocument.DefaultPageSettings.PaperSize = (From s As PaperSize In PrintDocument.PrinterSettings.PaperSizes.Cast(Of PaperSize) Where s.RawKind = PaperKind.A4).FirstOrDefault
+        PrintDocument.DefaultPageSettings.PrinterResolution = PrintDocument.PrinterSettings.PrinterResolutions(PrintQualityComboBox.SelectedIndex)
         'MsgBox(PrintDocument1.PrinterSettings.ToString + vbNewLine + PrintDocument1.DefaultPageSettings.ToString)
-        PrintDocument1.Print()
+        PrintDocument.Print()
 
-        Dim pset As PrinterSettings = PrintDocument1.PrinterSettings
-        PrintDocument1.PrinterSettings.PrinterName = "Microsoft Print to PDF"
-        PrintDocument1.PrinterSettings.PrintToFile = True
+        Dim pset As PrinterSettings = PrintDocument.PrinterSettings
+        PrintDocument.PrinterSettings.PrinterName = "Microsoft Print to PDF"
+        PrintDocument.PrinterSettings.PrintToFile = True
         Dim savePath As String = String.Format("{0}\Invoices-PDF\{1}\{2}\",
                                                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                                                InvoiceForm.DateTimePicker1.Value.Year,
@@ -363,15 +372,15 @@ Public Class PrintPreview
         If Not IO.Directory.Exists(savePath) Then
             IO.Directory.CreateDirectory(savePath)
         End If
-        PrintDocument1.PrinterSettings.PrintFileName = String.Format("{0}\{1},{2}.pdf",
+        PrintDocument.PrinterSettings.PrintFileName = String.Format("{0}\{1},{2}.pdf",
                                                                      savePath,
                                                                      InvoiceForm.invnotxt.Text,
                                                                      InvoiceForm.cnametxt.Text)
 
-        If (PrintDocument1.PrinterSettings.IsValid) Then
-            PrintDocument1.Print()
+        If (PrintDocument.PrinterSettings.IsValid) Then
+            PrintDocument.Print()
         End If
-        PrintDocument1.PrinterSettings = pset
+        PrintDocument.PrinterSettings = pset
 
         Close()
     End Sub
@@ -380,24 +389,23 @@ Public Class PrintPreview
         Close()
     End Sub
 
-    Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
-        PrintDocument1.PrinterSettings.PrinterName = ComboBox1.Text
+    Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles PrinterComboBox.SelectedIndexChanged
+        PrintDocument.PrinterSettings.PrinterName = PrinterComboBox.Text
     End Sub
 
-    Private Sub NumericUpDown1_ValueChanged(sender As Object, e As EventArgs) Handles NumericUpDown1.ValueChanged
-        PrintPreviewControl1.StartPage = NumericUpDown1.Value
+    Private Sub NumericUpDown1_ValueChanged(sender As Object, e As EventArgs)
+        'PrintPreviewControl.StartPage = PageNumberUpDown.Value
     End Sub
 
-    Private Sub PrintDocument1_BeginPrint(sender As Object, e As PrintEventArgs) Handles PrintDocument1.BeginPrint
+    Private Sub PrintDocument1_BeginPrint(sender As Object, e As PrintEventArgs) Handles PrintDocument.BeginPrint
 
-        mRow = 0
-        newpage = True
-        PrintPreviewControl1.StartPage = 0
+        CurrentDGVRow = 0
+        PrintPreviewControl.StartPage = 0
 
     End Sub
 
-    Private Sub ComboBox2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox2.SelectedIndexChanged
-        Select Case ComboBox2.SelectedIndex
+    Private Sub ComboBox2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles TextColorComboBox.SelectedIndexChanged
+        Select Case TextColorComboBox.SelectedIndex
             Case 0
                 col = Color.Gray
             Case 1
@@ -409,12 +417,58 @@ Public Class PrintPreview
             Case 4
                 col = Color.Red
         End Select
-        PrintPreviewControl1.InvalidatePreview()
+        PrintPreviewControl.InvalidatePreview()
     End Sub
 
     Private Sub Button1_Click_1(sender As Object, e As EventArgs)
         col = Color.Black
-        PrintPreviewControl1.InvalidatePreview()
+        PrintPreviewControl.InvalidatePreview()
     End Sub
 
+    Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TotalPagesTextBox.TextChanged
+        If Not String.IsNullOrEmpty(TotalPagesTextBox.Text) AndAlso (TotalPagesTextBox.Text > 1 And TotalPagesTextBox.Text < Pages) Then
+            PrintPreviewControl.StartPage = TotalPagesTextBox.Text - 1
+        End If
+    End Sub
+
+    Private Sub TextBox1_KeyDown(sender As Object, e As KeyEventArgs) Handles TotalPagesTextBox.KeyDown
+        If Not String.IsNullOrEmpty(TotalPagesTextBox.Text) Then
+            If TotalPagesTextBox.Text > Pages + 1 Then
+                TotalPagesTextBox.Text = Pages + 1
+                e.Handled = True
+            End If
+        End If
+    End Sub
+    Private Sub CheckTotalPagesTextbox()
+        If String.IsNullOrEmpty(TotalPagesTextBox.Text) Then
+            TotalPagesTextBox.Text = 1
+        End If
+        If TotalPagesTextBox.Text <= 1 Then
+            TotalPagesTextBox.Text = 1
+            PreviousPageButton.Enabled = False
+        ElseIf TotalPagesTextBox.Text >= Pages + 1 Then
+            TotalPagesTextBox.Text = Pages + 1
+            NextPageButton.Enabled = False
+        End If
+        PrintPreviewControl.StartPage = TotalPagesTextBox.Text - 1
+    End Sub
+    Private Sub Button1_Click_2(sender As Object, e As EventArgs) Handles NextPageButton.Click
+        If TotalPagesTextBox.Text >= 1 And TotalPagesTextBox.Text < Pages + 1 Then
+            TotalPagesTextBox.Text += 1
+            If Not PreviousPageButton.Enabled Then
+                PreviousPageButton.Enabled = True
+            End If
+        End If
+        CheckTotalPagesTextbox()
+    End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles PreviousPageButton.Click
+        If TotalPagesTextBox.Text > 1 And TotalPagesTextBox.Text <= Pages + 1 Then
+            TotalPagesTextBox.Text -= 1
+            If Not NextPageButton.Enabled Then
+                NextPageButton.Enabled = True
+            End If
+        End If
+        CheckTotalPagesTextbox()
+    End Sub
 End Class
