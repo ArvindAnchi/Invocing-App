@@ -380,17 +380,17 @@ Public Class Main
     End Sub
 
     Private Sub Main_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
-        'Hide()
-        'e.Cancel = True
-        'Dim psi As ProcessStartInfo = New ProcessStartInfo With {
-        '    .FileName = String.Format("C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"),
-        '    .UseShellExecute = True,
-        '    .WindowStyle = ProcessWindowStyle.Hidden,
-        '    .Arguments = String.Format("-file ""{0}\BackupSQL.ps1""", Application.StartupPath)
-        '}
-        'Dim proc As Process = Process.Start(psi)
-        'proc.WaitForExit()
-        'e.Cancel = False
+        Hide()
+        e.Cancel = True
+        Dim psi As ProcessStartInfo = New ProcessStartInfo With {
+            .FileName = String.Format("C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"),
+            .UseShellExecute = True,
+            .WindowStyle = ProcessWindowStyle.Hidden,
+            .Arguments = String.Format("-file ""{0}\BackupSQL.ps1""", Application.StartupPath)
+        }
+        Dim proc As Process = Process.Start(psi)
+        proc.WaitForExit()
+        e.Cancel = False
     End Sub
 
 End Class

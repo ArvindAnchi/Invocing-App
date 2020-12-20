@@ -35,14 +35,8 @@ Public Class PrintPreview
         GlobalFree(hDevMode)
     End Sub
 
-    Private Sub PrintSettingsBtn_Click(sender As Object, e As EventArgs) Handles PrinterSettingsBtn.Click
-        PrintDocument.PrinterSettings.PrinterName = PrinterComboBox.Text
-        If (PrintDocument.PrinterSettings.IsValid) Then
-            ShowPrinterProperties(PrintDocument.PrinterSettings)
-            PrintPreviewControl.InvalidatePreview() 'Refresh the print preview control to display changes.
-        Else
-            MsgBox("Invalid Printer", MsgBoxStyle.Information)
-        End If
+    Private Sub PrintSettingsBtn_Click(sender As Object, e As EventArgs)
+
     End Sub
 
     Private col As Color = Color.Gray
@@ -278,6 +272,14 @@ Public Class PrintPreview
                                     Brush,
                                     Bounds.Width - (Bounds.Width * 0.0955),
                                     Bounds.Height * 0.7325)
+                        .DrawString(String.Format("Terms: {1}",'{0}Ammount: {2}",
+                                                  vbNewLine,
+                                                  If(InvoiceForm.TrmCred.Checked, InvoiceForm.TermTXT.Text & " days", "Cash"),
+                                                  NumericStrings.GetNumberWords(CDec(prcdata(4)))),
+                                    H3Font,
+                                    Brush,
+                                    Bounds.Width * 0.0413,
+                                    Bounds.Height * 0.7325)
                     End Using
                     .DrawLine(Pen,
                               CSng(Bounds.Width * 0.02),
@@ -470,5 +472,15 @@ Public Class PrintPreview
             End If
         End If
         CheckTotalPagesTextbox()
+    End Sub
+
+    Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
+        PrintDocument.PrinterSettings.PrinterName = PrinterComboBox.Text
+        If (PrintDocument.PrinterSettings.IsValid) Then
+            ShowPrinterProperties(PrintDocument.PrinterSettings)
+            PrintPreviewControl.InvalidatePreview() 'Refresh the print preview control to display changes.
+        Else
+            MsgBox("Invalid Printer", MsgBoxStyle.Information)
+        End If
     End Sub
 End Class

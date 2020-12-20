@@ -25,7 +25,6 @@ Partial Class PrintPreview
         Me.PageNoLabel = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.ZoomSlider = New System.Windows.Forms.TrackBar()
-        Me.PrinterSettingsBtn = New System.Windows.Forms.Button()
         Me.CopiesTextBox = New System.Windows.Forms.TextBox()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
@@ -40,6 +39,8 @@ Partial Class PrintPreview
         Me.TotalPagesLabel = New System.Windows.Forms.Label()
         Me.NextPageButton = New System.Windows.Forms.Button()
         Me.PreviousPageButton = New System.Windows.Forms.Button()
+        Me.LinkLabel1 = New System.Windows.Forms.LinkLabel()
+        Me.Label4 = New System.Windows.Forms.Label()
         CType(Me.ZoomSlider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -49,7 +50,7 @@ Partial Class PrintPreview
         Me.TextColorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.TextColorComboBox.FormattingEnabled = True
         Me.TextColorComboBox.Items.AddRange(New Object() {"Gray", "DimGray", "Black", "Blue", "Red"})
-        Me.TextColorComboBox.Location = New System.Drawing.Point(508, 162)
+        Me.TextColorComboBox.Location = New System.Drawing.Point(508, 77)
         Me.TextColorComboBox.Name = "TextColorComboBox"
         Me.TextColorComboBox.Size = New System.Drawing.Size(222, 21)
         Me.TextColorComboBox.TabIndex = 53
@@ -105,20 +106,10 @@ Partial Class PrintPreview
         Me.ZoomSlider.TickStyle = System.Windows.Forms.TickStyle.Both
         Me.ZoomSlider.Value = 1
         '
-        'PrinterSettingsBtn
-        '
-        Me.PrinterSettingsBtn.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.PrinterSettingsBtn.Location = New System.Drawing.Point(592, 52)
-        Me.PrinterSettingsBtn.Name = "PrinterSettingsBtn"
-        Me.PrinterSettingsBtn.Size = New System.Drawing.Size(138, 28)
-        Me.PrinterSettingsBtn.TabIndex = 48
-        Me.PrinterSettingsBtn.Text = "Print settings"
-        Me.PrinterSettingsBtn.UseVisualStyleBackColor = True
-        '
         'CopiesTextBox
         '
         Me.CopiesTextBox.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.CopiesTextBox.Location = New System.Drawing.Point(508, 57)
+        Me.CopiesTextBox.Location = New System.Drawing.Point(508, 154)
         Me.CopiesTextBox.Name = "CopiesTextBox"
         Me.CopiesTextBox.Size = New System.Drawing.Size(73, 21)
         Me.CopiesTextBox.TabIndex = 47
@@ -128,7 +119,7 @@ Partial Class PrintPreview
         '
         Me.Label5.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(448, 165)
+        Me.Label5.Location = New System.Drawing.Point(448, 80)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(55, 13)
         Me.Label5.TabIndex = 45
@@ -138,7 +129,7 @@ Partial Class PrintPreview
         '
         Me.Label2.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(463, 60)
+        Me.Label2.Location = New System.Drawing.Point(462, 157)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(39, 13)
         Me.Label2.TabIndex = 46
@@ -190,11 +181,10 @@ Partial Class PrintPreview
         Me.BlackWhiteCheckBox.AutoSize = True
         Me.BlackWhiteCheckBox.Checked = True
         Me.BlackWhiteCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.BlackWhiteCheckBox.Location = New System.Drawing.Point(508, 216)
+        Me.BlackWhiteCheckBox.Location = New System.Drawing.Point(508, 133)
         Me.BlackWhiteCheckBox.Name = "BlackWhiteCheckBox"
-        Me.BlackWhiteCheckBox.Size = New System.Drawing.Size(82, 17)
+        Me.BlackWhiteCheckBox.Size = New System.Drawing.Size(15, 14)
         Me.BlackWhiteCheckBox.TabIndex = 54
-        Me.BlackWhiteCheckBox.Text = "Black/White"
         Me.BlackWhiteCheckBox.UseVisualStyleBackColor = True
         '
         'PrintQualityComboBox
@@ -202,7 +192,7 @@ Partial Class PrintPreview
         Me.PrintQualityComboBox.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.PrintQualityComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.PrintQualityComboBox.FormattingEnabled = True
-        Me.PrintQualityComboBox.Location = New System.Drawing.Point(508, 189)
+        Me.PrintQualityComboBox.Location = New System.Drawing.Point(508, 104)
         Me.PrintQualityComboBox.Name = "PrintQualityComboBox"
         Me.PrintQualityComboBox.Size = New System.Drawing.Size(222, 21)
         Me.PrintQualityComboBox.TabIndex = 56
@@ -211,7 +201,7 @@ Partial Class PrintPreview
         '
         Me.Label6.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(460, 192)
+        Me.Label6.Location = New System.Drawing.Point(460, 107)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(41, 13)
         Me.Label6.TabIndex = 55
@@ -259,6 +249,27 @@ Partial Class PrintPreview
         Me.PreviousPageButton.Text = "<"
         Me.PreviousPageButton.UseVisualStyleBackColor = True
         '
+        'LinkLabel1
+        '
+        Me.LinkLabel1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.LinkLabel1.AutoSize = True
+        Me.LinkLabel1.Location = New System.Drawing.Point(650, 49)
+        Me.LinkLabel1.Name = "LinkLabel1"
+        Me.LinkLabel1.Size = New System.Drawing.Size(80, 13)
+        Me.LinkLabel1.TabIndex = 60
+        Me.LinkLabel1.TabStop = True
+        Me.LinkLabel1.Text = "Printer settings"
+        '
+        'Label4
+        '
+        Me.Label4.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(438, 133)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(63, 13)
+        Me.Label4.TabIndex = 61
+        Me.Label4.Text = "Black/White"
+        '
         'PrintPreview
         '
         Me.AcceptButton = Me.PrintBtn
@@ -267,6 +278,8 @@ Partial Class PrintPreview
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(754, 605)
+        Me.Controls.Add(Me.Label4)
+        Me.Controls.Add(Me.LinkLabel1)
         Me.Controls.Add(Me.PreviousPageButton)
         Me.Controls.Add(Me.NextPageButton)
         Me.Controls.Add(Me.TotalPagesTextBox)
@@ -279,7 +292,6 @@ Partial Class PrintPreview
         Me.Controls.Add(Me.PageNoLabel)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.ZoomSlider)
-        Me.Controls.Add(Me.PrinterSettingsBtn)
         Me.Controls.Add(Me.CopiesTextBox)
         Me.Controls.Add(Me.Label5)
         Me.Controls.Add(Me.Label2)
@@ -306,7 +318,6 @@ Partial Class PrintPreview
     Friend WithEvents PageNoLabel As Label
     Friend WithEvents Label3 As Label
     Friend WithEvents ZoomSlider As TrackBar
-    Friend WithEvents PrinterSettingsBtn As Button
     Friend WithEvents CopiesTextBox As TextBox
     Friend WithEvents Label5 As Label
     Friend WithEvents Label2 As Label
@@ -321,4 +332,6 @@ Partial Class PrintPreview
     Friend WithEvents TotalPagesLabel As Label
     Friend WithEvents NextPageButton As Button
     Friend WithEvents PreviousPageButton As Button
+    Friend WithEvents LinkLabel1 As LinkLabel
+    Friend WithEvents Label4 As Label
 End Class

@@ -220,7 +220,7 @@ Public Class PrintCredNote
                                                       New Font("Cambria", 10), brush, e.MarginBounds.Left - 50, y + h + 25)
                     End If
 
-                    Dim num As New ClsConversion
+                    'Dim num As New ClsConversion
                     'e.Graphics.DrawString("AED " & num.ConvertNumberToWords(Math.Round(CInt(prcdata(2)) + CInt(prcdata(3)), 2).ToString("N2")) & " Fils only",
                     '                              New Font("Cambria", 10), brush, e.MarginBounds.Left - 50, y + h + 60)
 
