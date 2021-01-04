@@ -99,16 +99,21 @@ Public Class Main
             stfrm.ShowDialog()
         End Using
     End Sub
-    Function DVRowFilter(Paid As Boolean, RetCan As Boolean, UPaid As Boolean) As String
+    Function DVRowFilter(Paid As Boolean, RetCan As Boolean, UPaid As Boolean, SearchString As String) As String
 
         Try
-            If Not String.IsNullOrEmpty(ISearchTB.Text) Then
-                If IsNumeric(ISearchTB.Text) Then
-                    FilterString = String.Format("(CONVERT([Invoice Number], System.String) like '%{0}%' OR CONVERT([LPO Number], System.String) like '%{0}%') AND ([Invoice Date] >= '{1}' And [Invoice Date] <= '{2}')",
-                                                  ISearchTB.Text, ISDateDTP.Value, IEDateDTP.Value)
+            If Not String.IsNullOrEmpty(SearchString) Then
+                SearchString = SearchString.Trim
+                If IsNumeric(SearchString) Then
+                    FilterString = String.Format("({0} {1} {2}) AND ([Invoice Date] >= '{3}' And [Invoice Date] <= '{4}')",
+                                                  If(InvoiceRB.Checked, String.Format("CONVERT([Invoice Number], System.String) like '%{0}%'", SearchString), ""),
+                                                  If(LPORB.Checked, String.Format("CONVERT([LPO Number], System.String) like '%{0}%'", SearchString), ""),
+                                                  If(AllSearchRB.Checked, String.Format("CONVERT([Invoice Number], System.String) like '%{0}%' OR CONVERT([LPO Number], System.String) like '%{0}%'", SearchString), ""),
+                                                  ISDateDTP.Value,
+                                                  IEDateDTP.Value)
                 Else
-                    FilterString = String.Format("[Company Name] LIKE '%{0}%' AND ([Invoice Date] >= '{1}' And [Invoice Date] <= '{2}')",
-                                                  ISearchTB.Text, ISDateDTP.Value, IEDateDTP.Value)
+                    FilterString = String.Format("[Company Name] Like '%{0}%' AND ([Invoice Date] >= '{1}' And [Invoice Date] <= '{2}')",
+                    SearchString, ISDateDTP.Value, IEDateDTP.Value)
                 End If
                 If Paid = True Then
                     FilterString += String.Format(" AND Paid = '{0}'", Paid)
@@ -130,7 +135,7 @@ Public Class Main
                     FilterString = ""
                 End If
             End If
-            Console.WriteLine(FilterString)
+            'Console.WriteLine(FilterString)
         Catch ex As Exception
             Console.WriteLine(ex.ToString)
         End Try
@@ -138,20 +143,25 @@ Public Class Main
 
     End Function
 
-    Private Sub DataView_RowFilter(sender As Object, e As EventArgs) Handles ISDateDTP.ValueChanged, IEDateDTP.ValueChanged, ISearchTB.TextChanged, PaidRB.CheckedChanged, UPaidRB.CheckedChanged, RetcanRB.CheckedChanged
+    Private Sub DataView_RowFilter(sender As Object, e As EventArgs) Handles ISDateDTP.ValueChanged, IEDateDTP.ValueChanged, ISearchTB.TextChanged, PaidRB.CheckedChanged, UPaidRB.CheckedChanged, RetcanRB.CheckedChanged, InvoiceRB.CheckedChanged, LPORB.CheckedChanged, AllSearchRB.CheckedChanged
         If Not String.IsNullOrEmpty(ISearchTB.Text) Then
-            Console.WriteLine(FilterString)
             Dim dataView As DataView = InvoicesDataTable.DefaultView
-            dataView.RowFilter = If(ISearchTB.Text(0) <> "(", DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked), FilterString)
+            Dim MultiLineFilter As String = ""
+            Dim items As String() = ISearchTB.Text.Split(";"c)
+            For entryIndex As Integer = 0 To items.Count - 1
+                MultiLineFilter += If(entryIndex = 0, "", If(String.IsNullOrEmpty(items(entryIndex)), "", " OR ")) + DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked, items(entryIndex))
+            Next
+            'Console.WriteLine("FilterString: " & FilterString & vbNewLine & "MultiLineFilter: " & MultiLineFilter)
+            dataView.RowFilter = If(ISearchTB.Text(0) <> "(", MultiLineFilter, FilterString)
             InvoicesDGV.DataSource = dataView
 
             BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
                     " Total: " & InvoicesDataTable.Compute("SUM(Total)", dataView.RowFilter).ToString &
                     " VAT: " & InvoicesDataTable.Compute("SUM(VAT)", dataView.RowFilter).ToString
-        Else
+        ElseIf Not IsNothing(InvoicesDataTable) Then
             Dim dataView As DataView = InvoicesDataTable.DefaultView
             InvoicesDGV.DataSource = dataView
-            dataView.RowFilter = DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked)
+            dataView.RowFilter = DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked, ISearchTB.Text)
             BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
                     " Total: " & InvoicesDataTable.Compute("SUM(Total)", dataView.RowFilter).ToString &
                     " VAT: " & InvoicesDataTable.Compute("SUM(VAT)", dataView.RowFilter).ToString
@@ -173,7 +183,13 @@ Public Class Main
         If Not String.IsNullOrEmpty(ISearchTB.Text) Then
             Console.WriteLine(FilterString)
             Dim dataView As DataView = InvoicesDataTable.DefaultView
-            dataView.RowFilter = If(ISearchTB.Text(0) <> "(", DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked), FilterString)
+            Dim MultiLineFilter As String = ""
+            Dim items As String() = ISearchTB.Text.Split(";"c)
+            For entryIndex As Integer = 0 To items.Count - 1
+                MultiLineFilter += If(entryIndex = 0, "", If(String.IsNullOrEmpty(items(entryIndex)), "", " OR ")) + DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked, items(entryIndex))
+            Next
+            Console.WriteLine("FilterString: " & FilterString & vbNewLine & "MultiLineFilter: " & MultiLineFilter)
+            dataView.RowFilter = If(ISearchTB.Text(0) <> "(", MultiLineFilter, FilterString)
             InvoicesDGV.DataSource = dataView
             BarStaticItem1.Caption = "Records: " & InvoicesDGV.RowCount &
                 " Total: " & InvoicesDataTable.Compute("SUM(Total)", dataView.RowFilter).ToString &
@@ -281,13 +297,6 @@ Public Class Main
         End If
     End Sub
 
-    Private Sub Button1_Click_1(sender As Object, e As EventArgs) Handles Button1.Click
-        With Search
-            .mainfrm = Me
-            .ShowDialog()
-        End With
-    End Sub
-
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         InvoicesDGV.Enabled = False
         RefreshMainDGV()
@@ -393,4 +402,19 @@ Public Class Main
         e.Cancel = False
     End Sub
 
+    Private Sub BatchSavePDFButton_ItemClick(sender As Object, e As DevExpress.XtraBars.ItemClickEventArgs) Handles BatchSavePDFButton.ItemClick
+        For Each row As DataGridViewRow In InvoicesDGV.SelectedRows
+            If IsDBNull(row.Cells(8).Value) OrElse Not CBool(row.Cells(8).Value) Then
+                Using printprev As New PrintPreview
+                    Using invfrm As New InvoiceForm
+                        FillInvoiceData(invfrm, row)
+                        invfrm.Show()
+                        printprev.InvoiceForm = invfrm
+                        printprev.NotPdf = False
+                        printprev.ShowDialog()
+                    End Using
+                End Using
+            End If
+        Next
+    End Sub
 End Class

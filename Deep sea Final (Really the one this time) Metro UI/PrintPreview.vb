@@ -16,7 +16,7 @@ Public Class PrintPreview
                                                                          ByVal pDevModeInput As IntPtr,
                                                                          ByVal fMode As Integer) As Integer
     Public InvoiceForm As InvoiceForm
-
+    Public NotPdf As Boolean = True
 
     Sub ShowPrinterProperties(ByVal Settings As PrinterSettings)
 
@@ -33,10 +33,6 @@ Public Class PrintPreview
         Settings.DefaultPageSettings.SetHdevmode(hDevMode)
         ' cleanup
         GlobalFree(hDevMode)
-    End Sub
-
-    Private Sub PrintSettingsBtn_Click(sender As Object, e As EventArgs)
-
     End Sub
 
     Private col As Color = Color.Gray
@@ -322,7 +318,6 @@ Public Class PrintPreview
     End Sub
 
     Private Sub PrintPreview_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         MaximumSize = Screen.FromRectangle(Bounds).WorkingArea.Size
         Dim pkInstalledPrinters As String
         ZoomSlider.Minimum = PrintPreviewControl.Zoom * 100
@@ -342,7 +337,10 @@ Public Class PrintPreview
         End If
         'PrintPreviewControl1.Document = PrintDocument1
         TextColorComboBox.SelectedIndex = 0
-
+        If Not NotPdf Then
+            PrintPreviewControl.Visible = False
+            PrintBtn.PerformClick()
+        End If
     End Sub
 
     Private Sub TrackBar1_Scroll(sender As Object, e As EventArgs) Handles ZoomSlider.Scroll
@@ -350,7 +348,7 @@ Public Class PrintPreview
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles PrintBtn.Click
-
+        Console.WriteLine("Start print")
         PrintDocument.PrinterSettings.PrinterName = PrinterComboBox.Text
         If BlackWhiteCheckBox.Checked Then
             PrintDocument.DefaultPageSettings.Color = True
@@ -361,29 +359,39 @@ Public Class PrintPreview
         PrintDocument.DefaultPageSettings.Color = False
         PrintDocument.DefaultPageSettings.PaperSize = (From s As PaperSize In PrintDocument.PrinterSettings.PaperSizes.Cast(Of PaperSize) Where s.RawKind = PaperKind.A4).FirstOrDefault
         PrintDocument.DefaultPageSettings.PrinterResolution = PrintDocument.PrinterSettings.PrinterResolutions(PrintQualityComboBox.SelectedIndex)
+        Console.WriteLine("Set print settings")
         'MsgBox(PrintDocument1.PrinterSettings.ToString + vbNewLine + PrintDocument1.DefaultPageSettings.ToString)
-        PrintDocument.Print()
-
+        If NotPdf Then
+            Console.WriteLine("Not pdf")
+            PrintDocument.Print()
+        End If
         Dim pset As PrinterSettings = PrintDocument.PrinterSettings
         PrintDocument.PrinterSettings.PrinterName = "Microsoft Print to PDF"
         PrintDocument.PrinterSettings.PrintToFile = True
+        Console.WriteLine("Set Save PDF Settings")
         Dim savePath As String = String.Format("{0}\Invoices-PDF\{1}\{2}\",
                                                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                                                InvoiceForm.DateTimePicker1.Value.Year,
                                                MonthName(InvoiceForm.DateTimePicker1.Value.Month))
+        Console.WriteLine(String.Format("Save to file: Desktop\Invoices-PDF\{0}\{1}\",
+                                               InvoiceForm.DateTimePicker1.Value.Year,
+                                               MonthName(InvoiceForm.DateTimePicker1.Value.Month)))
         If Not IO.Directory.Exists(savePath) Then
+            Console.WriteLine("Directory does not exist... Creating")
             IO.Directory.CreateDirectory(savePath)
         End If
+        Console.WriteLine("Set printer to save PDF")
         PrintDocument.PrinterSettings.PrintFileName = String.Format("{0}\{1},{2}.pdf",
                                                                      savePath,
                                                                      InvoiceForm.invnotxt.Text,
                                                                      InvoiceForm.cnametxt.Text)
-
+        Console.WriteLine("Check if settings are valid")
         If (PrintDocument.PrinterSettings.IsValid) Then
+            Console.WriteLine("Save PDF")
             PrintDocument.Print()
         End If
         PrintDocument.PrinterSettings = pset
-
+        Console.WriteLine("Close form")
         Close()
     End Sub
 
@@ -483,4 +491,5 @@ Public Class PrintPreview
             MsgBox("Invalid Printer", MsgBoxStyle.Information)
         End If
     End Sub
+
 End Class

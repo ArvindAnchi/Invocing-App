@@ -41,7 +41,13 @@ Module General
                     With .InvoicesDGV
                         Dim dataView As DataView = dt.DefaultView
                         If Not String.IsNullOrEmpty(Main.ISearchTB.Text) Then
-                            dataView.RowFilter = If(Main.ISearchTB.Text(0) <> "(", Main.DVRowFilter(Main.PaidRB.Checked, Main.RetcanRB.Checked, Main.UPaidRB.Checked), Main.FilterString)
+                            Dim MultiLineFilter As String = ""
+                            Dim items As String() = Main.ISearchTB.Text.Split(";"c)
+                            For entryIndex As Integer = 0 To items.Count - 1
+                                MultiLineFilter += If(entryIndex = 0, "", If(String.IsNullOrEmpty(items(entryIndex)), "", " OR ")) + Main.DVRowFilter(Main.PaidRB.Checked, Main.RetcanRB.Checked, Main.UPaidRB.Checked, items(entryIndex))
+                            Next
+                            Console.WriteLine("FilterString: " & Main.FilterString & vbNewLine & "MultiLineFilter: " & MultiLineFilter)
+                            dataView.RowFilter = If(Main.ISearchTB.Text(0) <> "(", MultiLineFilter, Main.FilterString)
                         End If
                         .DataSource = dataView
                         .Columns(4).DefaultCellStyle.Format() = "0.00"

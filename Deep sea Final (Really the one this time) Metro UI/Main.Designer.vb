@@ -41,8 +41,10 @@ Partial Class Main
         Me.BarButtonItem2 = New DevExpress.XtraBars.BarButtonItem()
         Me.BarButtonItem5 = New DevExpress.XtraBars.BarButtonItem()
         Me.VATAccBtn = New DevExpress.XtraBars.BarButtonItem()
+        Me.BatchSavePDFButton = New DevExpress.XtraBars.BarButtonItem()
         Me.InvoiceRT = New DevExpress.XtraBars.Ribbon.RibbonPage()
         Me.InvoiceRG = New DevExpress.XtraBars.Ribbon.RibbonPageGroup()
+        Me.RibbonPageGroup2 = New DevExpress.XtraBars.Ribbon.RibbonPageGroup()
         Me.StmtRT = New DevExpress.XtraBars.Ribbon.RibbonPage()
         Me.StmtRG = New DevExpress.XtraBars.Ribbon.RibbonPageGroup()
         Me.VatGrp = New DevExpress.XtraBars.Ribbon.RibbonPageGroup()
@@ -61,7 +63,10 @@ Partial Class Main
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.PrintToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.FilterGB = New System.Windows.Forms.GroupBox()
-        Me.Button1 = New System.Windows.Forms.Button()
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.AllSearchRB = New System.Windows.Forms.RadioButton()
+        Me.InvoiceRB = New System.Windows.Forms.RadioButton()
+        Me.LPORB = New System.Windows.Forms.RadioButton()
         Me.RetcanRB = New System.Windows.Forms.RadioButton()
         Me.IClearBTN = New System.Windows.Forms.Button()
         Me.AllRB = New System.Windows.Forms.RadioButton()
@@ -80,6 +85,7 @@ Partial Class Main
         CType(Me.InvoicesDGV, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.FilterGB.SuspendLayout()
+        Me.Panel1.SuspendLayout()
         CType(Me.BehaviorManager1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -91,9 +97,9 @@ Partial Class Main
         '
         Me.RibbonControl.AllowMinimizeRibbon = False
         Me.RibbonControl.ExpandCollapseItem.Id = 0
-        Me.RibbonControl.Items.AddRange(New DevExpress.XtraBars.BarItem() {Me.RibbonControl.ExpandCollapseItem, Me.RibbonControl.SearchEditItem, Me.NewInvBtnItm, Me.OpenBtnItm, Me.PrintBtnItm, Me.CanceledBtnItm, Me.DeleteBtnItm, Me.BarButtonItem3, Me.PaidBtnItm, Me.GenStmtBtnItm, Me.BarButtonItem7, Me.BarStaticItem1, Me.SkinDropDownButtonItem1, Me.RefreshBtn, Me.BarButtonItem2, Me.BarButtonItem5, Me.VATAccBtn})
+        Me.RibbonControl.Items.AddRange(New DevExpress.XtraBars.BarItem() {Me.RibbonControl.ExpandCollapseItem, Me.RibbonControl.SearchEditItem, Me.NewInvBtnItm, Me.OpenBtnItm, Me.PrintBtnItm, Me.CanceledBtnItm, Me.DeleteBtnItm, Me.BarButtonItem3, Me.PaidBtnItm, Me.GenStmtBtnItm, Me.BarButtonItem7, Me.BarStaticItem1, Me.SkinDropDownButtonItem1, Me.RefreshBtn, Me.BarButtonItem2, Me.BarButtonItem5, Me.VATAccBtn, Me.BatchSavePDFButton})
         Me.RibbonControl.Location = New System.Drawing.Point(0, 0)
-        Me.RibbonControl.MaxItemId = 28
+        Me.RibbonControl.MaxItemId = 29
         Me.RibbonControl.Name = "RibbonControl"
         Me.RibbonControl.OptionsAnimation.PageCategoryShowAnimation = DevExpress.Utils.DefaultBoolean.[True]
         Me.RibbonControl.OptionsCustomizationForm.FormIcon = CType(resources.GetObject("resource.FormIcon"), System.Drawing.Icon)
@@ -212,9 +218,17 @@ Partial Class Main
         Me.VATAccBtn.ImageOptions.SvgImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.business_eurocircled
         Me.VATAccBtn.Name = "VATAccBtn"
         '
+        'BatchSavePDFButton
+        '
+        Me.BatchSavePDFButton.Caption = "Save invoices as pdf"
+        Me.BatchSavePDFButton.Id = 28
+        Me.BatchSavePDFButton.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.exporttopdf_16x16
+        Me.BatchSavePDFButton.ImageOptions.LargeImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.exporttopdf_32x321
+        Me.BatchSavePDFButton.Name = "BatchSavePDFButton"
+        '
         'InvoiceRT
         '
-        Me.InvoiceRT.Groups.AddRange(New DevExpress.XtraBars.Ribbon.RibbonPageGroup() {Me.InvoiceRG})
+        Me.InvoiceRT.Groups.AddRange(New DevExpress.XtraBars.Ribbon.RibbonPageGroup() {Me.InvoiceRG, Me.RibbonPageGroup2})
         Me.InvoiceRT.Name = "InvoiceRT"
         Me.InvoiceRT.Text = "Invoice"
         '
@@ -229,6 +243,12 @@ Partial Class Main
         Me.InvoiceRG.ItemLinks.Add(Me.PaidBtnItm)
         Me.InvoiceRG.Name = "InvoiceRG"
         Me.InvoiceRG.Text = "Invoice"
+        '
+        'RibbonPageGroup2
+        '
+        Me.RibbonPageGroup2.ItemLinks.Add(Me.BatchSavePDFButton)
+        Me.RibbonPageGroup2.Name = "RibbonPageGroup2"
+        Me.RibbonPageGroup2.Text = "Batch operations"
         '
         'StmtRT
         '
@@ -370,7 +390,7 @@ Partial Class Main
         '
         Me.FilterGB.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.FilterGB.Controls.Add(Me.Button1)
+        Me.FilterGB.Controls.Add(Me.Panel1)
         Me.FilterGB.Controls.Add(Me.RetcanRB)
         Me.FilterGB.Controls.Add(Me.IClearBTN)
         Me.FilterGB.Controls.Add(Me.AllRB)
@@ -389,14 +409,47 @@ Partial Class Main
         Me.FilterGB.TabStop = False
         Me.FilterGB.Text = "Filter"
         '
-        'Button1
+        'Panel1
         '
-        Me.Button1.Location = New System.Drawing.Point(458, 14)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(93, 21)
-        Me.Button1.TabIndex = 9
-        Me.Button1.Text = "Search multiline"
-        Me.Button1.UseVisualStyleBackColor = True
+        Me.Panel1.Controls.Add(Me.AllSearchRB)
+        Me.Panel1.Controls.Add(Me.InvoiceRB)
+        Me.Panel1.Controls.Add(Me.LPORB)
+        Me.Panel1.Location = New System.Drawing.Point(309, 14)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(242, 21)
+        Me.Panel1.TabIndex = 7
+        '
+        'AllSearchRB
+        '
+        Me.AllSearchRB.AutoSize = True
+        Me.AllSearchRB.Location = New System.Drawing.Point(202, 2)
+        Me.AllSearchRB.Name = "AllSearchRB"
+        Me.AllSearchRB.Size = New System.Drawing.Size(36, 17)
+        Me.AllSearchRB.TabIndex = 8
+        Me.AllSearchRB.Text = "All"
+        Me.AllSearchRB.UseVisualStyleBackColor = True
+        '
+        'InvoiceRB
+        '
+        Me.InvoiceRB.AutoSize = True
+        Me.InvoiceRB.Checked = True
+        Me.InvoiceRB.Location = New System.Drawing.Point(5, 2)
+        Me.InvoiceRB.Name = "InvoiceRB"
+        Me.InvoiceRB.Size = New System.Drawing.Size(100, 17)
+        Me.InvoiceRB.TabIndex = 8
+        Me.InvoiceRB.TabStop = True
+        Me.InvoiceRB.Text = "Invoice Number"
+        Me.InvoiceRB.UseVisualStyleBackColor = True
+        '
+        'LPORB
+        '
+        Me.LPORB.AutoSize = True
+        Me.LPORB.Location = New System.Drawing.Point(112, 2)
+        Me.LPORB.Name = "LPORB"
+        Me.LPORB.Size = New System.Drawing.Size(84, 17)
+        Me.LPORB.TabIndex = 9
+        Me.LPORB.Text = "LPO Number"
+        Me.LPORB.UseVisualStyleBackColor = True
         '
         'RetcanRB
         '
@@ -420,10 +473,12 @@ Partial Class Main
         'AllRB
         '
         Me.AllRB.AutoSize = True
+        Me.AllRB.Checked = True
         Me.AllRB.Location = New System.Drawing.Point(650, 20)
         Me.AllRB.Name = "AllRB"
         Me.AllRB.Size = New System.Drawing.Size(36, 17)
         Me.AllRB.TabIndex = 2
+        Me.AllRB.TabStop = True
         Me.AllRB.Text = "All"
         Me.AllRB.UseVisualStyleBackColor = True
         '
@@ -465,7 +520,7 @@ Partial Class Main
         '
         Me.ISearchTB.Location = New System.Drawing.Point(80, 14)
         Me.ISearchTB.Name = "ISearchTB"
-        Me.ISearchTB.Size = New System.Drawing.Size(372, 21)
+        Me.ISearchTB.Size = New System.Drawing.Size(223, 21)
         Me.ISearchTB.TabIndex = 1
         '
         'ISearchLBL
@@ -534,6 +589,8 @@ Partial Class Main
         Me.ContextMenuStrip1.ResumeLayout(False)
         Me.FilterGB.ResumeLayout(False)
         Me.FilterGB.PerformLayout()
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
         CType(Me.BehaviorManager1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -581,7 +638,6 @@ Partial Class Main
     Friend WithEvents RetcanRB As RadioButton
     Friend WithEvents VATAccBtn As DevExpress.XtraBars.BarButtonItem
     Friend WithEvents VatGrp As DevExpress.XtraBars.Ribbon.RibbonPageGroup
-    Friend WithEvents Button1 As Button
     Friend WithEvents Button2 As Button
     Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
     Friend WithEvents AToolStripMenuItem As ToolStripMenuItem
@@ -591,4 +647,10 @@ Partial Class Main
     Friend WithEvents DeleteToolStripMenuItem1 As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
     Friend WithEvents PrintToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents BatchSavePDFButton As DevExpress.XtraBars.BarButtonItem
+    Friend WithEvents RibbonPageGroup2 As DevExpress.XtraBars.Ribbon.RibbonPageGroup
+    Friend WithEvents Panel1 As Panel
+    Friend WithEvents InvoiceRB As RadioButton
+    Friend WithEvents LPORB As RadioButton
+    Friend WithEvents AllSearchRB As RadioButton
 End Class
