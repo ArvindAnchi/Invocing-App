@@ -151,7 +151,7 @@ Public Class Main
             For entryIndex As Integer = 0 To items.Count - 1
                 MultiLineFilter += If(entryIndex = 0, "", If(String.IsNullOrEmpty(items(entryIndex)), "", " OR ")) + DVRowFilter(PaidRB.Checked, RetcanRB.Checked, UPaidRB.Checked, items(entryIndex))
             Next
-            'Console.WriteLine("FilterString: " & FilterString & vbNewLine & "MultiLineFilter: " & MultiLineFilter)
+            Console.WriteLine("FilterString: " & FilterString & vbNewLine & "MultiLineFilter: " & MultiLineFilter)
             dataView.RowFilter = If(ISearchTB.Text(0) <> "(", MultiLineFilter, FilterString)
             InvoicesDGV.DataSource = dataView
 
@@ -416,5 +416,21 @@ Public Class Main
                 End Using
             End If
         Next
+    End Sub
+
+    Private Sub ISearchTB_KeyDown(sender As Object, e As KeyEventArgs) Handles ISearchTB.KeyDown
+        If e.Modifiers = Keys.Control AndAlso e.KeyCode = Keys.V Then
+            If Clipboard.ContainsText() Then
+                Dim finaltext As String = ""
+                For Each line As String In Clipboard.GetText.Split(ControlChars.CrLf.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                    finaltext += line & "; "
+                Next
+                ISearchTB.Text = finaltext.Substring(0, finaltext.Length - 2)
+                ISearchTB.SelectionStart = ISearchTB.Text.Length
+                ISearchTB.SelectionLength = 0
+            End If
+            e.Handled = True
+            e.SuppressKeyPress = True
+        End If
     End Sub
 End Class
