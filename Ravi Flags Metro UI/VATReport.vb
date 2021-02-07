@@ -2,8 +2,16 @@
 
 Public Class VATReport
     Private Sub VATReport_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        VATSDateDTP.Value = New DateTime(Today.Year, Today.Month - 3, 1, 0, 0, 0)
-        VATEDateDTP.Value = New DateTime(Today.Year, Today.Month - 1, Date.DaysInMonth(Today.Year, Today.Month - 1), 0, 0, 0)
+        VATSDateDTP.Value = New DateTime(If(Today.Month <= 3, Today.Year - 1, Today.Year),
+                                             If(Today.Month <= 3, 14 - Today.Month, Today.Month) - 3,
+                                             1, 0, 0, 0)
+        VATEDateDTP.Value = New DateTime(If(Today.Month <= 1, Today.Year - 1, Today.Year),
+                                             If(Today.Month <= 1, 14 - Today.Month, Today.Month) - 1,
+                                             Date.DaysInMonth(If(Today.Month <= 1, Today.Year - 1, Today.Year),
+                                                              If(Today.Month <= 3, 14 - Today.Month, Today.Month) - 1),
+                                             0, 0, 0)
+        'VATSDateDTP.Value = New DateTime(Today.Year, Today.Month - 3, 1, 0, 0, 0)
+        'VATEDateDTP.Value = New DateTime(Today.Year, Today.Month - 1, Date.DaysInMonth(Today.Year, Today.Month - 1), 0, 0, 0)
 
         Using dt As DataTable = Main.DBOp.GetInvoiceDetailsForVAT(VATSDateDTP.Value, VATEDateDTP.Value)
             Dim dataView As DataView = dt.DefaultView

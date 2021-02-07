@@ -76,7 +76,11 @@ Module General
             If InvoicesDGVRow IsNot Nothing Then
                 Invoice = dbop.GetInvoiceData(InvoicesDGVRow.Cells(0).Value.ToString)
             Else
-                Invoice = dbop.GetInvoiceData(Main.InvoicesDGV.Rows(0).Cells(0).Value.ToString)
+                If Not String.IsNullOrEmpty(invfrm.invnotxt.Text) Then
+                    Invoice = dbop.GetInvoiceData(invfrm.invnotxt.Text)
+                Else
+                    Invoice = dbop.GetInvoiceData(Main.InvoicesDGV.Rows(0).Cells(0).Value.ToString)
+                End If
             End If
             'Console.Write(Invoice)
             Dim InvoiceData As DataTable = Invoice(0)

@@ -64,9 +64,9 @@ Namespace My
     Friend Module MySettingsProperty
         
         <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")>  _
-        Friend ReadOnly Property Settings() As Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.MySettings
+        Friend ReadOnly Property Settings() As Global.Ravi_flags_Metro_UI.My.MySettings
             Get
-                Return Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.MySettings.Default
+                Return Global.Ravi_flags_Metro_UI.My.MySettings.Default
             End Get
         End Property
     End Module

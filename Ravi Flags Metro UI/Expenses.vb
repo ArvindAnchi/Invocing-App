@@ -4,8 +4,14 @@ Public Class Expenses
     Private expDataTeable As DataTable
     Private clickToFillFlag As Boolean = False
     Private Sub Expenses_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        DateTimePicker1.Value = New DateTime(Today.Year, Today.Month - 3, 1, 0, 0, 0)
-        DateTimePicker2.Value = New DateTime(Today.Year, Today.Month - 1, Date.DaysInMonth(Today.Year, Today.Month - 1), 0, 0, 0)
+        DateTimePicker1.Value = New DateTime(If(Today.Month <= 3, Today.Year - 1, Today.Year),
+                                             If(Today.Month <= 3, 14 - Today.Month, Today.Month) - 3,
+                                             1, 0, 0, 0)
+        DateTimePicker2.Value = New DateTime(If(Today.Month <= 1, Today.Year - 1, Today.Year),
+                                             If(Today.Month <= 1, 14 - Today.Month, Today.Month) - 1,
+                                             Date.DaysInMonth(If(Today.Month <= 1, Today.Year - 1, Today.Year),
+                                                              If(Today.Month <= 3, 14 - Today.Month, Today.Month) - 1),
+                                             0, 0, 0)
         expDataTeable = Main.DBOp.GetExpenses
         ExpDGV.DataSource = expDataTeable
         ExpDGV.ClearSelection()

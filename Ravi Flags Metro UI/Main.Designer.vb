@@ -20,7 +20,7 @@ Partial Class Main
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim SplashScreenManager1 As DevExpress.XtraSplashScreen.SplashScreenManager = New DevExpress.XtraSplashScreen.SplashScreenManager(Me, GetType(Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.SplashScreen1), False, False)
+        Dim SplashScreenManager1 As DevExpress.XtraSplashScreen.SplashScreenManager = New DevExpress.XtraSplashScreen.SplashScreenManager(Me, GetType(Global.Ravi_flags_Metro_UI.SplashScreen1), False, False)
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Main))
         Dim PushTransition1 As DevExpress.Utils.Animation.PushTransition = New DevExpress.Utils.Animation.PushTransition()
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
@@ -199,31 +199,31 @@ Partial Class Main
         '
         Me.BarButtonItem2.Caption = "Edit Companies"
         Me.BarButtonItem2.Id = 23
-        Me.BarButtonItem2.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.editcontact_16x16
-        Me.BarButtonItem2.ImageOptions.LargeImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.editcontact_32x321
+        Me.BarButtonItem2.ImageOptions.Image = Global.Ravi_flags_Metro_UI.My.Resources.Resources.editcontact_16x16
+        Me.BarButtonItem2.ImageOptions.LargeImage = Global.Ravi_flags_Metro_UI.My.Resources.Resources.editcontact_32x321
         Me.BarButtonItem2.Name = "BarButtonItem2"
         '
         'BarButtonItem5
         '
         Me.BarButtonItem5.Caption = "Add Expenses"
         Me.BarButtonItem5.Id = 25
-        Me.BarButtonItem5.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.addnewdatasource_16x16
-        Me.BarButtonItem5.ImageOptions.LargeImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.addnewdatasource_32x32
+        Me.BarButtonItem5.ImageOptions.Image = Global.Ravi_flags_Metro_UI.My.Resources.Resources.addnewdatasource_16x16
+        Me.BarButtonItem5.ImageOptions.LargeImage = Global.Ravi_flags_Metro_UI.My.Resources.Resources.addnewdatasource_32x32
         Me.BarButtonItem5.Name = "BarButtonItem5"
         '
         'VATAccBtn
         '
         Me.VATAccBtn.Caption = "VAT Report"
         Me.VATAccBtn.Id = 26
-        Me.VATAccBtn.ImageOptions.SvgImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.business_eurocircled
+        Me.VATAccBtn.ImageOptions.SvgImage = Global.Ravi_flags_Metro_UI.My.Resources.Resources.business_eurocircled
         Me.VATAccBtn.Name = "VATAccBtn"
         '
         'BatchSavePDFButton
         '
         Me.BatchSavePDFButton.Caption = "Save invoices as pdf"
         Me.BatchSavePDFButton.Id = 28
-        Me.BatchSavePDFButton.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.exporttopdf_16x16
-        Me.BatchSavePDFButton.ImageOptions.LargeImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.exporttopdf_32x321
+        Me.BatchSavePDFButton.ImageOptions.Image = Global.Ravi_flags_Metro_UI.My.Resources.Resources.exporttopdf_16x16
+        Me.BatchSavePDFButton.ImageOptions.LargeImage = Global.Ravi_flags_Metro_UI.My.Resources.Resources.exporttopdf_32x321
         Me.BatchSavePDFButton.Name = "BatchSavePDFButton"
         '
         'InvoiceRT

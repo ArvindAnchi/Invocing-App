@@ -32,7 +32,7 @@ Namespace My
         
         <Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
         Protected Overrides Sub OnCreateMainForm()
-            Me.MainForm = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.Main
+            Me.MainForm = Global.Ravi_flags_Metro_UI.Main
         End Sub
     End Class
 End Namespace

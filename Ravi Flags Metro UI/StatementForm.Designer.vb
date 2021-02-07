@@ -60,16 +60,16 @@ Partial Class StatementForm
         '
         Me.SendAsPDF.Caption = "Send as PDF"
         Me.SendAsPDF.Id = 1
-        Me.SendAsPDF.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.sendpdf_16x16
-        Me.SendAsPDF.ImageOptions.LargeImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.sendpdf_32x32
+        Me.SendAsPDF.ImageOptions.Image = Global.Ravi_flags_Metro_UI.My.Resources.Resources.sendpdf_16x16
+        Me.SendAsPDF.ImageOptions.LargeImage = Global.Ravi_flags_Metro_UI.My.Resources.Resources.sendpdf_32x32
         Me.SendAsPDF.Name = "SendAsPDF"
         '
         'SendAsEmail
         '
         Me.SendAsEmail.Caption = "Send as E-Mail"
         Me.SendAsEmail.Id = 2
-        Me.SendAsEmail.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.emailtemplate_16x16
-        Me.SendAsEmail.ImageOptions.LargeImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.emailtemplate_32x32
+        Me.SendAsEmail.ImageOptions.Image = Global.Ravi_flags_Metro_UI.My.Resources.Resources.emailtemplate_16x16
+        Me.SendAsEmail.ImageOptions.LargeImage = Global.Ravi_flags_Metro_UI.My.Resources.Resources.emailtemplate_32x32
         Me.SendAsEmail.Name = "SendAsEmail"
         '
         'StmtTotalLBL

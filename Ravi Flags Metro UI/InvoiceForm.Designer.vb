@@ -28,14 +28,14 @@ Partial Class InvoiceForm
         Me.FluentDesignFormContainer1 = New DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormContainer()
         Me.VatCB = New System.Windows.Forms.CheckBox()
         Me.AutoCompleteLB = New System.Windows.Forms.ListBox()
-        Me.FLine9 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
-        Me.FLine8 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
-        Me.FLine7 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
-        Me.FLine6 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
-        Me.FLine4 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
-        Me.FLine3 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
-        Me.FLine2 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
-        Me.FLine1 = New Deep_sea_Final__Really_the_one_this_time__Metro_UI.FLine()
+        Me.FLine9 = New Ravi_flags_Metro_UI.FLine()
+        Me.FLine8 = New Ravi_flags_Metro_UI.FLine()
+        Me.FLine7 = New Ravi_flags_Metro_UI.FLine()
+        Me.FLine6 = New Ravi_flags_Metro_UI.FLine()
+        Me.FLine4 = New Ravi_flags_Metro_UI.FLine()
+        Me.FLine3 = New Ravi_flags_Metro_UI.FLine()
+        Me.FLine2 = New Ravi_flags_Metro_UI.FLine()
+        Me.FLine1 = New Ravi_flags_Metro_UI.FLine()
         Me.prclbl = New System.Windows.Forms.Label()
         Me.InvoiceItemsDGV = New System.Windows.Forms.DataGridView()
         Me.SNoClm = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -533,7 +533,7 @@ Partial Class InvoiceForm
         Me.SaveRibBtn.Appearance.Pressed.Options.UseBackColor = True
         Me.SaveRibBtn.Appearance.Pressed.Options.UseBorderColor = True
         Me.SaveRibBtn.Enabled = False
-        Me.SaveRibBtn.ImageOptions.SvgImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.save
+        Me.SaveRibBtn.ImageOptions.SvgImage = Global.Ravi_flags_Metro_UI.My.Resources.Resources.save
         Me.SaveRibBtn.Name = "SaveRibBtn"
         Me.SaveRibBtn.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
         Me.SaveRibBtn.Text = "Save"
@@ -544,7 +544,7 @@ Partial Class InvoiceForm
         Me.NewInvoiceRibBtn.Appearance.Hovered.Options.UseBackColor = True
         Me.NewInvoiceRibBtn.Appearance.Normal.BackColor = System.Drawing.Color.White
         Me.NewInvoiceRibBtn.Appearance.Normal.Options.UseBackColor = True
-        Me.NewInvoiceRibBtn.ImageOptions.SvgImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources._new
+        Me.NewInvoiceRibBtn.ImageOptions.SvgImage = Global.Ravi_flags_Metro_UI.My.Resources.Resources._new
         Me.NewInvoiceRibBtn.Name = "NewInvoiceRibBtn"
         Me.NewInvoiceRibBtn.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
         Me.NewInvoiceRibBtn.Text = "New"
@@ -562,7 +562,7 @@ Partial Class InvoiceForm
         Me.SavePDFRibBtn.Appearance.Pressed.BackColor2 = System.Drawing.Color.FromArgb(CType(CType(113, Byte), Integer), CType(CType(113, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.SavePDFRibBtn.Appearance.Pressed.Options.UseBackColor = True
         Me.SavePDFRibBtn.Expanded = True
-        Me.SavePDFRibBtn.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.addfile_32x32
+        Me.SavePDFRibBtn.ImageOptions.Image = Global.Ravi_flags_Metro_UI.My.Resources.Resources.addfile_32x32
         Me.SavePDFRibBtn.Name = "SavePDFRibBtn"
         Me.SavePDFRibBtn.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
         Me.SavePDFRibBtn.Text = "New Invoice (Same company)"
@@ -584,7 +584,7 @@ Partial Class InvoiceForm
         Me.ReloadRibBtn.Appearance.Hovered.Options.UseBackColor = True
         Me.ReloadRibBtn.Appearance.Normal.BackColor = System.Drawing.Color.White
         Me.ReloadRibBtn.Appearance.Normal.Options.UseBackColor = True
-        Me.ReloadRibBtn.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.refresh_32x32
+        Me.ReloadRibBtn.ImageOptions.Image = Global.Ravi_flags_Metro_UI.My.Resources.Resources.refresh_32x32
         Me.ReloadRibBtn.Name = "ReloadRibBtn"
         Me.ReloadRibBtn.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
         Me.ReloadRibBtn.Text = "Reload invoice"
@@ -595,7 +595,7 @@ Partial Class InvoiceForm
         Me.SaveCreditRibBtn.Appearance.Hovered.Options.UseBackColor = True
         Me.SaveCreditRibBtn.Appearance.Normal.BackColor = System.Drawing.Color.White
         Me.SaveCreditRibBtn.Appearance.Normal.Options.UseBackColor = True
-        Me.SaveCreditRibBtn.ImageOptions.SvgImage = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.saveas
+        Me.SaveCreditRibBtn.ImageOptions.SvgImage = Global.Ravi_flags_Metro_UI.My.Resources.Resources.saveas
         Me.SaveCreditRibBtn.Name = "SaveCreditRibBtn"
         Me.SaveCreditRibBtn.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
         Me.SaveCreditRibBtn.Text = "Save credit note"
@@ -620,7 +620,7 @@ Partial Class InvoiceForm
         Me.AccordionControlElement1.Appearance.Hovered.Options.UseBackColor = True
         Me.AccordionControlElement1.Appearance.Normal.BackColor = System.Drawing.Color.White
         Me.AccordionControlElement1.Appearance.Normal.Options.UseBackColor = True
-        Me.AccordionControlElement1.ImageOptions.Image = Global.Deep_sea_Final__Really_the_one_this_time__Metro_UI.My.Resources.Resources.refresh_32x32
+        Me.AccordionControlElement1.ImageOptions.Image = Global.Ravi_flags_Metro_UI.My.Resources.Resources.refresh_32x32
         Me.AccordionControlElement1.Name = "AccordionControlElement1"
         Me.AccordionControlElement1.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item
         Me.AccordionControlElement1.Text = "Reload invoice"
