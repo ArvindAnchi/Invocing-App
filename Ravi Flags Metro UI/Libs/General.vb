@@ -257,6 +257,7 @@ Module General
         Next
 
         Dim sourceFileName As String = Application.StartupPath & "\output.txt"
+        Process.Start("explorer.exe", Application.StartupPath)
         Using pro As New Process
             pro.StartInfo.FileName = Application.StartupPath & "\mutool.exe"
             pro.StartInfo.Arguments = " draw -F txt -o """ & sourceFileName & """ """ & targetFileName & ""
@@ -267,7 +268,8 @@ Module General
                 InvoiceForm.disctxt.Text = "15"
                 InvoiceForm.cnametxt.Text = "Techno Marine Equipment Services LLC."
                 InvoiceForm.lpotxt.Text = lines(3).Split(" "c)(2)
-                InvoiceForm.DateTimePicker1.Text = lines(23)
+                InvoiceForm.DateTimePicker1.Text = lines(22)
+                Debug.WriteLine(lines(22))
                 InvoiceForm.trntxt.Text = "100293529200003"
                 InvoiceForm.Ordbycb.Text = InputBox("Order by", "", "Mr. Shyam")
                 InvoiceForm.InvoiceItemsDGV.CurrentCell = InvoiceForm.InvoiceItemsDGV.Rows(InvoiceForm.InvoiceItemsDGV.Rows.Count - 1).Cells(0)
@@ -295,7 +297,7 @@ Module General
                     End If
                     flgnsize = lines(line)
                     line += 2
-
+                    Dim Serial As Integer = 1
                     While True
                         qty = lines(line)
                         line += 1
@@ -306,7 +308,8 @@ Module General
                         line += 1
                         price = lines(line)
                         line += 4
-                        InvoiceForm.InvoiceItemsDGV.Rows.Add("", disc, unit, qty, price)
+                        InvoiceForm.InvoiceItemsDGV.Rows.Add(Serial, disc, unit, qty, price, price * qty)
+                        Serial += 1
                         If lines(line).ToUpper.Contains("FLAG") Or lines(line).ToLower.Contains("subtotal") Then
                             Exit While
                         End If
